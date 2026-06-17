@@ -19,14 +19,47 @@ use CodeIgniter\Config\BaseService;
  */
 class Services extends BaseService
 {
-    /*
-     * public static function example($getShared = true)
-     * {
-     *     if ($getShared) {
-     *         return static::getSharedInstance('example');
-     *     }
-     *
-     *     return new \CodeIgniter\Example();
-     * }
+    /**
+     * Twig service.
      */
+    public static function twig(bool $getShared = true): \Twig\Environment
+    {
+        if ($getShared) {
+            return static::getSharedInstance('twig');
+        }
+
+        $loader = new \Twig\Loader\FilesystemLoader(APPPATH . 'Views');
+        
+        return new \Twig\Environment($loader, [
+            'cache' => WRITEPATH . 'cache/twig',
+            'debug' => ENVIRONMENT !== 'production',
+            'auto_reload' => ENVIRONMENT !== 'production',
+        ]);
+    }
+
+    /**
+     * Intervention Image service (v3+).
+     */
+    public static function imageManager(bool $getShared = true): \Intervention\Image\ImageManager
+    {
+        if ($getShared) {
+            return static::getSharedInstance('imageManager');
+        }
+
+        // Defaulting to GD driver. Use \Intervention\Image\Drivers\Imagick\Driver if available.
+        return new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+    }
+
+    /**
+     * Redis (Predis) service.
+     */
+    public static function redis(bool $getShared = true): \Predis\Client
+    {
+        if ($getShared) {
+            return static::getSharedInstance('redis');
+        }
+
+        $config = config('Queue'); // Reuse connection info from Queue config
+        return new \Predis\Client($config->predis);
+    }
 }
