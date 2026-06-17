@@ -49,6 +49,15 @@
 # database.tests.DBCollat = utf8mb4_general_ci
 # database.tests.port = 3306
 
+# Logger / Audit database (separate connection)
+# database.loggerDB.hostname = 127.0.0.1
+# database.loggerDB.database = logger_ci4
+# database.loggerDB.username = root
+# database.loggerDB.password = root
+# database.loggerDB.DBDriver = MySQLi
+# database.loggerDB.DBPrefix =
+# database.loggerDB.port = 3306
+
 #--------------------------------------------------------------------
 # ENCRYPTION
 #--------------------------------------------------------------------

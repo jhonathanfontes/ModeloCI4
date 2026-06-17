@@ -1,15 +1,17 @@
 # PESSOAS
 
 ## Objetivo
-Tabela central de pessoas físicas para desambiguação de CPF entre diferentes
-entidades do sistema (clientes, usuários, contatos, etc.).
+Tabela central de CPF/CNPJ para vincular registros de clientes (CLIENTES)
+que compartilham o mesmo documento. Garante a unicidade do CPF/CNPJ em todo
+o sistema e permite que uma mesma pessoa física ou jurídica seja associada a
+múltiplos clientes (ex: filiais, representações).
 
 ## Dicionário de dados
 
 | Campo | Tipo | Nulidade | Comentário |
 |---|---|---|---|
 | ID_PESSOA | BIGINT UNSIGNED | NOT NULL | Identificador único sequencial da pessoa (PK) |
-| CPF_CNPJ | VARCHAR(14) | NOT NULL | CPF (11 dígitos), apenas números (UNIQUE) |
+| CPF_CNPJ | VARCHAR(14) | NOT NULL | CPF (11 dígitos) ou CNPJ (14 dígitos), apenas números (UNIQUE) |
 | CRIADO_EM | DATETIME | NOT NULL | Data e hora de inserção do registro |
 | ATUALIZADO_EM | DATETIME | NOT NULL | Data e hora da última modificação |
 | EXCLUIDO_EM | DATETIME | NULL | Data de exclusão lógica (Soft Delete) |
@@ -29,7 +31,9 @@ entidades do sistema (clientes, usuários, contatos, etc.).
 
 ## Regras de Negócio
 
-- `CPF_CNPJ` armazenado apenas números (11 dígitos para CPF).
+- `CPF_CNPJ` armazenado apenas números. 11 dígitos para CPF, 14 para CNPJ.
+- `CPF_CNPJ` é UNIQUE — garante a unicidade do documento em todo o sistema.
+- CLIENTES apontam para PESSOAS via `PESSOA_ID`. Múltiplos clientes podem referenciar a mesma pessoa.
 - Exclusão é lógica via `EXCLUIDO_EM` (Soft Delete).
 
 ## Payload de Exemplo

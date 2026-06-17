@@ -4,62 +4,56 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreateClientes extends Migration
+class CreateEmpresasContatos extends Migration
 {
     public function up()
     {
         $this->forge->addField([
-            'ID_CLIENTE' => [
+            'ID_CONTATO' => [
                 'type'           => 'BIGINT',
                 'unsigned'       => true,
                 'auto_increment' => true,
-                'comment'        => 'Identificador único sequencial do cliente (PK)',
+                'comment'        => 'Identificador único sequencial do contato (PK)',
             ],
             'UUID' => [
                 'type'       => 'CHAR',
                 'constraint' => 36,
                 'comment'    => 'Identificador único público universal (UUID4) para uso em APIs e URLs',
             ],
-            'EMPRESA_ID' => [
-                'type'     => 'BIGINT',
-                'unsigned' => true,
-                'comment'  => 'Chave estrangeira vinculada à empresa responsável na tabela EMPRESAS',
-            ],
-            'PESSOA_ID' => [
-                'type'     => 'BIGINT',
-                'unsigned' => true,
-                'comment'  => 'Chave estrangeira vinculada à pessoa na tabela PESSOAS',
-            ],
-            'TIPO_ID' => [
-                'type'     => 'BIGINT',
-                'unsigned' => true,
-                'comment'  => 'Chave estrangeira vinculada à classificação do cliente na tabela SIST_TIPOS',
-            ],
-            'SITUACAO_ID' => [
-                'type'     => 'BIGINT',
-                'unsigned' => true,
-                'comment'  => 'Chave estrangeira vinculada ao estado atual na tabela SIST_SITUACOES',
-            ],
             'NOME' => [
                 'type'       => 'VARCHAR',
-                'constraint' => 255,
-                'comment'    => 'Nome completo (pessoa física) ou razão social (pessoa jurídica)',
+                'constraint' => 150,
+                'comment'    => 'Nome do contato ou descrição do setor',
             ],
-            'NOME_FANTASIA' => [
+            'CARGO' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 100,
+                'null'       => true,
+                'comment'    => 'Cargo do contato na empresa',
+            ],
+            'TELEFONE' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 15,
+                'null'       => true,
+                'comment'    => 'Telefone fixo com DDD, apenas números',
+            ],
+            'EMAIL' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 255,
                 'null'       => true,
-                'comment'    => 'Nome fantasia do cliente (pessoa jurídica)',
+                'comment'    => 'E-mail de contato',
             ],
-            'CPF_CNPJ' => [
+            'WHATSAPP' => [
                 'type'       => 'VARCHAR',
-                'constraint' => 14,
-                'comment'    => 'CPF (11 dígitos) ou CNPJ (14 dígitos) contendo apenas números (UNIQUE)',
+                'constraint' => 15,
+                'null'       => true,
+                'comment'    => 'Número de WhatsApp com DDD, apenas números',
             ],
-            'DATA_NASCIMENTO' => [
-                'type'    => 'DATE',
-                'null'    => true,
-                'comment' => 'Data de nascimento do cliente (pessoa física)',
+            'PRINCIPAL' => [
+                'type'    => 'TINYINT',
+                'constraint' => 1,
+                'default' => 0,
+                'comment' => 'Indica se é o contato principal (1) ou secundário (0)',
             ],
             'CRIADO_EM' => [
                 'type'    => 'DATETIME',
@@ -94,20 +88,17 @@ class CreateClientes extends Migration
             ],
         ]);
 
-        $this->forge->addKey('ID_CLIENTE', true);
+        $this->forge->addKey('ID_CONTATO', true);
         $this->forge->addUniqueKey('UUID');
-        $this->forge->addUniqueKey('CPF_CNPJ');
         $this->forge->addForeignKey('EMPRESA_ID', 'EMPRESAS', 'ID_EMPRESA', 'RESTRICT', 'RESTRICT');
-        $this->forge->addForeignKey('TIPO_ID', 'SIST_TIPOS', 'ID_TIPO', 'RESTRICT', 'RESTRICT');
-        $this->forge->addForeignKey('SITUACAO_ID', 'SIST_SITUACOES', 'ID_SITUACAO', 'RESTRICT', 'RESTRICT');
         $this->forge->addForeignKey('CRIADO_POR', 'SEGU_USUARIOS', 'ID_USUARIO', 'RESTRICT', 'RESTRICT');
         $this->forge->addForeignKey('ATUALIZADO_POR', 'SEGU_USUARIOS', 'ID_USUARIO', 'RESTRICT', 'RESTRICT');
         $this->forge->addForeignKey('EXCLUIDO_POR', 'SEGU_USUARIOS', 'ID_USUARIO', 'RESTRICT', 'RESTRICT');
-        $this->forge->createTable('CLIENTES');
+        $this->forge->createTable('EMPR_CONTATOS');
     }
 
     public function down()
     {
-        $this->forge->dropTable('CLIENTES');
+        $this->forge->dropTable('EMPR_CONTATOS');
     }
 }

@@ -20,6 +20,11 @@ class CreatePessoas extends Migration
                 'constraint' => 14,
                 'comment'    => 'CPF (11 dígitos), apenas números (UNIQUE)',
             ],
+            'DATA_NASCIMENTO' => [
+                'type'    => 'DATE',
+                'null'    => true,
+                'comment' => 'Data de nascimento do cliente (pessoa física)',
+            ],
             'CRIADO_EM' => [
                 'type'    => 'DATETIME',
                 'comment' => 'Data e hora exata de inserção do registro',
