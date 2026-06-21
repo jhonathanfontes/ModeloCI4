@@ -119,9 +119,6 @@ class CreateSistemaSituacoes extends Migration
 
         $this->forge->addKey('ID_SITUACAO', true);
         $this->forge->addUniqueKey('UUID');
-        $this->forge->addForeignKey('CRIADO_POR', 'SEGU_USUARIOS', 'ID_USUARIO', 'RESTRICT', 'RESTRICT');
-        $this->forge->addForeignKey('ATUALIZADO_POR', 'SEGU_USUARIOS', 'ID_USUARIO', 'RESTRICT', 'RESTRICT');
-        $this->forge->addForeignKey('EXCLUIDO_POR', 'SEGU_USUARIOS', 'ID_USUARIO', 'RESTRICT', 'RESTRICT');
         $this->forge->createTable('SIST_SITUACOES');
 
         $this->seed();

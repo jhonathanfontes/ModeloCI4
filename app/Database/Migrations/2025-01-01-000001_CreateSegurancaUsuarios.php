@@ -108,15 +108,11 @@ class CreateSegurancaUsuarios extends Migration
         $this->forge->addKey('ID_USUARIO', true);
         $this->forge->addUniqueKey('UUID');
         $this->forge->addUniqueKey('EMAIL');
-        $this->forge->addForeignKey('SITUACAO_ID', 'SIST_SITUACOES', 'ID_SITUACAO', 'RESTRICT', 'RESTRICT');
-        $this->forge->addForeignKey('CRIADO_POR', 'SEGU_USUARIOS', 'ID_USUARIO', 'RESTRICT', 'RESTRICT');
-        $this->forge->addForeignKey('ATUALIZADO_POR', 'SEGU_USUARIOS', 'ID_USUARIO', 'RESTRICT', 'RESTRICT');
-        $this->forge->addForeignKey('EXCLUIDO_POR', 'SEGU_USUARIOS', 'ID_USUARIO', 'RESTRICT', 'RESTRICT');
-        $this->forge->createTable('USUARIOS');
+        $this->forge->createTable('SEGU_USUARIOS');
     }
 
     public function down()
     {
-        $this->forge->dropTable('USUARIOS');
+        $this->forge->dropTable('SEGU_USUARIOS');
     }
 }

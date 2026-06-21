@@ -20,6 +20,16 @@ class CreateEmpresasContatos extends Migration
                 'constraint' => 36,
                 'comment'    => 'Identificador único público universal (UUID4) para uso em APIs e URLs',
             ],
+            'EMPRESA_ID' => [
+                'type'     => 'BIGINT',
+                'unsigned' => true,
+                'comment'  => 'Chave estrangeira vinculada à empresa responsável na tabela EMPRESAS',
+            ],
+            'EMPRESA_ID' => [
+                'type'     => 'BIGINT',
+                'unsigned' => true,
+                'comment'  => 'Chave estrangeira vinculada à empresa na tabela EMPRESAS',
+            ],
             'NOME' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 150,
