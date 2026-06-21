@@ -4,6 +4,8 @@ namespace App\Dominios;
 
 class SituacaoRegistro extends Dominio
 {
+    public const MODULO = 'SITUACAO_REGISTRO';
+
     public const HABILITADO   = 'S101';
     public const DESABILITADO = 'S102';
     public const ATIVO       = 'S201';
@@ -13,6 +15,11 @@ class SituacaoRegistro extends Dominio
     public const CANCELADO   = 'S205';
     public const EXCLUIDO    = 'S206';
 
+    public static function modulo(): string
+    {
+        return self::MODULO;
+    }
+
     public static function lista(): array
     {
         return [
@@ -21,20 +28,39 @@ class SituacaoRegistro extends Dominio
                 'codigo'    => self::HABILITADO,
                 'descricao' => 'Habilitado',
                 'cor'       => 'success',
-                'icone'     => 'fas fa-check-circle'
+                'icone'     => 'fas fa-check-circle',
+                'finalizado'      => false,
+                'concluida'       => false,
+                'cancelada'       => false,
+                'pendente'        => false,
+                'bloqueia_edicao' => false,
+                'gera_historico'  => true,
             ],
 
             self::DESABILITADO => [
                 'codigo'    => self::DESABILITADO,
                 'descricao' => 'Desabilitado',
                 'cor'       => 'danger',
-                'icone'     => 'fas fa-ban'
+                'icone'     => 'fas fa-ban',
+                'finalizado'      => false,
+                'concluida'       => false,
+                'cancelada'       => false,
+                'pendente'        => false,
+                'bloqueia_edicao' => true,
+                'gera_historico'  => true,
             ],
+
             self::ATIVO => [
                 'codigo'    => self::ATIVO,
                 'descricao' => 'Ativo',
                 'cor'       => 'success',
                 'icone'     => 'fas fa-check-circle',
+                'finalizado'      => false,
+                'concluida'       => false,
+                'cancelada'       => false,
+                'pendente'        => false,
+                'bloqueia_edicao' => false,
+                'gera_historico'  => true,
             ],
 
             self::INATIVO => [
@@ -42,6 +68,12 @@ class SituacaoRegistro extends Dominio
                 'descricao' => 'Inativo',
                 'cor'       => 'secondary',
                 'icone'     => 'fas fa-pause-circle',
+                'finalizado'      => false,
+                'concluida'       => false,
+                'cancelada'       => false,
+                'pendente'        => false,
+                'bloqueia_edicao' => true,
+                'gera_historico'  => true,
             ],
 
             self::BLOQUEADO => [
@@ -49,6 +81,12 @@ class SituacaoRegistro extends Dominio
                 'descricao' => 'Bloqueado',
                 'cor'       => 'danger',
                 'icone'     => 'fas fa-lock',
+                'finalizado'      => false,
+                'concluida'       => false,
+                'cancelada'       => false,
+                'pendente'        => false,
+                'bloqueia_edicao' => true,
+                'gera_historico'  => true,
             ],
 
             self::PENDENTE => [
@@ -56,6 +94,12 @@ class SituacaoRegistro extends Dominio
                 'descricao' => 'Pendente',
                 'cor'       => 'warning',
                 'icone'     => 'fas fa-clock',
+                'finalizado'      => false,
+                'concluida'       => false,
+                'cancelada'       => false,
+                'pendente'        => true,
+                'bloqueia_edicao' => false,
+                'gera_historico'  => true,
             ],
 
             self::CANCELADO => [
@@ -63,6 +107,12 @@ class SituacaoRegistro extends Dominio
                 'descricao' => 'Cancelado',
                 'cor'       => 'dark',
                 'icone'     => 'fas fa-ban',
+                'finalizado'      => true,
+                'concluida'       => false,
+                'cancelada'       => true,
+                'pendente'        => false,
+                'bloqueia_edicao' => true,
+                'gera_historico'  => true,
             ],
 
             self::EXCLUIDO => [
@@ -70,17 +120,24 @@ class SituacaoRegistro extends Dominio
                 'descricao' => 'Excluído',
                 'cor'       => 'danger',
                 'icone'     => 'fas fa-trash',
-            ]
+                'finalizado'      => true,
+                'concluida'       => false,
+                'cancelada'       => true,
+                'pendente'        => false,
+                'bloqueia_edicao' => true,
+                'gera_historico'  => true,
+            ],
+
         ];
     }
 
     public static function cadastro(): array
-{
-    return self::obter([
-        self::HABILITADO,
-        self::DESABILITADO
-    ]);
-}
+    {
+        return self::obter([
+            self::HABILITADO,
+            self::DESABILITADO
+        ]);
+    }
 
     public static function situacao(): array
     {

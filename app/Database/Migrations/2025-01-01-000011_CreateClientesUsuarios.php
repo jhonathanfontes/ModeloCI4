@@ -51,6 +51,12 @@ class CreateClientesUsuarios extends Migration
                 'unsigned' => true,
                 'comment'  => 'Chave estrangeira vinculada ao estado atual na tabela SIST_SITUACOES',
             ],
+            'CLIENTE_ID' => [
+                'type'     => 'BIGINT',
+                'unsigned' => true,
+                'null'     => true,
+                'comment'  => 'Chave estrangeira vinculada ao cliente na tabela CLIENTES',
+            ],
             'CRIADO_EM' => [
                 'type'    => 'DATETIME',
                 'comment' => 'Data e hora exata de inserção do registro',

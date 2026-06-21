@@ -62,4 +62,52 @@ class Services extends BaseService
         $config = config('Queue'); // Reuse connection info from Queue config
         return new \Predis\Client($config->predis);
     }
+
+    /**
+     * Situacao service.
+     */
+    public static function situacao(bool $getShared = true): \App\Modulos\Sistema\Services\SituacaoService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('situacao');
+        }
+
+        return new \App\Modulos\Sistema\Services\SituacaoService();
+    }
+
+    /**
+     * Cliente repository.
+     */
+    public static function clienteRepository(bool $getShared = true): \App\Modulos\Cadastro\Repositories\ClienteRepository
+    {
+        if ($getShared) {
+            return static::getSharedInstance('clienteRepository');
+        }
+
+        return new \App\Modulos\Cadastro\Repositories\ClienteRepository();
+    }
+
+    /**
+     * Usuario service.
+     */
+    public static function usuario(bool $getShared = true): \App\Modulos\Seguranca\Services\UsuarioService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('usuario');
+        }
+
+        return new \App\Modulos\Seguranca\Services\UsuarioService();
+    }
+
+    /**
+     * Usuario repository.
+     */
+    public static function usuarioRepository(bool $getShared = true): \App\Modulos\Seguranca\Repositories\UsuarioRepository
+    {
+        if ($getShared) {
+            return static::getSharedInstance('usuarioRepository');
+        }
+
+        return new \App\Modulos\Seguranca\Repositories\UsuarioRepository();
+    }
 }

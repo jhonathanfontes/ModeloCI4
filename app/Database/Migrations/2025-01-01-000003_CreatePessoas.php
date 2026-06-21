@@ -18,12 +18,54 @@ class CreatePessoas extends Migration
             'CPF_CNPJ' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 14,
-                'comment'    => 'CPF (11 dígitos), apenas números (UNIQUE)',
+                'comment'    => 'CPF ou CNPJ apenas números (UNIQUE)',
             ],
             'DATA_NASCIMENTO' => [
                 'type'    => 'DATE',
                 'null'    => true,
                 'comment' => 'Data de nascimento do cliente (pessoa física)',
+            ],
+            'EMAIL' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
+                'comment'    => 'E-mail de login do usuário (UNIQUE)',
+            ],
+            'SENHA_HASH' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
+                'comment'    => 'Hash da senha armazenado com algoritmo BCRYPT',
+            ],
+            'ULTIMO_LOGIN' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+                'comment' => 'Data e hora do último login bem-sucedido',
+            ],
+            'ULTIMO_IP' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 45,
+                'null'       => true,
+                'comment'    => 'Endereço IP do último acesso',
+            ],
+            'EMAIL_VERIFICADO_EM' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+                'comment' => 'Data de verificação do e-mail',
+            ],
+            'TENTATIVAS_LOGIN' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'default'    => 0,
+                'comment'    => 'Contador de tentativas de login falhas consecutivas',
+            ],
+            'BLOQUEADO_ATE' => [
+                'type'    => 'DATETIME',
+                'null'    => true,
+                'comment' => 'Bloqueio temporário por excesso de tentativas de login',
+            ],
+            'SITUACAO_ID' => [
+                'type'     => 'BIGINT',
+                'unsigned' => true,
+                'comment'  => 'Chave estrangeira vinculada ao estado atual na tabela SIST_SITUACOES',
             ],
             'CRIADO_EM' => [
                 'type'    => 'DATETIME',

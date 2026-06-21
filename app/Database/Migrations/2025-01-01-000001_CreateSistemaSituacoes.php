@@ -3,6 +3,7 @@
 namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
+use App\Dominios\Dominio;
 
 class CreateSistemaSituacoes extends Migration
 {
@@ -122,10 +123,30 @@ class CreateSistemaSituacoes extends Migration
         $this->forge->addForeignKey('ATUALIZADO_POR', 'SEGU_USUARIOS', 'ID_USUARIO', 'RESTRICT', 'RESTRICT');
         $this->forge->addForeignKey('EXCLUIDO_POR', 'SEGU_USUARIOS', 'ID_USUARIO', 'RESTRICT', 'RESTRICT');
         $this->forge->createTable('SIST_SITUACOES');
+
+        $this->seed();
     }
 
     public function down()
     {
         $this->forge->dropTable('SIST_SITUACOES');
+    }
+
+    private function seed(): void
+    {
+        $agora = date('Y-m-d H:i:s');
+
+        $registros = [];
+        foreach (Dominio::classes() as $classe) {
+            foreach ($classe::dadosBanco() as $dado) {
+                $dado['CRIADO_EM']    = $agora;
+                $dado['ATUALIZADO_EM'] = $agora;
+                $registros[] = $dado;
+            }
+        }
+
+        if ($registros !== []) {
+            $this->db->table('SIST_SITUACOES')->insertBatch($registros);
+        }
     }
 }
