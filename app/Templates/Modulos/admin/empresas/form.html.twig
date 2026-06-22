@@ -1,0 +1,92 @@
+{% extends 'Layouts/admin' %}
+{% block page_title %}{{ empresa ? 'Editar Empresa' : 'Nova Empresa' }}{% endblock %}
+{% block page_heading %}{{ empresa ? 'Editar Empresa' : 'Nova Empresa' }}{% endblock %}
+{% block breadcrumb_items %}
+<a href="{{ route_to('admin.dashboard') }}">Admin</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('admin.empresas') }}">Empresas</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">{{ empresa ? 'Editar' : 'Novo' }}</span>
+{% endblock %}
+{% block page_actions %}{% endblock %}
+
+{% block content %}
+
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+{% if errors is defined and errors|length > 0 %}
+<div class="alert alert-error">
+    <ul style="margin:0;padding-left:20px;">
+    {% for field, msg in errors %}
+        <li>{{ msg }}</li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header">
+        <h3>{{ empresa ? 'Editar Empresa' : 'Nova Empresa' }}</h3>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{{ route_to('admin.empresas.salvar') }}">
+            {% if empresa %}
+            <input type="hidden" name="ID_EMPRESA" value="{{ empresa.id }}">
+            {% endif %}
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="RAZAO_SOCIAL">Razão Social</label>
+                    <input type="text" id="RAZAO_SOCIAL" name="RAZAO_SOCIAL" class="form-control" value="{{ old('RAZAO_SOCIAL', empresa.razaoSocial ?? '') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="NOME_FANTASIA">Nome Fantasia</label>
+                    <input type="text" id="NOME_FANTASIA" name="NOME_FANTASIA" class="form-control" value="{{ old('NOME_FANTASIA', empresa.nomeFantasia ?? '') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="CPF_CNPJ">CPF/CNPJ</label>
+                    <input type="text" id="CPF_CNPJ" name="CPF_CNPJ" class="form-control" value="{{ old('CPF_CNPJ', empresa.cpfCnpj ?? '') }}" placeholder="Apenas números" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="EMAIL">E-mail</label>
+                    <input type="email" id="EMAIL" name="EMAIL" class="form-control" value="{{ old('EMAIL', empresa.email ?? '') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="TELEFONE">Telefone</label>
+                    <input type="text" id="TELEFONE" name="TELEFONE" class="form-control" value="{{ old('TELEFONE', empresa.telefone ?? '') }}" placeholder="Apenas números">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="CELULAR">Celular</label>
+                    <input type="text" id="CELULAR" name="CELULAR" class="form-control" value="{{ old('CELULAR', empresa.celular ?? '') }}" placeholder="Apenas números">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="SITUACAO_ID">Situação</label>
+                    <select id="SITUACAO_ID" name="SITUACAO_ID" class="form-control" required>
+                        {% for s in situacoes %}
+                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID', empresa.situacaoId ?? '') == s.ID_SITUACAO) ? 'selected' : '' }}>
+                            {{ s.DESCRICAO }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ route_to('admin.empresas') }}" class="btn btn-outline">Cancelar</a>
+                <button type="submit" class="btn btn-primary">
+                    {{ empresa ? 'Atualizar' : 'Salvar' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

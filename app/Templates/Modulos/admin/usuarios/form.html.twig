@@ -1,0 +1,98 @@
+{% extends 'Layouts/admin' %}
+{% block page_title %}{{ usuario ? 'Editar' : 'Novo' }} Usuário{% endblock %}
+{% block page_heading %}{{ usuario ? 'Editar' : 'Novo' }} Usuário{% endblock %}
+{% block breadcrumb_items %}
+<a href="{{ route_to('admin.dashboard') }}">Admin</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('admin.usuarios') }}">Usuários</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">{{ usuario ? 'Editar' : 'Novo' }}</span>
+{% endblock %}
+
+{% block content %}
+
+{% if success %}
+<div class="alert alert-success">{{ success }}</div>
+{% endif %}
+
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header">
+        <h2>{{ usuario ? 'Editar Usuário' : 'Novo Usuário' }}</h2>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{{ route_to('admin.usuarios.salvar') }}" class="form">
+            {% if usuario %}
+            <input type="hidden" name="ID_USUARIO" value="{{ usuario.id }}">
+            {% endif %}
+
+            {% if errors is not empty %}
+            <div class="alert alert-error">
+                <strong>Verifique os seguintes erros:</strong>
+                <ul style="margin:8px 0 0 20px;">
+                    {% for field, msg in errors %}
+                    <li>{{ msg }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="NOME" class="form-label">Nome</label>
+                    <input type="text" id="NOME" name="NOME" class="form-control" value="{{ old('NOME') ?? usuario.nome ?? '' }}" required maxlength="255">
+                </div>
+
+                <div class="form-group">
+                    <label for="EMAIL" class="form-label">E-mail</label>
+                    <input type="email" id="EMAIL" name="EMAIL" class="form-control" value="{{ old('EMAIL') ?? usuario.email ?? '' }}" required maxlength="255">
+                </div>
+
+                <div class="form-group">
+                    <label for="SENHA" class="form-label">
+                        {{ usuario ? 'Nova Senha (deixe em branco para manter)' : 'Senha' }}
+                    </label>
+                    <input type="password" id="SENHA" name="SENHA" class="form-control" maxlength="100" {{ usuario ? '' : 'required' }} minlength="8">
+                </div>
+
+                <div class="form-group">
+                    <label for="TIPO" class="form-label">Tipo</label>
+                    <select id="TIPO" name="TIPO" class="form-control" required>
+                        <option value="SYSTEM"  {{ (old('TIPO') ?? usuario.tipo ?? '') == 'SYSTEM'  ? 'selected' : '' }}>Sistema</option>
+                        <option value="EMPRESA" {{ (old('TIPO') ?? usuario.tipo ?? '') == 'EMPRESA' ? 'selected' : '' }}>Empresa</option>
+                        <option value="CLIENTE" {{ (old('TIPO') ?? usuario.tipo ?? '') == 'CLIENTE' ? 'selected' : '' }}>Cliente</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="SITUACAO_ID" class="form-label">Situação</label>
+                    <select id="SITUACAO_ID" name="SITUACAO_ID" class="form-control" required>
+                        <option value="">— Selecione —</option>
+                        {% for s in situacoes %}
+                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID') ?? usuario.situacaoId ?? '') == s.ID_SITUACAO ? 'selected' : '' }}>
+                            {{ s.DESCRICAO }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    {{ usuario ? 'Atualizar' : 'Salvar' }}
+                </button>
+                <a href="{{ route_to('admin.usuarios') }}" class="btn btn-outline">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

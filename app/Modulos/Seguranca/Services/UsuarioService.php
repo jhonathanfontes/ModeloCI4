@@ -3,6 +3,7 @@
 namespace App\Modulos\Seguranca\Services;
 
 use App\Dominios\SituacaoRegistro;
+use App\Helpers\Uuid;
 use App\Modulos\Seguranca\DTO\UsuarioDTO;
 use App\Modulos\Seguranca\Models\UsuarioModel;
 
@@ -47,7 +48,21 @@ class UsuarioService
             SituacaoRegistro::ATIVO
         );
 
-        return $model->insert($data) ? (int) $model->getInsertID() : null;
+        $data['UUID'] = Uuid::generate('SEGU_USUARIOS_' . microtime());
+
+        $insertResult = $model->insert($data);
+
+        if ($insertResult === false) {
+            log_message('critical', 'UsuarioModel insert failed. Errors: {errors}', [
+                'errors' => print_r($model->errors(), true),
+            ]);
+            log_message('critical', 'Data sent: {data}', [
+                'data' => print_r($data, true),
+            ]);
+            return null;
+        }
+
+        return (int) $model->getInsertID();
     }
 
     public function atualizar(int $id, array $data): bool

@@ -1,0 +1,66 @@
+{% extends 'Layouts/admin' %} {% block page_title %}Dashboard{% endblock %} {% block page_heading %}Dashboard{% endblock %} {% block breadcrumb_items %}
+
+<a href="#">Admin</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">Dashboard</span> {% endblock %} {% block content %}
+
+<div class="stats-grid">
+    {% for stat in stats %}
+    <div class="stat-card">
+        <div class="stat-icon" style="background:{{ stat.color }}18;color:{{ stat.color }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                {% if stat.icon == 'building' %}
+                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+                {% elseif stat.icon == 'users' %}
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                {% elseif stat.icon == 'user-check' %}
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/>
+                {% else %}
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                {% endif %}
+            </svg>
+        </div>
+        <div class="stat-info">
+            <div class="stat-value">{{ stat.value }}</div>
+            <div class="stat-label">{{ stat.label }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2>Atividades Recentes</h2>
+        <a href="#" class="btn btn-sm btn-outline">Ver todas</a>
+    </div>
+    <div class="card-body">
+        {% if activities is empty %}
+        <p style="color:var(--color-text-muted);text-align:center;padding:32px 0;">
+            Nenhuma atividade registrada ainda.
+        </p>
+        {% else %}
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <th>Ação</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for activity in activities %}
+                    <tr>
+                        <td>{{ activity.user }}</td>
+                        <td>{{ activity.action }}</td>
+                        <td>{{ activity.date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

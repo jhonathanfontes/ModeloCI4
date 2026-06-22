@@ -28,13 +28,7 @@ class Services extends BaseService
             return static::getSharedInstance('twig');
         }
 
-        $loader = new \Twig\Loader\FilesystemLoader(APPPATH . 'Views');
-        
-        return new \Twig\Environment($loader, [
-            'cache' => WRITEPATH . 'cache/twig',
-            'debug' => ENVIRONMENT !== 'production',
-            'auto_reload' => ENVIRONMENT !== 'production',
-        ]);
+        return \App\Services\TwigService::create();
     }
 
     /**
@@ -46,8 +40,7 @@ class Services extends BaseService
             return static::getSharedInstance('imageManager');
         }
 
-        // Defaulting to GD driver. Use \Intervention\Image\Drivers\Imagick\Driver if available.
-        return new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+        return \App\Services\ImageManagerService::create();
     }
 
     /**
@@ -59,8 +52,7 @@ class Services extends BaseService
             return static::getSharedInstance('redis');
         }
 
-        $config = config('Queue'); // Reuse connection info from Queue config
-        return new \Predis\Client($config->predis);
+        return \App\Services\RedisService::create();
     }
 
     /**
@@ -72,7 +64,7 @@ class Services extends BaseService
             return static::getSharedInstance('situacao');
         }
 
-        return new \App\Modulos\Sistema\Services\SituacaoService();
+        return \App\Services\SituacaoService::create();
     }
 
     /**
@@ -84,7 +76,31 @@ class Services extends BaseService
             return static::getSharedInstance('clienteRepository');
         }
 
-        return new \App\Modulos\Cadastro\Repositories\ClienteRepository();
+        return \App\Services\ClienteRepositoryService::create();
+    }
+
+    /**
+     * Menu service.
+     */
+    public static function menu(bool $getShared = true): \App\Modulos\Menu\Services\MenuService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('menu');
+        }
+
+        return \App\Services\MenuService::create();
+    }
+
+    /**
+     * Empresa service.
+     */
+    public static function empresa(bool $getShared = true): \App\Modulos\Cadastro\Services\EmpresaService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('empresa');
+        }
+
+        return \App\Services\EmpresaService::create();
     }
 
     /**
@@ -96,7 +112,7 @@ class Services extends BaseService
             return static::getSharedInstance('usuario');
         }
 
-        return new \App\Modulos\Seguranca\Services\UsuarioService();
+        return \App\Services\UsuarioService::create();
     }
 
     /**
@@ -108,6 +124,6 @@ class Services extends BaseService
             return static::getSharedInstance('usuarioRepository');
         }
 
-        return new \App\Modulos\Seguranca\Repositories\UsuarioRepository();
+        return \App\Services\UsuarioRepositoryService::create();
     }
 }

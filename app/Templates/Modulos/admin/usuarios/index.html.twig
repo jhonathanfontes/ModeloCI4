@@ -1,0 +1,108 @@
+{% extends 'Layouts/admin' %}
+{% block page_title %}Usuários{% endblock %}
+{% block page_heading %}Usuários{% endblock %}
+{% block breadcrumb_items %}
+<a href="{{ route_to('admin.dashboard') }}">Admin</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">Usuários</span>
+{% endblock %}
+{% block page_actions %}
+<a href="{{ route_to('admin.usuarios.novo') }}" class="btn btn-primary">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+    Novo Usuário
+</a>
+{% endblock %}
+
+{% block content %}
+
+{% if success %}
+<div class="alert alert-success">{{ success }}</div>
+{% endif %}
+
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-body" style="padding:0;">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Tipo</th>
+                        <th>Situação</th>
+                        <th>Último Login</th>
+                        <th style="width:120px;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if usuarios is empty %}
+                    <tr>
+                        <td colspan="6" style="text-align:center;padding:32px 16px;color:var(--color-text-muted);">
+                            Nenhum usuário encontrado.
+                        </td>
+                    </tr>
+                    {% else %}
+                    {% for u in usuarios %}
+                    <tr>
+                        <td>
+                            <div class="user-name">{{ u.nome }}</div>
+                        </td>
+                        <td>{{ u.email }}</td>
+                        <td>
+                            <span class="tipo-badge tipo-{{ u.tipo|lower }}">{{ u.tipo }}</span>
+                        </td>
+                        <td>
+                            {% if u.situacaoCor %}
+                            <span class="status" style="background:{{ u.situacaoCor }}18;color:{{ u.situacaoCor }}">
+                                <span class="status-dot" style="background:{{ u.situacaoCor }}"></span>
+                                {{ u.situacaoDescricao ?? u.situacaoCodigo }}
+                            </span>
+                            {% else %}
+                            <span class="status status-active">
+                                <span class="status-dot"></span>
+                                Ativo
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>{{ u.ultimoLogin ?: '—' }}</td>
+                        <td>
+                            <div class="action-group">
+                                <a href="{{ route_to('admin.usuarios.editar', u.id) }}" class="btn btn-sm btn-outline" title="Editar">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
+                                </a>
+                                <form method="post" action="{{ route_to('admin.usuarios.excluir', u.id) }}" class="inline-form" onsubmit="return confirm('Tem certeza que deseja cancelar este usuário?')">
+                                    <button type="submit" class="btn btn-sm btn-outline btn-danger" title="Cancelar">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="3 6 5 6 21 6"/>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                            <line x1="10" y1="11" x2="10" y2="17"/>
+                                            <line x1="14" y1="11" x2="14" y2="17"/>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if pager and pager.getPageCount() > 1 %}
+<div class="pagination">
+    {{ pager.links()|raw }}
+</div>
+{% endif %}
+
+{% endblock %}

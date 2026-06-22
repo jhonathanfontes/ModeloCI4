@@ -1,0 +1,111 @@
+{% extends 'Layouts/admin' %}
+{% block page_title %}{{ modulo ? 'Editar Módulo' : 'Novo Módulo' }}{% endblock %}
+{% block page_heading %}{{ modulo ? 'Editar Módulo' : 'Novo Módulo' }}{% endblock %}
+{% block breadcrumb_items %}
+<a href="{{ route_to('admin.dashboard') }}">Admin</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('admin.menu') }}">Menu</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">{{ modulo ? 'Editar' : 'Novo' }}</span>
+{% endblock %}
+{% block page_actions %}{% endblock %}
+
+{% block content %}
+{% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+{% if errors is defined and errors|length > 0 %}
+<div class="alert alert-error">
+    <ul style="margin:0;padding-left:20px;">
+    {% for field, msg in errors %}<li>{{ msg }}</li>{% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header"><h3>{{ modulo ? 'Editar Módulo' : 'Novo Módulo' }}</h3></div>
+    <div class="card-body">
+        <form method="post" action="{{ route_to('admin.menu.modulo.salvar') }}">
+            {% if modulo %}<input type="hidden" name="ID_MODULO" value="{{ modulo.id }}">{% endif %}
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="NOME">Nome</label>
+                    <input type="text" id="NOME" name="NOME" class="form-control" value="{{ old('NOME', modulo.nome ?? '') }}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="ICONE">Ícone</label>
+                    {% include 'Modulos/admin/menu/_icon_picker' with {
+                        fieldId: 'ICONE',
+                        fieldName: 'ICONE',
+                        fieldValue: old('ICONE', modulo.icone ?? ''),
+                        placeholder: 'Ex: fas fa-users',
+                    } %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="URL_ROTA">URL da Rota</label>
+                    <div style="display:flex;align-items:center;gap:4px;">
+                        <input type="text" id="URL_ROTA" name="URL_ROTA" class="form-control" value="{{ old('URL_ROTA', modulo.urlRota ?? '') }}" style="flex:1;">
+                        <button type="button" class="btn btn-sm btn-outline" onclick="gerarUrlModulo()" title="Gerar automaticamente">⟳</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="ORDEM">Ordem</label>
+                    <input type="number" id="ORDEM" name="ORDEM" class="form-control" value="{{ old('ORDEM', modulo.ordem ?? '') }}">
+                </div>
+                <div class="form-group" style="grid-column:1/-1;">
+                    <label class="form-label" for="DESCRICAO">Descrição</label>
+                    <textarea id="DESCRICAO" name="DESCRICAO" class="form-control" rows="3">{{ old('DESCRICAO', modulo.descricao ?? '') }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="SITUACAO_ID">Situação</label>
+                    <select id="SITUACAO_ID" name="SITUACAO_ID" class="form-control" required>
+                        {% for s in situacoes %}
+                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID', modulo.situacaoId ?? '') == s.ID_SITUACAO) ? 'selected' : '' }}>{{ s.DESCRICAO }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ route_to('admin.menu') }}" class="btn btn-outline">Cancelar</a>
+                <button type="submit" class="btn btn-primary">{{ modulo ? 'Atualizar' : 'Salvar' }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function slugify(texto) {
+    return texto
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+}
+
+function gerarUrlModulo() {
+    const nome = document.getElementById('NOME').value.trim();
+    if (nome) {
+        document.getElementById('URL_ROTA').value = '/' + slugify(nome);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const nomeInput = document.getElementById('NOME');
+    const urlRotaInput = document.getElementById('URL_ROTA');
+
+    urlRotaInput.dataset.auto = '1';
+
+    nomeInput.addEventListener('blur', function () {
+        if (nomeInput.value.trim()) {
+            gerarUrlModulo();
+        }
+    });
+});
+</script>
+{% endblock %}

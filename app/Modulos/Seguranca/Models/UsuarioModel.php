@@ -36,7 +36,7 @@ class UsuarioModel extends Model
     protected $validationRules = [
         'UUID'       => 'required|max_length[36]',
         'NOME'       => 'required|max_length[255]',
-        'EMAIL'      => 'required|valid_email|max_length[255]|is_unique[SEGU_USUARIOS.EMAIL]',
+        'EMAIL'      => 'required|valid_email|max_length[255]',
         'SENHA_HASH' => 'required|max_length[255]',
         'TIPO'       => 'required|in_list[SYSTEM,EMPRESA,CLIENTE]',
         'SITUACAO_ID'=> 'required|integer',
