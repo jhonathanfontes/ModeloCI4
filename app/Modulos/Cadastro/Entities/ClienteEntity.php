@@ -8,24 +8,24 @@ use CodeIgniter\Entity\Entity;
 class ClienteEntity extends Entity
 {
     protected $casts = [
-        'ID_CLIENTE'   => 'integer',
-        'EMPRESA_ID'   => 'integer',
-        'PESSOA_ID'    => '?integer',
-        'TIPO_ID'      => 'integer',
-        'SITUACAO_ID'  => 'integer',
-        'CRIADO_POR'   => '?integer',
+        'ID_CLIENTE' => 'integer',
+        'EMPRESA_ID' => 'integer',
+        'PESSOA_ID' => '?integer',
+        'TIPO_ID' => 'integer',
+        'SITUACAO_ID' => 'integer',
+        'CRIADO_POR' => '?integer',
         'ATUALIZADO_POR' => '?integer',
         'EXCLUIDO_POR' => '?integer',
     ];
 
     protected $datamap = [
-        'id'         => 'ID_CLIENTE',
-        'uuid'       => 'UUID',
-        'empresaId'  => 'EMPRESA_ID',
-        'pessoaId'   => 'PESSOA_ID',
-        'nome'       => 'NOME',
+        'id' => 'ID_CLIENTE',
+        'uuid' => 'UUID',
+        'empresaId' => 'EMPRESA_ID',
+        'pessoaId' => 'PESSOA_ID',
+        'nome' => 'NOME',
         'nomeFantasia' => 'NOME_FANTASIA',
-        'tipoId'     => 'TIPO_ID',
+        'tipoId' => 'TIPO_ID',
         'situacaoId' => 'SITUACAO_ID',
     ];
 

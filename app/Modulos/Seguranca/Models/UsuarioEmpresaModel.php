@@ -7,11 +7,11 @@ use CodeIgniter\Model;
 
 class UsuarioEmpresaModel extends Model
 {
-    protected $table            = 'USUA_USUARIO_EMPRESAS';
-    protected $primaryKey       = 'ID_USUARIO_EMPRESA';
+    protected $table = 'USUA_USUARIO_EMPRESAS';
+    protected $primaryKey = 'ID_USUARIO_EMPRESA';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'object';
-    protected $useSoftDeletes   = true;
+    protected $returnType = 'object';
+    protected $useSoftDeletes = true;
 
     protected $allowedFields = [
         'UUID',
@@ -22,15 +22,15 @@ class UsuarioEmpresaModel extends Model
     ];
 
     protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'CRIADO_EM';
-    protected $updatedField  = 'ATUALIZADO_EM';
-    protected $deletedField  = 'EXCLUIDO_EM';
+    protected $dateFormat = 'datetime';
+    protected $createdField = 'CRIADO_EM';
+    protected $updatedField = 'ATUALIZADO_EM';
+    protected $deletedField = 'EXCLUIDO_EM';
 
     protected $validationRules = [
-        'UUID'        => 'max_length[36]',
-        'USUARIO_ID'  => 'required|integer',
-        'EMPRESA_ID'  => 'required|integer',
+        'UUID' => 'max_length[36]',
+        'USUARIO_ID' => 'required|integer',
+        'EMPRESA_ID' => 'required|integer',
         'SITUACAO_ID' => 'required|integer',
     ];
 
@@ -38,9 +38,10 @@ class UsuarioEmpresaModel extends Model
 
     protected function gerarUuid(array $data): array
     {
-        if (!isset($data['data']['UUID'])) {
+        if (! isset($data['data']['UUID'])) {
             $data['data']['UUID'] = Uuid::generate('USUA_USUARIO_EMPRESAS_' . microtime());
         }
+
         return $data;
     }
 

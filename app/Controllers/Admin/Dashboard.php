@@ -7,8 +7,8 @@ class Dashboard extends BaseController
     public function index(): string
     {
         return $this->render('Modulos/admin/dashboard', [
-            'title'     => 'Dashboard',
-            'stats'     => $this->getStats(),
+            'title' => 'Dashboard',
+            'stats' => $this->getStats(),
             'activities' => $this->getRecentActivities(),
         ]);
     }

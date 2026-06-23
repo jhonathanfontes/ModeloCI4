@@ -2,9 +2,9 @@
 
 namespace App\Controllers\Admin;
 
-use CodeIgniter\HTTP\ResponseInterface;
 use App\Modulos\Cadastro\Services\EmpresaService;
 use App\Modulos\Seguranca\Repositories\UsuarioRepository;
+use CodeIgniter\HTTP\ResponseInterface;
 
 class EmpresaUsuarios extends BaseController
 {
@@ -15,7 +15,7 @@ class EmpresaUsuarios extends BaseController
     {
         parent::initController($request, $response, $logger);
 
-        $this->empresaService    = service('empresa');
+        $this->empresaService = service('empresa');
         $this->usuarioRepository = service('usuarioRepository');
     }
 
@@ -29,16 +29,16 @@ class EmpresaUsuarios extends BaseController
         }
 
         $usuarios = $this->usuarioRepository->usuariosDaEmpresa($empresaId);
-        $perfis   = $this->usuarioRepository->listarPerfis();
+        $perfis = $this->usuarioRepository->listarPerfis();
 
         return $this->render('Modulos/admin/empresas/usuarios', [
-            'title'    => 'Usuários - ' . $empresa->nomeFantasia,
-            'empresa'  => $empresa,
+            'title' => 'Usuários - ' . $empresa->nomeFantasia,
+            'empresa' => $empresa,
             'usuarios' => $usuarios,
-            'perfis'   => $perfis,
-            'success'  => session()->getFlashdata('success'),
-            'error'    => session()->getFlashdata('error'),
-            'errors'   => session()->getFlashdata('errors') ?? [],
+            'perfis' => $perfis,
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
+            'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
@@ -52,16 +52,16 @@ class EmpresaUsuarios extends BaseController
         }
 
         $usuariosDisponiveis = $this->usuarioRepository->usuariosDisponiveis($empresaId);
-        $perfis              = $this->usuarioRepository->listarPerfis();
+        $perfis = $this->usuarioRepository->listarPerfis();
 
         return $this->render('Modulos/admin/empresas/usuarios_vincular', [
-            'title'    => 'Vincular Usuário - ' . $empresa->nomeFantasia,
-            'empresa'  => $empresa,
+            'title' => 'Vincular Usuário - ' . $empresa->nomeFantasia,
+            'empresa' => $empresa,
             'usuarios' => $usuariosDisponiveis,
-            'perfis'   => $perfis,
-            'success'  => session()->getFlashdata('success'),
-            'error'    => session()->getFlashdata('error'),
-            'errors'   => session()->getFlashdata('errors') ?? [],
+            'perfis' => $perfis,
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
+            'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
@@ -75,7 +75,7 @@ class EmpresaUsuarios extends BaseController
         }
 
         $usuarioId = (int) $this->request->getPost('USUARIO_ID');
-        $perfilId  = $this->request->getPost('PERFIL_ID') ? (int) $this->request->getPost('PERFIL_ID') : null;
+        $perfilId = $this->request->getPost('PERFIL_ID') ? (int) $this->request->getPost('PERFIL_ID') : null;
 
         if ($usuarioId <= 0) {
             return redirect()->back()

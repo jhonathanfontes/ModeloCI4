@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use Predis\Client;
-use Config\Queue;
 
 class RedisService
 {

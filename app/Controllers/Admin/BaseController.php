@@ -17,6 +17,14 @@ abstract class BaseController extends \App\Controllers\BaseController
 
     protected function render(string $template, array $data = []): string
     {
+        $flashData = service('session')->getFlashdata();
+
+        foreach ($flashData as $key => $value) {
+            if (! isset($data[$key])) {
+                $data[$key] = $value;
+            }
+        }
+
         return $this->twig->render($template, $data);
     }
 }

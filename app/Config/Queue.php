@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Config;
 
 use CodeIgniter\Queue\Config\Queue as BaseQueue;
-use CodeIgniter\Queue\Exceptions\QueueException;
 use CodeIgniter\Queue\Handlers\DatabaseHandler;
 use CodeIgniter\Queue\Handlers\PredisHandler;
 use CodeIgniter\Queue\Handlers\RabbitMQHandler;
@@ -36,8 +35,8 @@ class Queue extends BaseQueue
      */
     public array $handlers = [
         'database' => DatabaseHandler::class,
-        'redis'    => RedisHandler::class,
-        'predis'   => PredisHandler::class,
+        'redis' => RedisHandler::class,
+        'predis' => PredisHandler::class,
         'rabbitmq' => RabbitMQHandler::class,
     ];
 
@@ -45,7 +44,7 @@ class Queue extends BaseQueue
      * Database handler config.
      */
     public array $database = [
-        'dbGroup'   => 'default',
+        'dbGroup' => 'default',
         'getShared' => true,
         // use skip locked feature to maintain concurrency calls
         // this is not relevant for the SQLite3 database driver
@@ -56,36 +55,36 @@ class Queue extends BaseQueue
      * Redis handler config.
      */
     public array $redis = [
-        'host'     => '127.0.0.1',
+        'host' => '127.0.0.1',
         'password' => null,
-        'port'     => 6379,
-        'timeout'  => 0,
+        'port' => 6379,
+        'timeout' => 0,
         'database' => 0,
-        'prefix'   => '',
+        'prefix' => '',
     ];
 
     /**
      * Predis handler config.
      */
     public array $predis = [
-        'scheme'   => 'tcp',
-        'host'     => '127.0.0.1',
+        'scheme' => 'tcp',
+        'host' => '127.0.0.1',
         'password' => null,
-        'port'     => 6379,
-        'timeout'  => 5,
+        'port' => 6379,
+        'timeout' => 5,
         'database' => 0,
-        'prefix'   => '',
+        'prefix' => '',
     ];
 
     /**
      * RabbitMQ handler config.
      */
     public array $rabbitmq = [
-        'host'     => '127.0.0.1',
-        'port'     => 5672,
-        'user'     => 'guest',
+        'host' => '127.0.0.1',
+        'port' => 5672,
+        'user' => 'guest',
         'password' => 'guest',
-        'vhost'    => '/',
+        'vhost' => '/',
     ];
 
     /**

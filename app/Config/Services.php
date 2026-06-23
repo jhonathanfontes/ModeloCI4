@@ -126,4 +126,16 @@ class Services extends BaseService
 
         return \App\Services\UsuarioRepositoryService::create();
     }
+
+    /**
+     * Plano service.
+     */
+    public static function plano(bool $getShared = true): \App\Modulos\Planos\Services\PlanoService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('plano');
+        }
+
+        return \App\Services\PlanoService::create();
+    }
 }

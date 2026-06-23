@@ -2,8 +2,8 @@
 
 namespace App\Libraries\Twig;
 
-use Twig\Loader\FilesystemLoader;
 use Twig\Error\LoaderError;
+use Twig\Loader\FilesystemLoader;
 
 class TwigLoader extends FilesystemLoader
 {

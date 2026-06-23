@@ -12,44 +12,44 @@ class CreateAudiHistoricos extends Migration
     {
         $this->forge->addField([
             'ID_HISTORICO' => [
-                'type'           => 'BIGINT',
-                'unsigned'       => true,
+                'type' => 'BIGINT',
+                'unsigned' => true,
                 'auto_increment' => true,
-                'comment'        => 'Identificador único sequencial do histórico (PK)',
+                'comment' => 'Identificador único sequencial do histórico (PK)',
             ],
             'TABELA' => [
-                'type'       => 'VARCHAR',
+                'type' => 'VARCHAR',
                 'constraint' => 100,
-                'comment'    => 'Nome da tabela onde o campo foi alterado',
+                'comment' => 'Nome da tabela onde o campo foi alterado',
             ],
             'TABELA_ID' => [
-                'type'     => 'BIGINT',
+                'type' => 'BIGINT',
                 'unsigned' => true,
-                'comment'  => 'ID do registro na tabela de origem',
+                'comment' => 'ID do registro na tabela de origem',
             ],
             'CAMPO' => [
-                'type'       => 'VARCHAR',
+                'type' => 'VARCHAR',
                 'constraint' => 100,
-                'comment'    => 'Nome da coluna que foi alterada',
+                'comment' => 'Nome da coluna que foi alterada',
             ],
             'VALOR_ANTERIOR' => [
-                'type'    => 'TEXT',
-                'null'    => true,
+                'type' => 'TEXT',
+                'null' => true,
                 'comment' => 'Valor do campo antes da alteração',
             ],
             'VALOR_NOVO' => [
-                'type'    => 'TEXT',
-                'null'    => true,
+                'type' => 'TEXT',
+                'null' => true,
                 'comment' => 'Valor do campo após a alteração',
             ],
             'USUARIO_ID' => [
-                'type'     => 'BIGINT',
+                'type' => 'BIGINT',
                 'unsigned' => true,
-                'null'     => true,
-                'comment'  => 'ID do usuário que realizou a alteração (referência lógica)',
+                'null' => true,
+                'comment' => 'ID do usuário que realizou a alteração (referência lógica)',
             ],
             'CRIADO_EM' => [
-                'type'    => 'DATETIME',
+                'type' => 'DATETIME',
                 'comment' => 'Data e hora exata da alteração',
             ],
         ]);

@@ -19,7 +19,7 @@ class UsuarioRepository
             ->orderBy('NOME', 'ASC')
             ->paginate($perPage);
 
-        $itens = array_map(fn($row) => UsuarioDTO::fromObject($row), $rows);
+        $itens = array_map(fn ($row) => UsuarioDTO::fromObject($row), $rows);
 
         return [
             'itens' => $itens,
@@ -97,6 +97,7 @@ class UsuarioRepository
         $usuarioId = $model->insert($dadosUsuario);
         if ($usuarioId === false) {
             $db->transRollback();
+
             return null;
         }
 
@@ -223,6 +224,7 @@ class UsuarioRepository
         $subQuery = $db->table('USUA_USUARIO_EMPRESAS')
             ->select('USUARIO_ID')
             ->where('EMPRESA_ID', $empresaId)
+            ->where('EXCLUIDO_EM', null)
             ->getCompiledSelect();
 
         $model = model(UsuarioModel::class);

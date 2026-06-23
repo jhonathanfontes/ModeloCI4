@@ -7,11 +7,11 @@ use CodeIgniter\Model;
 
 class ServicoModel extends Model
 {
-    protected $table            = 'MENU_SERVICOS';
-    protected $primaryKey       = 'ID_SERVICO';
+    protected $table = 'MENU_SERVICOS';
+    protected $primaryKey = 'ID_SERVICO';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'object';
-    protected $useSoftDeletes   = true;
+    protected $returnType = 'object';
+    protected $useSoftDeletes = true;
 
     protected $allowedFields = [
         'UUID',
@@ -27,20 +27,20 @@ class ServicoModel extends Model
     ];
 
     protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'CRIADO_EM';
-    protected $updatedField  = 'ATUALIZADO_EM';
-    protected $deletedField  = 'EXCLUIDO_EM';
+    protected $dateFormat = 'datetime';
+    protected $createdField = 'CRIADO_EM';
+    protected $updatedField = 'ATUALIZADO_EM';
+    protected $deletedField = 'EXCLUIDO_EM';
 
     protected $validationRules = [
-        'UUID'        => 'required|max_length[36]',
-        'MODULO_ID'   => 'required|integer',
-        'NOME'        => 'required|max_length[100]',
-        'URL_MODULO'  => 'permit_empty|max_length[255]',
-        'URL_ROTA'    => 'permit_empty|max_length[255]',
-        'ICONE'       => 'permit_empty|max_length[50]',
-        'ORDEM'       => 'permit_empty|integer',
-        'DASHBOARD'   => 'permit_empty|integer',
+        'UUID' => 'required|max_length[36]',
+        'MODULO_ID' => 'required|integer',
+        'NOME' => 'required|max_length[100]',
+        'URL_MODULO' => 'permit_empty|max_length[255]',
+        'URL_ROTA' => 'permit_empty|max_length[255]',
+        'ICONE' => 'permit_empty|max_length[50]',
+        'ORDEM' => 'permit_empty|integer',
+        'DASHBOARD' => 'permit_empty|integer',
         'SITUACAO_ID' => 'required|integer',
     ];
 
@@ -48,9 +48,10 @@ class ServicoModel extends Model
 
     protected function gerarUuid(array $data): array
     {
-        if (!isset($data['data']['UUID'])) {
+        if (! isset($data['data']['UUID'])) {
             $data['data']['UUID'] = Uuid::generate('MENU_SERVICOS_' . microtime());
         }
+
         return $data;
     }
 

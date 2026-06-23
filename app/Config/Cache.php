@@ -83,7 +83,7 @@ class Cache extends BaseConfig
      */
     public array $file = [
         'storePath' => WRITEPATH . 'cache/',
-        'mode'      => 0640,
+        'mode' => 0640,
     ];
 
     /**
@@ -99,10 +99,10 @@ class Cache extends BaseConfig
      * @var array{host?: string, port?: int, weight?: int, raw?: bool}
      */
     public array $memcached = [
-        'host'   => '127.0.0.1',
-        'port'   => 11211,
+        'host' => '127.0.0.1',
+        'port' => 11211,
         'weight' => 1,
-        'raw'    => false,
+        'raw' => false,
     ];
 
     /**
@@ -124,13 +124,13 @@ class Cache extends BaseConfig
      * }
      */
     public array $redis = [
-        'host'       => '127.0.0.1',
-        'password'   => null,
-        'port'       => 6379,
-        'timeout'    => 0,
-        'async'      => false, // specific to Predis and ignored by the native Redis extension
+        'host' => '127.0.0.1',
+        'password' => null,
+        'port' => 6379,
+        'timeout' => 0,
+        'async' => false, // specific to Predis and ignored by the native Redis extension
         'persistent' => false,
-        'database'   => 0,
+        'database' => 0,
     ];
 
     /**
@@ -144,13 +144,13 @@ class Cache extends BaseConfig
      * @var array<string, class-string<CacheInterface>>
      */
     public array $validHandlers = [
-        'apcu'      => ApcuHandler::class,
-        'dummy'     => DummyHandler::class,
-        'file'      => FileHandler::class,
+        'apcu' => ApcuHandler::class,
+        'dummy' => DummyHandler::class,
+        'file' => FileHandler::class,
         'memcached' => MemcachedHandler::class,
-        'predis'    => PredisHandler::class,
-        'redis'     => RedisHandler::class,
-        'wincache'  => WincacheHandler::class,
+        'predis' => PredisHandler::class,
+        'redis' => RedisHandler::class,
+        'wincache' => WincacheHandler::class,
     ];
 
     /**

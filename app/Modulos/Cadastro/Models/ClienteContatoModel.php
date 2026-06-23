@@ -7,11 +7,11 @@ use CodeIgniter\Model;
 
 class ClienteContatoModel extends Model
 {
-    protected $table            = 'CLIE_CONTATOS';
-    protected $primaryKey       = 'ID_CONTATO';
+    protected $table = 'CLIE_CONTATOS';
+    protected $primaryKey = 'ID_CONTATO';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'object';
-    protected $useSoftDeletes   = true;
+    protected $returnType = 'object';
+    protected $useSoftDeletes = true;
 
     protected $allowedFields = [
         'UUID',
@@ -25,24 +25,25 @@ class ClienteContatoModel extends Model
     ];
 
     protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'CRIADO_EM';
-    protected $updatedField  = 'ATUALIZADO_EM';
-    protected $deletedField  = 'EXCLUIDO_EM';
+    protected $dateFormat = 'datetime';
+    protected $createdField = 'CRIADO_EM';
+    protected $updatedField = 'ATUALIZADO_EM';
+    protected $deletedField = 'EXCLUIDO_EM';
 
     protected $validationRules = [
-        'UUID'       => 'required|max_length[36]',
+        'UUID' => 'required|max_length[36]',
         'CLIENTE_ID' => 'required|integer',
-        'NOME'       => 'required|max_length[150]',
+        'NOME' => 'required|max_length[150]',
     ];
 
     protected $beforeInsert = ['gerarUuid'];
 
     protected function gerarUuid(array $data): array
     {
-        if (!isset($data['data']['UUID'])) {
+        if (! isset($data['data']['UUID'])) {
             $data['data']['UUID'] = Uuid::generate('CLIE_CONTATOS_' . microtime());
         }
+
         return $data;
     }
 

@@ -26,6 +26,19 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
     $routes->post('empresas/(:num)/usuarios/salvar',    'EmpresaUsuarios::salvar/$1',     ['as' => 'admin.empresas.usuarios.salvar']);
     $routes->post('empresas/(:num)/usuarios/(:num)/desvincular', 'EmpresaUsuarios::desvincular/$1/$2', ['as' => 'admin.empresas.usuarios.desvincular']);
 
+    // Empresa Serviços (UUID nas URLs)
+    $routes->get('empresas/(:any)/servicos',                          'EmpresaServicos::index/$1',          ['as' => 'admin.empresas.servicos']);
+    $routes->post('empresas/(:any)/servicos/salvar-licenca',          'EmpresaServicos::salvarLicenca/$1',  ['as' => 'admin.empresas.servicos.salvar-licenca']);
+    $routes->post('empresas/(:any)/servicos/salvar',                  'EmpresaServicos::salvarServicos/$1', ['as' => 'admin.empresas.servicos.salvar']);
+
+    // Planos (UUID nas URLs)
+    $routes->get('planos',                            'Planos::index',             ['as' => 'admin.planos']);
+    $routes->get('planos/novo',                       'Planos::novo',              ['as' => 'admin.planos.novo']);
+    $routes->get('planos/visualizar/(:any)',          'Planos::visualizar/$1',    ['as' => 'admin.planos.visualizar']);
+    $routes->get('planos/editar/(:any)',              'Planos::editar/$1',        ['as' => 'admin.planos.editar']);
+    $routes->post('planos/salvar',                     'Planos::salvar',           ['as' => 'admin.planos.salvar']);
+    $routes->post('planos/(:any)/excluir',            'Planos::excluir/$1',       ['as' => 'admin.planos.excluir']);
+
     // Menu
     $routes->get('menu',                          'Menu::index',             ['as' => 'admin.menu']);
     $routes->get('menu/modulos/novo',             'Menu::moduloNovo',        ['as' => 'admin.menu.modulo.novo']);
@@ -40,7 +53,16 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
     $routes->post('menu/servicos/(:num)/copiar',  'Menu::servicoCopiar/$1',  ['as' => 'admin.menu.servico.copiar']);
     $routes->get('menu/funcionalidades/(:num)',       'Menu::funcionalidades/$1',       ['as' => 'admin.menu.funcionalidades']);
     $routes->get('menu/funcionalidades/novo/(:num)',  'Menu::funcionalidadeNovo/$1',    ['as' => 'admin.menu.funcionalidade.novo']);
-    $routes->get('menu/funcionalidades/editar/(:num)','Menu::funcionalidadeEditar/$1',  ['as' => 'admin.menu.funcionalidade.editar']);
+    $routes->get('menu/funcionalidades/editar/(:num)', 'Menu::funcionalidadeEditar/$1',  ['as' => 'admin.menu.funcionalidade.editar']);
     $routes->post('menu/funcionalidades/salvar',       'Menu::funcionalidadeSalvar',     ['as' => 'admin.menu.funcionalidade.salvar']);
-    $routes->post('menu/funcionalidades/(:num)/excluir','Menu::funcionalidadeExcluir/$1',['as' => 'admin.menu.funcionalidade.excluir']);
+    $routes->post('menu/funcionalidades/(:num)/excluir', 'Menu::funcionalidadeExcluir/$1', ['as' => 'admin.menu.funcionalidade.excluir']);
+});
+
+$routes->get('painel/login',  'Painel\Login::index',     ['as' => 'painel.login']);
+$routes->post('painel/login', 'Painel\Login::autenticar', ['as' => 'painel.autenticar']);
+$routes->get('painel/logout', 'Painel\Login::sair',       ['as' => 'painel.logout']);
+
+$routes->group('painel', ['namespace' => 'App\Controllers\Painel', 'filter' => 'auth'], static function (RouteCollection $routes) {
+    $routes->get('/',                'Dashboard::index', ['as' => 'painel.dashboard']);
+    $routes->get('empresa/ativar/(:num)', 'Empresa::ativar/$1', ['as' => 'painel.empresa.ativar']);
 });

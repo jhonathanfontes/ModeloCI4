@@ -15,7 +15,8 @@ class PerfilDTO
         public readonly ?string $situacaoCor = null,
         public readonly ?string $criadoEm = null,
         public readonly ?string $atualizadoEm = null,
-    ) {}
+    ) {
+    }
 
     public static function fromObject(object $row): self
     {
@@ -46,6 +47,6 @@ class PerfilDTO
             'situacao_cor' => $this->situacaoCor,
             'criado_em' => $this->criadoEm,
             'atualizado_em' => $this->atualizadoEm,
-        ], fn($v) => $v !== null);
+        ], fn ($v) => $v !== null);
     }
 }

@@ -22,7 +22,7 @@ class ClienteRepository
             ->orderBy('CLIENTES.NOME', 'ASC')
             ->paginate($perPage);
 
-        $itens = array_map(fn($row) => ClienteDTO::fromObject($row), $rows);
+        $itens = array_map(fn ($row) => ClienteDTO::fromObject($row), $rows);
 
         return [
             'itens' => $itens,
@@ -58,6 +58,7 @@ class ClienteRepository
 
         if ($clienteId === false) {
             $db->transRollback();
+
             return null;
         }
 
@@ -143,6 +144,7 @@ class ClienteRepository
     public function salvarEndereco(array $dados): ?int
     {
         $model = model(ClienteEnderecoModel::class);
+
         return $model->insert($dados) ? (int) $model->getInsertID() : null;
     }
 
@@ -167,6 +169,7 @@ class ClienteRepository
     public function salvarContato(array $dados): ?int
     {
         $model = model(ClienteContatoModel::class);
+
         return $model->insert($dados) ? (int) $model->getInsertID() : null;
     }
 

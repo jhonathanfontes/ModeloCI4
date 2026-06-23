@@ -1,0 +1,130 @@
+{% extends 'Layouts/admin' %}
+{% block page_title %}{{ plano.nome }}{% endblock %}
+{% block page_heading %}{{ plano.nome }}{% endblock %}
+{% block breadcrumb_items %}
+<a href="{{ route_to('admin.dashboard') }}">Admin</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('admin.planos') }}">Planos</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">{{ plano.nome }}</span>
+{% endblock %}
+{% block page_actions %}
+<a href="{{ route_to('admin.planos.editar', plano.uuid) }}" class="btn btn-outline">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+    </svg>
+    Editar
+</a>
+{% endblock %}
+
+{% block content %}
+
+{% if success %}
+<div class="alert alert-success">{{ success }}</div>
+{% endif %}
+
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header">
+        <h3>Informações do Plano</h3>
+    </div>
+    <div class="card-body">
+        <div class="view-grid">
+            <div class="view-group">
+                <span class="view-label">Nome</span>
+                <span class="view-value">{{ plano.nome }}</span>
+            </div>
+
+            <div class="view-group">
+                <span class="view-label">Descrição</span>
+                <span class="view-value">{{ plano.descricao ?: '-' }}</span>
+            </div>
+
+            <div class="view-group">
+                <span class="view-label">Valor</span>
+                <span class="view-value">{{ moeda(plano.valor) }}</span>
+            </div>
+
+            <div class="view-group">
+                <span class="view-label">Período</span>
+                <span class="view-value">{{ plano.periodoDescricao ?: '-' }}</span>
+            </div>
+
+            <div class="view-group">
+                <span class="view-label">Limite de Clientes</span>
+                <span class="view-value">{{ plano.limiteClientes is not null ? plano.limiteClientes|number_format(0, ',', '.') : 'Ilimitado' }}</span>
+            </div>
+
+            <div class="view-group">
+                <span class="view-label">Limite de Usuários</span>
+                <span class="view-value">{{ plano.limiteUsuarios is not null ? plano.limiteUsuarios|number_format(0, ',', '.') : 'Ilimitado' }}</span>
+            </div>
+
+            <div class="view-group">
+                <span class="view-label">Limite de Armazenamento</span>
+                <span class="view-value">{{ plano.limiteArmazenamentoMb is not null ? bytes(plano.limiteArmazenamentoMb * 1024 * 1024) : 'Ilimitado' }}</span>
+            </div>
+
+            <div class="view-group">
+                <span class="view-label">Situação</span>
+                <span class="view-value">
+                    {% if plano.situacao %}
+                    <span class="status status-active">
+                        <span class="status-dot"></span>
+                        Ativo
+                    </span>
+                    {% else %}
+                    <span class="status" style="background:#fef2f218;color:#ef4444;">
+                        <span class="status-dot" style="background:#ef4444;"></span>
+                        Inativo
+                    </span>
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="view-group">
+                <span class="view-label">Criado em</span>
+                <span class="view-value">{{ dataBR(plano.criadoEm) }}</span>
+            </div>
+
+            <div class="view-group">
+                <span class="view-label">Atualizado em</span>
+                <span class="view-value">{{ dataBR(plano.atualizadoEm) }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if modulosVinculados is not empty %}
+<div class="card" style="margin-top:24px;">
+    <div class="card-header">
+        <h3>Módulos do Plano</h3>
+    </div>
+    <div class="card-body">
+        {% for modulo in modulosVinculados %}
+        <div class="modulo-item" style="margin-bottom:16px;border:1px solid var(--color-border);border-radius:8px;padding:12px;">
+            <div class="modulo-header" style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                {% if modulo.ICONE %}<i class="{{ modulo.ICONE }}" style="font-size:18px;"></i>{% endif %}
+                <strong>{{ modulo.NOME }}</strong>
+            </div>
+            {% if modulo.servicos is defined and modulo.servicos|length > 0 %}
+            <div class="servicos-list" style="margin-left:28px;">
+                {% for servico in modulo.servicos %}
+                <div class="servico-item" style="padding:4px 0;font-size:14px;color:var(--color-text-muted);">
+                    {% if servico.ICONE %}<i class="{{ servico.ICONE }}" style="width:16px;"></i>{% endif %}
+                    {{ servico.NOME }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

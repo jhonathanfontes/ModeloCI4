@@ -22,11 +22,11 @@ class ClienteService
             ->orderBy('CLIENTES.NOME', 'ASC')
             ->paginate($perPage);
 
-        $itens = array_map(fn($row) => ClienteDTO::fromObject($row), $rows);
+        $itens = array_map(fn ($row) => ClienteDTO::fromObject($row), $rows);
 
         return [
-            'itens'    => $itens,
-            'pager'    => $model->pager,
+            'itens' => $itens,
+            'pager' => $model->pager,
         ];
     }
 

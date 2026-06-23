@@ -69,8 +69,8 @@ class Mascara
     {
         if (preg_match('/^\d{4}-\d{2}-\d{2}/', $value)) {
             $parts = explode(' ', $value);
-            $date  = explode('-', $parts[0]);
-            $time  = $parts[1] ?? '';
+            $date = explode('-', $parts[0]);
+            $time = $parts[1] ?? '';
 
             return ($date[2] ?? '') . '/' . $date[1] . '/' . $date[0] . ($time ? ' ' . $time : '');
         }

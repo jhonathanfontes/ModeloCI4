@@ -2,10 +2,10 @@
 
 namespace App\Controllers\Admin;
 
-use CodeIgniter\HTTP\ResponseInterface;
 use App\Modulos\Seguranca\Rules\UsuarioRules;
 use App\Modulos\Seguranca\Services\UsuarioService;
 use App\Modulos\Sistema\Models\SituacaoModel;
+use CodeIgniter\HTTP\ResponseInterface;
 
 class Usuarios extends BaseController
 {
@@ -25,23 +25,23 @@ class Usuarios extends BaseController
         $result = $this->usuarioService->listar($perPage);
 
         return $this->render('Modulos/admin/usuarios/index', [
-            'title'    => 'Usuários',
+            'title' => 'Usuários',
             'usuarios' => $result['itens'],
-            'pager'    => $result['pager'],
-            'success'  => session()->getFlashdata('success'),
-            'error'    => session()->getFlashdata('error'),
+            'pager' => $result['pager'],
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
         ]);
     }
 
     public function novo(): string
     {
         return $this->render('Modulos/admin/usuarios/form', [
-            'title'     => 'Novo Usuário',
-            'usuario'   => null,
+            'title' => 'Novo Usuário',
+            'usuario' => null,
             'situacoes' => $this->listarSituacoes(),
-            'success'   => session()->getFlashdata('success'),
-            'error'     => session()->getFlashdata('error'),
-            'errors'    => session()->getFlashdata('errors') ?? [],
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
+            'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
@@ -55,12 +55,12 @@ class Usuarios extends BaseController
         }
 
         return $this->render('Modulos/admin/usuarios/form', [
-            'title'     => 'Editar Usuário',
-            'usuario'   => $usuario,
+            'title' => 'Editar Usuário',
+            'usuario' => $usuario,
             'situacoes' => $this->listarSituacoes(),
-            'success'   => session()->getFlashdata('success'),
-            'error'     => session()->getFlashdata('error'),
-            'errors'    => session()->getFlashdata('errors') ?? [],
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
+            'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
@@ -77,9 +77,9 @@ class Usuarios extends BaseController
         }
 
         $data = [
-            'NOME'        => $this->request->getPost('NOME'),
-            'EMAIL'       => $this->request->getPost('EMAIL'),
-            'TIPO'        => $this->request->getPost('TIPO'),
+            'NOME' => $this->request->getPost('NOME'),
+            'EMAIL' => $this->request->getPost('EMAIL'),
+            'TIPO' => $this->request->getPost('TIPO'),
             'SITUACAO_ID' => (int) $this->request->getPost('SITUACAO_ID'),
         ];
 
@@ -96,7 +96,7 @@ class Usuarios extends BaseController
                 ->with('success', 'Usuário atualizado com sucesso.');
         }
 
-       // $data['CRIADO_POR'] = 1;
+        // $data['CRIADO_POR'] = 1;
 
         $insertId = $this->usuarioService->criar($data);
 

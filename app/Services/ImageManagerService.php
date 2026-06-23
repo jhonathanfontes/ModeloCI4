@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class ImageManagerService
 {

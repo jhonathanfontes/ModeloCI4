@@ -2,11 +2,10 @@
 
 namespace App\Controllers\Admin;
 
-use CodeIgniter\HTTP\ResponseInterface;
 use App\Modulos\Cadastro\Rules\EmpresaRules;
 use App\Modulos\Cadastro\Services\EmpresaService;
-use App\Modulos\Seguranca\Repositories\UsuarioRepository;
 use App\Modulos\Sistema\Models\SituacaoModel;
+use CodeIgniter\HTTP\ResponseInterface;
 
 class Empresas extends BaseController
 {
@@ -26,23 +25,23 @@ class Empresas extends BaseController
         $result = $this->empresaService->listar($perPage);
 
         return $this->render('Modulos/admin/empresas/index', [
-            'title'     => 'Empresas',
-            'empresas'  => $result['itens'],
-            'pager'     => $result['pager'],
-            'success'   => session()->getFlashdata('success'),
-            'error'     => session()->getFlashdata('error'),
+            'title' => 'Empresas',
+            'empresas' => $result['itens'],
+            'pager' => $result['pager'],
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
         ]);
     }
 
     public function novo(): string
     {
         return $this->render('Modulos/admin/empresas/form', [
-            'title'     => 'Nova Empresa',
-            'empresa'   => null,
+            'title' => 'Nova Empresa',
+            'empresa' => null,
             'situacoes' => $this->listarSituacoes(),
-            'success'   => session()->getFlashdata('success'),
-            'error'     => session()->getFlashdata('error'),
-            'errors'    => session()->getFlashdata('errors') ?? [],
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
+            'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
@@ -58,11 +57,11 @@ class Empresas extends BaseController
         $usuarios = service('usuarioRepository')->usuariosDaEmpresa($id);
 
         return $this->render('Modulos/admin/empresas/visualizar', [
-            'title'    => $empresa->nomeFantasia,
-            'empresa'  => $empresa,
+            'title' => $empresa->nomeFantasia,
+            'empresa' => $empresa,
             'usuarios' => $usuarios,
-            'success'  => session()->getFlashdata('success'),
-            'error'    => session()->getFlashdata('error'),
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
         ]);
     }
 
@@ -76,12 +75,12 @@ class Empresas extends BaseController
         }
 
         return $this->render('Modulos/admin/empresas/form', [
-            'title'     => 'Editar Empresa',
-            'empresa'   => $empresa,
+            'title' => 'Editar Empresa',
+            'empresa' => $empresa,
             'situacoes' => $this->listarSituacoes(),
-            'success'   => session()->getFlashdata('success'),
-            'error'     => session()->getFlashdata('error'),
-            'errors'    => session()->getFlashdata('errors') ?? [],
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
+            'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
@@ -90,13 +89,13 @@ class Empresas extends BaseController
         $id = (int) ($this->request->getPost('ID_EMPRESA') ?: 0);
 
         $data = [
-            'RAZAO_SOCIAL'  => $this->request->getPost('RAZAO_SOCIAL'),
+            'RAZAO_SOCIAL' => $this->request->getPost('RAZAO_SOCIAL'),
             'NOME_FANTASIA' => $this->request->getPost('NOME_FANTASIA'),
-            'CPF_CNPJ'      => preg_replace('/\D/', '', $this->request->getPost('CPF_CNPJ') ?? ''),
-            'EMAIL'         => $this->request->getPost('EMAIL'),
-            'TELEFONE'      => preg_replace('/\D/', '', $this->request->getPost('TELEFONE') ?? ''),
-            'CELULAR'       => preg_replace('/\D/', '', $this->request->getPost('CELULAR') ?? ''),
-            'SITUACAO_ID'   => (int) $this->request->getPost('SITUACAO_ID'),
+            'CPF_CNPJ' => preg_replace('/\D/', '', $this->request->getPost('CPF_CNPJ') ?? ''),
+            'EMAIL' => $this->request->getPost('EMAIL'),
+            'TELEFONE' => preg_replace('/\D/', '', $this->request->getPost('TELEFONE') ?? ''),
+            'CELULAR' => preg_replace('/\D/', '', $this->request->getPost('CELULAR') ?? ''),
+            'SITUACAO_ID' => (int) $this->request->getPost('SITUACAO_ID'),
         ];
 
         $rules = $id > 0 ? EmpresaRules::atualizacao($id) : EmpresaRules::cadastro();

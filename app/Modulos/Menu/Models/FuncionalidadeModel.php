@@ -7,11 +7,11 @@ use CodeIgniter\Model;
 
 class FuncionalidadeModel extends Model
 {
-    protected $table            = 'MENU_FUNCIONALIDADES';
-    protected $primaryKey       = 'ID_FUNCIONALIDADE';
+    protected $table = 'MENU_FUNCIONALIDADES';
+    protected $primaryKey = 'ID_FUNCIONALIDADE';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'object';
-    protected $useSoftDeletes   = true;
+    protected $returnType = 'object';
+    protected $useSoftDeletes = true;
 
     protected $allowedFields = [
         'UUID',
@@ -23,16 +23,16 @@ class FuncionalidadeModel extends Model
     ];
 
     protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'CRIADO_EM';
-    protected $updatedField  = 'ATUALIZADO_EM';
-    protected $deletedField  = 'EXCLUIDO_EM';
+    protected $dateFormat = 'datetime';
+    protected $createdField = 'CRIADO_EM';
+    protected $updatedField = 'ATUALIZADO_EM';
+    protected $deletedField = 'EXCLUIDO_EM';
 
     protected $validationRules = [
-        'UUID'        => 'required|max_length[36]',
-        'SERVICO_ID'  => 'required|integer',
-        'NOME'        => 'required|max_length[100]',
-        'CHAVE'       => 'required|max_length[100]',
+        'UUID' => 'required|max_length[36]',
+        'SERVICO_ID' => 'required|integer',
+        'NOME' => 'required|max_length[100]',
+        'CHAVE' => 'required|max_length[100]',
         'SITUACAO_ID' => 'required|integer',
     ];
 
@@ -40,9 +40,10 @@ class FuncionalidadeModel extends Model
 
     protected function gerarUuid(array $data): array
     {
-        if (!isset($data['data']['UUID'])) {
+        if (! isset($data['data']['UUID'])) {
             $data['data']['UUID'] = Uuid::generate('MENU_FUNCIONALIDADES_' . microtime());
         }
+
         return $data;
     }
 

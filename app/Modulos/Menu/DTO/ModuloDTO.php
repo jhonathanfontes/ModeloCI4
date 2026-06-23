@@ -19,7 +19,8 @@ class ModuloDTO
         public readonly ?array $servicos = null,
         public readonly ?string $criadoEm = null,
         public readonly ?string $atualizadoEm = null,
-    ) {}
+    ) {
+    }
 
     public static function fromObject(object $row): self
     {
@@ -57,6 +58,6 @@ class ModuloDTO
             'servicos' => $this->servicos,
             'criado_em' => $this->criadoEm,
             'atualizado_em' => $this->atualizadoEm,
-        ], fn($v) => $v !== null);
+        ], fn ($v) => $v !== null);
     }
 }

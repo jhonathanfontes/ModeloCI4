@@ -17,7 +17,7 @@ class EmpresaService
             ->orderBy('NOME_FANTASIA', 'ASC')
             ->paginate($perPage);
 
-        $itens = array_map(fn($row) => EmpresaDTO::fromObject($row), $rows);
+        $itens = array_map(fn ($row) => EmpresaDTO::fromObject($row), $rows);
 
         return [
             'itens' => $itens,
@@ -30,6 +30,15 @@ class EmpresaService
         $model = model(EmpresaModel::class);
 
         $row = $model->comSituacao()->find($id);
+
+        return $row !== null ? EmpresaDTO::fromObject($row) : null;
+    }
+
+    public function encontrarPorUuid(string $uuid): ?EmpresaDTO
+    {
+        $model = model(EmpresaModel::class);
+
+        $row = $model->comSituacao()->where('EMPRESAS.UUID', $uuid)->first();
 
         return $row !== null ? EmpresaDTO::fromObject($row) : null;
     }
@@ -82,6 +91,6 @@ class EmpresaService
             ->orderBy('NOME_FANTASIA', 'ASC')
             ->findAll();
 
-        return array_map(fn($row) => EmpresaDTO::fromObject($row), $rows);
+        return array_map(fn ($row) => EmpresaDTO::fromObject($row), $rows);
     }
 }

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Painel{% endblock %} — ModeloBF2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ base_url('assets/css/painel.css') }}">
+    {% block styles %}{% endblock %}
+</head>
+<body>
+
+<div class="painel-wrapper">
+    <aside class="painel-sidebar" id="painelSidebar">
+        <div class="painel-brand">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                <rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+            ModeloBF2
+        </div>
+
+        <nav class="painel-nav">
+            <div class="nav-section">Principal</div>
+            <a href="{{ route_to('painel.dashboard') }}" class="nav-item {{ currentRoute == 'painel.dashboard' ? 'nav-item-active' : '' }}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                Dashboard
+            </a>
+
+            {% if menuModulos is defined and menuModulos|length > 0 %}
+            {% for modulo in menuModulos %}
+            <div class="nav-section">{{ modulo.nome }}</div>
+            {% if modulo.servicos|length > 0 %}
+            {% for servico in modulo.servicos %}
+            {% set rota = servico.urlRota ?? servico.urlModulo ?? modulo.urlRota %}
+            {% if rota %}
+            <a href="{{ route_to(rota) }}" class="nav-item {{ currentRoute starts with rota ? 'nav-item-active' : '' }}">
+                {% if servico.icone %}<i class="{{ servico.icone }}" style="width:20px;text-align:center;"></i>{% endif %}
+                {{ servico.nome }}
+            </a>
+            {% endif %}
+            {% endfor %}
+            {% elseif modulo.urlRota %}
+            <a href="{{ route_to(modulo.urlRota) }}" class="nav-item {{ currentRoute starts with modulo.urlRota ? 'nav-item-active' : '' }}">
+                {% if modulo.icone %}<i class="{{ modulo.icone }}" style="width:20px;text-align:center;"></i>{% endif %}
+                {{ modulo.nome }}
+            </a>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+        </nav>
+
+            {% if empresaAtiva %}
+            <div class="painel-empresa-ativa" title="Empresa ativa">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+                <span>{{ empresaAtiva.nome }}</span>
+            </div>
+            {% endif %}
+
+            <div class="painel-sidebar-footer">
+            <div class="painel-user">
+                <div class="avatar">{{ usuario.nome|slice(0, 1)|upper }}</div>
+                <div class="painel-user-info">
+                    <span class="painel-user-name">{{ usuario.nome }}</span>
+                    <span class="painel-user-email">{{ usuario.email }}</span>
+                </div>
+            </div>
+            <a href="{{ route_to('painel.logout') }}" class="nav-item logout">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Sair
+            </a>
+        </div>
+    </aside>
+
+    <div class="painel-main">
+        <header class="painel-header">
+            <button class="painel-toggle" id="painelSidebarToggle" aria-label="Abrir menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+            </button>
+            <div class="painel-header-title">{% block page_title %}Dashboard{% endblock %}</div>
+        </header>
+
+        <main class="painel-content">
+            {% if success %}
+            <div class="alert alert-success">{{ success }}</div>
+            {% endif %}
+
+            {% if error %}
+            <div class="alert alert-error">{{ error }}</div>
+            {% endif %}
+
+            {% block breadcrumb %}
+            <div class="page-header">
+                <div>
+                    <h1>{% block page_heading %}Dashboard{% endblock %}</h1>
+                    <div class="breadcrumb">
+                        {% block breadcrumb_items %}
+                        <a href="{{ route_to('painel.dashboard') }}">Painel</a>
+                        {% endblock %}
+                    </div>
+                </div>
+                {% block page_actions %}{% endblock %}
+            </div>
+            {% endblock %}
+
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="painel-footer">
+            &copy; {{ 'now'|date('Y') }} ModeloBF2. Todos os direitos reservados.
+        </footer>
+    </div>
+</div>
+
+<script src="{{ base_url('assets/js/painel.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

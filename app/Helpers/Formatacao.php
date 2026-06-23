@@ -87,9 +87,9 @@ class Formatacao
         ];
 
         $timestamp = $date ? strtotime($date) : time();
-        $day       = date('j', $timestamp);
-        $month     = $months[(int) date('n', $timestamp)];
-        $year      = date('Y', $timestamp);
+        $day = date('j', $timestamp);
+        $month = $months[(int) date('n', $timestamp)];
+        $year = date('Y', $timestamp);
 
         return "{$day} de {$month} de {$year}";
     }

@@ -1,0 +1,114 @@
+{% extends 'Layouts/admin' %}
+{% block page_title %}Planos{% endblock %}
+{% block page_heading %}Planos{% endblock %}
+{% block breadcrumb_items %}
+<a href="{{ route_to('admin.dashboard') }}">Admin</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">Planos</span>
+{% endblock %}
+{% block page_actions %}
+<a href="{{ route_to('admin.planos.novo') }}" class="btn btn-primary">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+    Novo Plano
+</a>
+{% endblock %}
+
+{% block content %}
+
+{% if success %}
+<div class="alert alert-success">{{ success }}</div>
+{% endif %}
+
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-body" style="padding:0;">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Valor</th>
+                        <th>Limite Clientes</th>
+                        <th>Limite Usuários</th>
+                        <th>Armazenamento</th>
+                        <th>Situação</th>
+                        <th style="width:120px;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if planos is empty %}
+                    <tr>
+                        <td colspan="7" style="text-align:center;padding:32px 16px;color:var(--color-text-muted);">
+                            Nenhum plano encontrado.
+                        </td>
+                    </tr>
+                    {% else %}
+                    {% for p in planos %}
+                    <tr>
+                        <td>
+                            <div class="user-name">{{ p.nome }}</div>
+                        </td>
+                        <td>{{ moeda(p.valor) }}</td>
+                        <td>{{ p.limiteClientes is not null ? p.limiteClientes|number_format(0, ',', '.') : 'Ilimitado' }}</td>
+                        <td>{{ p.limiteUsuarios is not null ? p.limiteUsuarios|number_format(0, ',', '.') : 'Ilimitado' }}</td>
+                        <td>{{ p.limiteArmazenamentoMb is not null ? bytes(p.limiteArmazenamentoMb * 1024 * 1024) : 'Ilimitado' }}</td>
+                        <td>
+                            {% if p.situacao %}
+                            <span class="status status-active">
+                                <span class="status-dot"></span>
+                                Ativo
+                            </span>
+                            {% else %}
+                            <span class="status" style="background:#fef2f218;color:#ef4444;">
+                                <span class="status-dot" style="background:#ef4444;"></span>
+                                Inativo
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-group">
+                                <a href="{{ route_to('admin.planos.visualizar', p.uuid) }}" class="btn btn-sm btn-outline" title="Visualizar">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                </a>
+                                <a href="{{ route_to('admin.planos.editar', p.uuid) }}" class="btn btn-sm btn-outline" title="Editar">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
+                                </a>
+                                <form method="post" action="{{ route_to('admin.planos.excluir', p.uuid) }}" class="inline-form" onsubmit="return confirm('Tem certeza que deseja cancelar este plano?')">
+                                    <button type="submit" class="btn btn-sm btn-outline btn-danger" title="Cancelar">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="3 6 5 6 21 6"/>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                            <line x1="10" y1="11" x2="10" y2="17"/>
+                                            <line x1="14" y1="11" x2="14" y2="17"/>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if pager and pager.getPageCount() > 1 %}
+<div class="pagination">
+    {{ pager.links()|raw }}
+</div>
+{% endif %}
+
+{% endblock %}

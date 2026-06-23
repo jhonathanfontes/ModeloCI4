@@ -2,12 +2,12 @@
 
 namespace App\Controllers\Admin;
 
-use CodeIgniter\HTTP\ResponseInterface;
 use App\Modulos\Menu\Rules\FuncionalidadeRules;
 use App\Modulos\Menu\Rules\ModuloRules;
 use App\Modulos\Menu\Rules\ServicoRules;
 use App\Modulos\Menu\Services\MenuService;
 use App\Modulos\Sistema\Models\SituacaoModel;
+use CodeIgniter\HTTP\ResponseInterface;
 
 class Menu extends BaseController
 {
@@ -25,7 +25,7 @@ class Menu extends BaseController
         $modulos = $this->menuService->listarModulosComServicos();
 
         return $this->render('Modulos/admin/menu/index', [
-            'title'   => 'Gerenciar Menu',
+            'title' => 'Gerenciar Menu',
             'modulos' => $modulos,
         ]);
     }
@@ -35,12 +35,12 @@ class Menu extends BaseController
     public function moduloNovo(): string
     {
         return $this->render('Modulos/admin/menu/modulo_form', [
-            'title'     => 'Novo Módulo',
-            'modulo'    => null,
+            'title' => 'Novo Módulo',
+            'modulo' => null,
             'situacoes' => $this->listarSituacoes(),
-            'success'   => session()->getFlashdata('success'),
-            'error'     => session()->getFlashdata('error'),
-            'errors'    => session()->getFlashdata('errors') ?? [],
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
+            'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
@@ -54,12 +54,12 @@ class Menu extends BaseController
         }
 
         return $this->render('Modulos/admin/menu/modulo_form', [
-            'title'     => 'Editar Módulo',
-            'modulo'    => $modulo,
+            'title' => 'Editar Módulo',
+            'modulo' => $modulo,
             'situacoes' => $this->listarSituacoes(),
-            'success'   => session()->getFlashdata('success'),
-            'error'     => session()->getFlashdata('error'),
-            'errors'    => session()->getFlashdata('errors') ?? [],
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
+            'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
@@ -74,11 +74,11 @@ class Menu extends BaseController
         }
 
         $data = [
-            'NOME'        => $this->request->getPost('NOME'),
-            'DESCRICAO'   => $this->request->getPost('DESCRICAO') ?: null,
-            'ICONE'       => $this->request->getPost('ICONE') ?: null,
-            'URL_ROTA'    => $this->request->getPost('URL_ROTA') ?: null,
-            'ORDEM'       => $this->request->getPost('ORDEM') ? (int) $this->request->getPost('ORDEM') : null,
+            'NOME' => $this->request->getPost('NOME'),
+            'DESCRICAO' => $this->request->getPost('DESCRICAO') ?: null,
+            'ICONE' => $this->request->getPost('ICONE') ?: null,
+            'URL_ROTA' => $this->request->getPost('URL_ROTA') ?: null,
+            'ORDEM' => $this->request->getPost('ORDEM') ? (int) $this->request->getPost('ORDEM') : null,
             'SITUACAO_ID' => (int) $this->request->getPost('SITUACAO_ID'),
         ];
 
@@ -133,12 +133,12 @@ class Menu extends BaseController
         $result = $this->menuService->listarServicos($moduloId, $perPage);
 
         return $this->render('Modulos/admin/menu/servicos', [
-            'title'    => 'Serviços: ' . $modulo->nome,
-            'modulo'   => $modulo,
+            'title' => 'Serviços: ' . $modulo->nome,
+            'modulo' => $modulo,
             'servicos' => $result['itens'],
-            'pager'    => $result['pager'],
-            'success'  => session()->getFlashdata('success'),
-            'error'    => session()->getFlashdata('error'),
+            'pager' => $result['pager'],
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
         ]);
     }
 
@@ -152,13 +152,13 @@ class Menu extends BaseController
         }
 
         return $this->render('Modulos/admin/menu/servico_form', [
-            'title'     => 'Novo Serviço em ' . $modulo->nome,
-            'modulo'    => $modulo,
-            'servico'   => null,
+            'title' => 'Novo Serviço em ' . $modulo->nome,
+            'modulo' => $modulo,
+            'servico' => null,
             'situacoes' => $this->listarSituacoes(),
-            'success'   => session()->getFlashdata('success'),
-            'error'     => session()->getFlashdata('error'),
-            'errors'    => session()->getFlashdata('errors') ?? [],
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
+            'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
@@ -174,13 +174,13 @@ class Menu extends BaseController
         $modulo = $this->menuService->encontrarModulo($servico->moduloId);
 
         return $this->render('Modulos/admin/menu/servico_form', [
-            'title'     => 'Editar Serviço',
-            'modulo'    => $modulo,
-            'servico'   => $servico,
+            'title' => 'Editar Serviço',
+            'modulo' => $modulo,
+            'servico' => $servico,
             'situacoes' => $this->listarSituacoes(),
-            'success'   => session()->getFlashdata('success'),
-            'error'     => session()->getFlashdata('error'),
-            'errors'    => session()->getFlashdata('errors') ?? [],
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
+            'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
@@ -196,14 +196,14 @@ class Menu extends BaseController
         }
 
         $data = [
-            'MODULO_ID'   => $moduloId,
-            'NOME'        => $this->request->getPost('NOME'),
-            'DESCRICAO'   => $this->request->getPost('DESCRICAO') ?: null,
-            'URL_MODULO'  => $this->request->getPost('URL_MODULO') ?: null,
-            'URL_ROTA'    => $this->request->getPost('URL_ROTA') ?: null,
-            'ICONE'       => $this->request->getPost('ICONE') ?: null,
-            'ORDEM'       => $this->request->getPost('ORDEM') ? (int) $this->request->getPost('ORDEM') : null,
-            'DASHBOARD'   => $this->request->getPost('DASHBOARD') ? 1 : 0,
+            'MODULO_ID' => $moduloId,
+            'NOME' => $this->request->getPost('NOME'),
+            'DESCRICAO' => $this->request->getPost('DESCRICAO') ?: null,
+            'URL_MODULO' => $this->request->getPost('URL_MODULO') ?: null,
+            'URL_ROTA' => $this->request->getPost('URL_ROTA') ?: null,
+            'ICONE' => $this->request->getPost('ICONE') ?: null,
+            'ORDEM' => $this->request->getPost('ORDEM') ? (int) $this->request->getPost('ORDEM') : null,
+            'DASHBOARD' => $this->request->getPost('DASHBOARD') ? 1 : 0,
             'SITUACAO_ID' => (int) $this->request->getPost('SITUACAO_ID'),
         ];
 
@@ -278,12 +278,12 @@ class Menu extends BaseController
         $result = $this->menuService->listarFuncionalidades($servicoId, $perPage);
 
         return $this->render('Modulos/admin/menu/funcionalidades', [
-            'title'           => 'Funcionalidades: ' . $servico->nome,
-            'servico'         => $servico,
+            'title' => 'Funcionalidades: ' . $servico->nome,
+            'servico' => $servico,
             'funcionalidades' => $result['itens'],
-            'pager'           => $result['pager'],
-            'success'         => session()->getFlashdata('success'),
-            'error'           => session()->getFlashdata('error'),
+            'pager' => $result['pager'],
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
         ]);
     }
 
@@ -297,13 +297,13 @@ class Menu extends BaseController
         }
 
         return $this->render('Modulos/admin/menu/funcionalidade_form', [
-            'title'           => 'Nova Funcionalidade em ' . $servico->nome,
-            'servico'         => $servico,
-            'funcionalidade'  => null,
-            'situacoes'       => $this->listarSituacoes(),
-            'success'         => session()->getFlashdata('success'),
-            'error'           => session()->getFlashdata('error'),
-            'errors'          => session()->getFlashdata('errors') ?? [],
+            'title' => 'Nova Funcionalidade em ' . $servico->nome,
+            'servico' => $servico,
+            'funcionalidade' => null,
+            'situacoes' => $this->listarSituacoes(),
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
+            'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
@@ -319,13 +319,13 @@ class Menu extends BaseController
         $servico = $this->menuService->encontrarServico($funcionalidade->servicoId);
 
         return $this->render('Modulos/admin/menu/funcionalidade_form', [
-            'title'          => 'Editar Funcionalidade',
-            'servico'        => $servico,
+            'title' => 'Editar Funcionalidade',
+            'servico' => $servico,
             'funcionalidade' => $funcionalidade,
-            'situacoes'      => $this->listarSituacoes(),
-            'success'        => session()->getFlashdata('success'),
-            'error'          => session()->getFlashdata('error'),
-            'errors'         => session()->getFlashdata('errors') ?? [],
+            'situacoes' => $this->listarSituacoes(),
+            'success' => session()->getFlashdata('success'),
+            'error' => session()->getFlashdata('error'),
+            'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
@@ -341,10 +341,10 @@ class Menu extends BaseController
         }
 
         $data = [
-            'SERVICO_ID'  => $servicoId,
-            'NOME'        => $this->request->getPost('NOME'),
-            'DESCRICAO'   => $this->request->getPost('DESCRICAO') ?: null,
-            'CHAVE'       => $this->request->getPost('CHAVE'),
+            'SERVICO_ID' => $servicoId,
+            'NOME' => $this->request->getPost('NOME'),
+            'DESCRICAO' => $this->request->getPost('DESCRICAO') ?: null,
+            'CHAVE' => $this->request->getPost('CHAVE'),
             'SITUACAO_ID' => (int) $this->request->getPost('SITUACAO_ID'),
         ];
 

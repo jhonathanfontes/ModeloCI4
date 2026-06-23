@@ -7,11 +7,11 @@ use CodeIgniter\Model;
 
 class ClienteModel extends Model
 {
-    protected $table            = 'CLIENTES';
-    protected $primaryKey       = 'ID_CLIENTE';
+    protected $table = 'CLIENTES';
+    protected $primaryKey = 'ID_CLIENTE';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'object';
-    protected $useSoftDeletes   = true;
+    protected $returnType = 'object';
+    protected $useSoftDeletes = true;
 
     protected $allowedFields = [
         'UUID',
@@ -24,16 +24,16 @@ class ClienteModel extends Model
     ];
 
     protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'CRIADO_EM';
-    protected $updatedField  = 'ATUALIZADO_EM';
-    protected $deletedField  = 'EXCLUIDO_EM';
+    protected $dateFormat = 'datetime';
+    protected $createdField = 'CRIADO_EM';
+    protected $updatedField = 'ATUALIZADO_EM';
+    protected $deletedField = 'EXCLUIDO_EM';
 
     protected $validationRules = [
-        'UUID'        => 'required|max_length[36]',
-        'EMPRESA_ID'  => 'required|integer',
-        'NOME'        => 'required|max_length[255]',
-        'TIPO_ID'     => 'required|integer',
+        'UUID' => 'required|max_length[36]',
+        'EMPRESA_ID' => 'required|integer',
+        'NOME' => 'required|max_length[255]',
+        'TIPO_ID' => 'required|integer',
         'SITUACAO_ID' => 'required|integer',
     ];
 
@@ -41,9 +41,10 @@ class ClienteModel extends Model
 
     protected function gerarUuid(array $data): array
     {
-        if (!isset($data['data']['UUID'])) {
+        if (! isset($data['data']['UUID'])) {
             $data['data']['UUID'] = Uuid::generate('CLIENTES_' . microtime());
         }
+
         return $data;
     }
 

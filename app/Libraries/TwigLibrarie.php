@@ -2,10 +2,10 @@
 
 namespace App\Libraries;
 
-use Twig\Environment;
 use App\Libraries\Twig\TwigFunction;
 use App\Libraries\Twig\TwigGlobal;
 use App\Libraries\Twig\TwigLoader;
+use Twig\Environment;
 
 class TwigLibrarie
 {
@@ -14,8 +14,8 @@ class TwigLibrarie
         $loader = new TwigLoader(\APPPATH . 'Templates');
 
         $twig = new Environment($loader, [
-            'cache'       => \WRITEPATH . 'cache/twig',
-            'debug'       => \ENVIRONMENT !== 'production',
+            'cache' => \WRITEPATH . 'cache/twig',
+            'debug' => \ENVIRONMENT !== 'production',
             'auto_reload' => \ENVIRONMENT !== 'production',
         ]);
 

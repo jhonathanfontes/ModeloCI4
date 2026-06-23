@@ -4,6 +4,8 @@ namespace App\Modulos\Menu\Services;
 
 use App\Dominios\SituacaoRegistro;
 use App\Helpers\Uuid;
+use App\Modulos\Cadastro\Models\EmpresaModuloModel;
+use App\Modulos\Cadastro\Models\EmpresaServicoModel;
 use App\Modulos\Menu\DTO\FuncionalidadeDTO;
 use App\Modulos\Menu\DTO\ModuloDTO;
 use App\Modulos\Menu\DTO\ServicoDTO;
@@ -22,7 +24,7 @@ class MenuService
             ->orderBy('NOME', 'ASC')
             ->paginate($perPage);
 
-        $itens = array_map(fn($row) => ModuloDTO::fromObject($row), $rows);
+        $itens = array_map(fn ($row) => ModuloDTO::fromObject($row), $rows);
 
         return [
             'itens' => $itens,
@@ -49,7 +51,7 @@ class MenuService
                 ->orderBy('NOME', 'ASC')
                 ->findAll();
 
-            $dtoServicos = array_map(fn($s) => ServicoDTO::fromObject($s), $servicos);
+            $dtoServicos = array_map(fn ($s) => ServicoDTO::fromObject($s), $servicos);
 
             return new ModuloDTO(
                 id: $dto->id,
@@ -128,7 +130,7 @@ class MenuService
             ->orderBy('MENU_SERVICOS.NOME', 'ASC')
             ->paginate($perPage);
 
-        $itens = array_map(fn($row) => ServicoDTO::fromObject($row), $rows);
+        $itens = array_map(fn ($row) => ServicoDTO::fromObject($row), $rows);
 
         return [
             'itens' => $itens,
@@ -177,14 +179,14 @@ class MenuService
         }
 
         $data = [
-            'MODULO_ID'   => $original->moduloId,
-            'NOME'        => $original->nome . ' (cópia)',
-            'DESCRICAO'   => $original->descricao,
-            'URL_MODULO'  => $original->urlModulo,
-            'URL_ROTA'    => $original->urlRota,
-            'ICONE'       => $original->icone,
-            'ORDEM'       => $original->ordem,
-            'DASHBOARD'   => $original->dashboard ? 1 : 0,
+            'MODULO_ID' => $original->moduloId,
+            'NOME' => $original->nome . ' (cópia)',
+            'DESCRICAO' => $original->descricao,
+            'URL_MODULO' => $original->urlModulo,
+            'URL_ROTA' => $original->urlRota,
+            'ICONE' => $original->icone,
+            'ORDEM' => $original->ordem,
+            'DASHBOARD' => $original->dashboard ? 1 : 0,
             'SITUACAO_ID' => $original->situacaoId,
         ];
 
@@ -216,7 +218,7 @@ class MenuService
         $rows = $query->orderBy('MENU_FUNCIONALIDADES.NOME', 'ASC')
             ->paginate($perPage);
 
-        $itens = array_map(fn($row) => FuncionalidadeDTO::fromObject($row), $rows);
+        $itens = array_map(fn ($row) => FuncionalidadeDTO::fromObject($row), $rows);
 
         return [
             'itens' => $itens,
@@ -233,7 +235,7 @@ class MenuService
             ->orderBy('NOME', 'ASC')
             ->findAll();
 
-        return array_map(fn($row) => FuncionalidadeDTO::fromObject($row), $rows);
+        return array_map(fn ($row) => FuncionalidadeDTO::fromObject($row), $rows);
     }
 
     public function encontrarFuncionalidade(int $id): ?FuncionalidadeDTO
@@ -289,7 +291,7 @@ class MenuService
             ->orderBy('NOME', 'ASC')
             ->findAll();
 
-        return array_map(fn($row) => ModuloDTO::fromObject($row), $rows);
+        return array_map(fn ($row) => ModuloDTO::fromObject($row), $rows);
     }
 
     public function listarServicosPorModulo(int $moduloId): array
@@ -302,6 +304,72 @@ class MenuService
             ->orderBy('NOME', 'ASC')
             ->findAll();
 
-        return array_map(fn($row) => ServicoDTO::fromObject($row), $rows);
+        return array_map(fn ($row) => ServicoDTO::fromObject($row), $rows);
+    }
+
+    public function montarMenuPainel(int $empresaId): array
+    {
+        $db = db_connect();
+
+        $modulos = $db->table('EMPR_EMPRESA_MODULOS')
+            ->select('MENU_MODULOS.ID_MODULO, MENU_MODULOS.NOME, MENU_MODULOS.ICONE, MENU_MODULOS.URL_ROTA')
+            ->join('MENU_MODULOS', 'MENU_MODULOS.ID_MODULO = EMPR_EMPRESA_MODULOS.MODULO_ID')
+            ->where('EMPR_EMPRESA_MODULOS.EMPRESA_ID', $empresaId)
+            ->where('EMPR_EMPRESA_MODULOS.ATIVO', 1)
+            ->where('EMPR_EMPRESA_MODULOS.EXCLUIDO_EM', null)
+            ->where('MENU_MODULOS.EXCLUIDO_EM', null)
+            ->orderBy('MENU_MODULOS.ORDEM', 'ASC')
+            ->orderBy('MENU_MODULOS.NOME', 'ASC')
+            ->get()
+            ->getResult();
+
+        if (empty($modulos)) {
+            return [];
+        }
+
+        $moduloIds = array_map(fn ($m) => (int) $m->ID_MODULO, $modulos);
+
+        $servicos = $db->table('EMPR_EMPRESA_SERVICOS')
+            ->select('MENU_SERVICOS.ID_SERVICO, MENU_SERVICOS.MODULO_ID, MENU_SERVICOS.NOME, MENU_SERVICOS.ICONE, MENU_SERVICOS.URL_ROTA, MENU_SERVICOS.URL_MODULO')
+            ->join('MENU_SERVICOS', 'MENU_SERVICOS.ID_SERVICO = EMPR_EMPRESA_SERVICOS.SERVICO_ID')
+            ->where('EMPR_EMPRESA_SERVICOS.EMPRESA_ID', $empresaId)
+            ->where('EMPR_EMPRESA_SERVICOS.ATIVO', 1)
+            ->where('EMPR_EMPRESA_SERVICOS.EXCLUIDO_EM', null)
+            ->where('MENU_SERVICOS.EXCLUIDO_EM', null)
+            ->whereIn('MENU_SERVICOS.MODULO_ID', $moduloIds)
+            ->orderBy('MENU_SERVICOS.ORDEM', 'ASC')
+            ->orderBy('MENU_SERVICOS.NOME', 'ASC')
+            ->get()
+            ->getResult();
+
+        $servicosPorModulo = [];
+
+        foreach ($servicos as $s) {
+            $moduloId = (int) $s->MODULO_ID;
+
+            $servicosPorModulo[$moduloId][] = [
+                'id' => (int) $s->ID_SERVICO,
+                'nome' => $s->NOME,
+                'icone' => $s->ICONE,
+                'urlRota' => $s->URL_ROTA,
+                'urlModulo' => $s->URL_MODULO,
+            ];
+        }
+
+        $menu = [];
+
+        foreach ($modulos as $m) {
+            $moduloId = (int) $m->ID_MODULO;
+
+            $menu[] = [
+                'id' => $moduloId,
+                'nome' => $m->NOME,
+                'icone' => $m->ICONE,
+                'urlRota' => $m->URL_ROTA,
+                'servicos' => $servicosPorModulo[$moduloId] ?? [],
+            ];
+        }
+
+        return $menu;
     }
 }

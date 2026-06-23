@@ -39,8 +39,8 @@ class SituacaoService
     {
         $model = model('App\Modulos\Sistema\Models\SituacaoModel');
 
-        $agora  = date('Y-m-d H:i:s');
-        $total  = 0;
+        $agora = date('Y-m-d H:i:s');
+        $total = 0;
 
         foreach (Dominio::classes() as $classe) {
             foreach ($classe::dadosBanco() as $dado) {

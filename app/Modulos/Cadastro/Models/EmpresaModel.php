@@ -7,11 +7,11 @@ use CodeIgniter\Model;
 
 class EmpresaModel extends Model
 {
-    protected $table            = 'EMPRESAS';
-    protected $primaryKey       = 'ID_EMPRESA';
+    protected $table = 'EMPRESAS';
+    protected $primaryKey = 'ID_EMPRESA';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'object';
-    protected $useSoftDeletes   = true;
+    protected $returnType = 'object';
+    protected $useSoftDeletes = true;
 
     protected $allowedFields = [
         'UUID',
@@ -25,29 +25,30 @@ class EmpresaModel extends Model
     ];
 
     protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'CRIADO_EM';
-    protected $updatedField  = 'ATUALIZADO_EM';
-    protected $deletedField  = 'EXCLUIDO_EM';
+    protected $dateFormat = 'datetime';
+    protected $createdField = 'CRIADO_EM';
+    protected $updatedField = 'ATUALIZADO_EM';
+    protected $deletedField = 'EXCLUIDO_EM';
 
     protected $validationRules = [
-        'UUID'          => 'required|max_length[36]',
-        'RAZAO_SOCIAL'  => 'required|max_length[255]',
+        'UUID' => 'required|max_length[36]',
+        'RAZAO_SOCIAL' => 'required|max_length[255]',
         'NOME_FANTASIA' => 'required|max_length[255]',
-        'CPF_CNPJ'      => 'required|min_length[11]|max_length[14]',
-        'EMAIL'         => 'required|valid_email|max_length[255]',
-        'TELEFONE'      => 'permit_empty|max_length[15]',
-        'CELULAR'       => 'permit_empty|max_length[15]',
-        'SITUACAO_ID'   => 'required|integer',
+        'CPF_CNPJ' => 'required|min_length[11]|max_length[14]',
+        'EMAIL' => 'required|valid_email|max_length[255]',
+        'TELEFONE' => 'permit_empty|max_length[15]',
+        'CELULAR' => 'permit_empty|max_length[15]',
+        'SITUACAO_ID' => 'required|integer',
     ];
 
     protected $beforeInsert = ['gerarUuid'];
 
     protected function gerarUuid(array $data): array
     {
-        if (!isset($data['data']['UUID'])) {
+        if (! isset($data['data']['UUID'])) {
             $data['data']['UUID'] = Uuid::generate('EMPRESAS_' . microtime());
         }
+
         return $data;
     }
 

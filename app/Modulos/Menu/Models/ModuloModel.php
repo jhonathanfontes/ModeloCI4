@@ -7,11 +7,11 @@ use CodeIgniter\Model;
 
 class ModuloModel extends Model
 {
-    protected $table            = 'MENU_MODULOS';
-    protected $primaryKey       = 'ID_MODULO';
+    protected $table = 'MENU_MODULOS';
+    protected $primaryKey = 'ID_MODULO';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'object';
-    protected $useSoftDeletes   = true;
+    protected $returnType = 'object';
+    protected $useSoftDeletes = true;
 
     protected $allowedFields = [
         'UUID',
@@ -24,17 +24,17 @@ class ModuloModel extends Model
     ];
 
     protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'CRIADO_EM';
-    protected $updatedField  = 'ATUALIZADO_EM';
-    protected $deletedField  = 'EXCLUIDO_EM';
+    protected $dateFormat = 'datetime';
+    protected $createdField = 'CRIADO_EM';
+    protected $updatedField = 'ATUALIZADO_EM';
+    protected $deletedField = 'EXCLUIDO_EM';
 
     protected $validationRules = [
-        'UUID'        => 'required|max_length[36]',
-        'NOME'        => 'required|max_length[100]',
-        'ICONE'       => 'permit_empty|max_length[50]',
-        'URL_ROTA'    => 'permit_empty|max_length[255]',
-        'ORDEM'       => 'permit_empty|integer',
+        'UUID' => 'required|max_length[36]',
+        'NOME' => 'required|max_length[100]',
+        'ICONE' => 'permit_empty|max_length[50]',
+        'URL_ROTA' => 'permit_empty|max_length[255]',
+        'ORDEM' => 'permit_empty|integer',
         'SITUACAO_ID' => 'required|integer',
     ];
 
@@ -42,9 +42,10 @@ class ModuloModel extends Model
 
     protected function gerarUuid(array $data): array
     {
-        if (!isset($data['data']['UUID'])) {
+        if (! isset($data['data']['UUID'])) {
             $data['data']['UUID'] = Uuid::generate('MENU_MODULOS_' . microtime());
         }
+
         return $data;
     }
 

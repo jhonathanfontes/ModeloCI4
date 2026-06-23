@@ -42,7 +42,7 @@
 <div class="tabs">
     <a href="{{ route_to('admin.empresas.visualizar', empresa.id) }}" class="tab">Dados</a>
     <a href="{{ route_to('admin.empresas.usuarios', empresa.id) }}" class="tab">Usuários</a>
-    <a href="#" class="tab disabled">Serviços</a>
+    <a href="{{ route_to('admin.empresas.servicos', empresa.uuid) }}" class="tab">Serviços</a>
 </div>
 {% endif %}
 

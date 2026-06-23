@@ -7,11 +7,11 @@ use CodeIgniter\Model;
 
 class UsuarioModel extends Model
 {
-    protected $table            = 'SEGU_USUARIOS';
-    protected $primaryKey       = 'ID_USUARIO';
+    protected $table = 'SEGU_USUARIOS';
+    protected $primaryKey = 'ID_USUARIO';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'object';
-    protected $useSoftDeletes   = true;
+    protected $returnType = 'object';
+    protected $useSoftDeletes = true;
 
     protected $allowedFields = [
         'UUID',
@@ -28,27 +28,28 @@ class UsuarioModel extends Model
     ];
 
     protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'CRIADO_EM';
-    protected $updatedField  = 'ATUALIZADO_EM';
-    protected $deletedField  = 'EXCLUIDO_EM';
+    protected $dateFormat = 'datetime';
+    protected $createdField = 'CRIADO_EM';
+    protected $updatedField = 'ATUALIZADO_EM';
+    protected $deletedField = 'EXCLUIDO_EM';
 
     protected $validationRules = [
-        'UUID'       => 'required|max_length[36]',
-        'NOME'       => 'required|max_length[255]',
-        'EMAIL'      => 'required|valid_email|max_length[255]',
+        'UUID' => 'required|max_length[36]',
+        'NOME' => 'required|max_length[255]',
+        'EMAIL' => 'required|valid_email|max_length[255]',
         'SENHA_HASH' => 'required|max_length[255]',
-        'TIPO'       => 'required|in_list[SYSTEM,EMPRESA,CLIENTE]',
-        'SITUACAO_ID'=> 'required|integer',
+        'TIPO' => 'required|in_list[SYSTEM,EMPRESA,CLIENTE]',
+        'SITUACAO_ID' => 'required|integer',
     ];
 
     protected $beforeInsert = ['gerarUuid'];
 
     protected function gerarUuid(array $data): array
     {
-        if (!isset($data['data']['UUID'])) {
+        if (! isset($data['data']['UUID'])) {
             $data['data']['UUID'] = Uuid::generate('SEGU_USUARIOS_' . microtime());
         }
+
         return $data;
     }
 

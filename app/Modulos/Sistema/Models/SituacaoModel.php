@@ -10,11 +10,11 @@ use CodeIgniter\Model;
  */
 class SituacaoModel extends Model
 {
-    protected $table            = 'SIST_SITUACOES';
-    protected $primaryKey       = 'ID_SITUACAO';
+    protected $table = 'SIST_SITUACOES';
+    protected $primaryKey = 'ID_SITUACAO';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'object';
-    protected $useSoftDeletes   = true;
+    protected $returnType = 'object';
+    protected $useSoftDeletes = true;
 
     protected $allowedFields = [
         'UUID',
@@ -31,16 +31,16 @@ class SituacaoModel extends Model
         'GERA_HISTORICO',
     ];
 
-    protected $useTimestamps  = true;
-    protected $dateFormat     = 'datetime';
-    protected $createdField   = 'CRIADO_EM';
-    protected $updatedField   = 'ATUALIZADO_EM';
-    protected $deletedField   = 'EXCLUIDO_EM';
+    protected $useTimestamps = true;
+    protected $dateFormat = 'datetime';
+    protected $createdField = 'CRIADO_EM';
+    protected $updatedField = 'ATUALIZADO_EM';
+    protected $deletedField = 'EXCLUIDO_EM';
 
     protected $validationRules = [
-        'UUID'    => 'required|max_length[36]',
-        'MODULO'  => 'required|max_length[100]',
-        'CODIGO'  => 'required|max_length[50]',
+        'UUID' => 'required|max_length[36]',
+        'MODULO' => 'required|max_length[100]',
+        'CODIGO' => 'required|max_length[50]',
         'DESCRICAO' => 'required|max_length[255]',
     ];
 }

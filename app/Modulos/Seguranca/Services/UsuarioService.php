@@ -17,7 +17,7 @@ class UsuarioService
             ->orderBy('NOME', 'ASC')
             ->paginate($perPage);
 
-        $itens = array_map(fn($row) => UsuarioDTO::fromObject($row), $rows);
+        $itens = array_map(fn ($row) => UsuarioDTO::fromObject($row), $rows);
 
         return [
             'itens' => $itens,
@@ -59,6 +59,7 @@ class UsuarioService
             log_message('critical', 'Data sent: {data}', [
                 'data' => print_r($data, true),
             ]);
+
             return null;
         }
 

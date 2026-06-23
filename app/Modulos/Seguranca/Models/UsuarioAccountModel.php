@@ -7,11 +7,11 @@ use CodeIgniter\Model;
 
 class UsuarioAccountModel extends Model
 {
-    protected $table            = 'SEGU_ACCOUNTS';
-    protected $primaryKey       = 'ID_ACCOUNT';
+    protected $table = 'SEGU_ACCOUNTS';
+    protected $primaryKey = 'ID_ACCOUNT';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'object';
-    protected $useSoftDeletes   = true;
+    protected $returnType = 'object';
+    protected $useSoftDeletes = true;
 
     protected $allowedFields = [
         'UUID',
@@ -26,16 +26,16 @@ class UsuarioAccountModel extends Model
     ];
 
     protected $useTimestamps = true;
-    protected $dateFormat    = 'datetime';
-    protected $createdField  = 'CRIADO_EM';
-    protected $updatedField  = 'ATUALIZADO_EM';
-    protected $deletedField  = 'EXCLUIDO_EM';
+    protected $dateFormat = 'datetime';
+    protected $createdField = 'CRIADO_EM';
+    protected $updatedField = 'ATUALIZADO_EM';
+    protected $deletedField = 'EXCLUIDO_EM';
 
     protected $validationRules = [
-        'UUID'        => 'required|max_length[36]',
-        'USUARIO_ID'  => 'required|integer',
-        'EMAIL'       => 'required|valid_email|max_length[255]|is_unique[SEGU_ACCOUNTS.EMAIL]',
-        'SENHA_HASH'  => 'required|max_length[255]',
+        'UUID' => 'required|max_length[36]',
+        'USUARIO_ID' => 'required|integer',
+        'EMAIL' => 'required|valid_email|max_length[255]|is_unique[SEGU_ACCOUNTS.EMAIL]',
+        'SENHA_HASH' => 'required|max_length[255]',
         'SITUACAO_ID' => 'required|integer',
     ];
 
@@ -43,9 +43,10 @@ class UsuarioAccountModel extends Model
 
     protected function gerarUuid(array $data): array
     {
-        if (!isset($data['data']['UUID'])) {
+        if (! isset($data['data']['UUID'])) {
             $data['data']['UUID'] = Uuid::generate('SEGU_ACCOUNTS_' . microtime());
         }
+
         return $data;
     }
 

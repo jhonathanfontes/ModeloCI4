@@ -17,7 +17,7 @@ Define limites de uso e recursos disponíveis para cada locatário (empresa).
 | LIMITE_CLIENTES | INT UNSIGNED | NULL | Número máximo de clientes permitido (NULL = ilimitado) |
 | LIMITE_USUARIOS | INT UNSIGNED | NULL | Número máximo de usuários permitido |
 | LIMITE_ARMAZENAMENTO_MB | INT UNSIGNED | NULL | Limite de armazenamento em MB |
-| SITUACAO_ID | BIGINT UNSIGNED | NOT NULL | Chave estrangeira para SIST_SITUACOES |
+| SITUACAO | TINYINT(1) | NOT NULL | Indica se o plano está ativo (1) ou inativo (0) |
 | CRIADO_EM | DATETIME | NOT NULL | Data e hora de inserção do registro |
 | ATUALIZADO_EM | DATETIME | NOT NULL | Data e hora da última modificação |
 | EXCLUIDO_EM | DATETIME | NULL | Data de exclusão lógica (Soft Delete) |
@@ -32,7 +32,7 @@ Define limites de uso e recursos disponíveis para cada locatário (empresa).
 | PRIMARY KEY | ID_PLANO | — |
 | UNIQUE | UUID | — |
 | FOREIGN KEY | PERIODO_ID | SIST_TIPOS(ID_TIPO) |
-| FOREIGN KEY | SITUACAO_ID | SIST_SITUACOES(ID_SITUACAO) |
+| — | SITUACAO | — |
 | FOREIGN KEY | CRIADO_POR | SEGU_USUARIOS(ID_USUARIO) |
 | FOREIGN KEY | ATUALIZADO_POR | SEGU_USUARIOS(ID_USUARIO) |
 | FOREIGN KEY | EXCLUIDO_POR | SEGU_USUARIOS(ID_USUARIO) |
@@ -42,6 +42,7 @@ Define limites de uso e recursos disponíveis para cada locatário (empresa).
 - `VALOR` é armazenado em reais (BRL) com duas casas decimais.
 - Limites com valor `NULL` significam "sem restrição".
 - `PERIODO_ID` referencia SIST_TIPOS filtrando por tipo "periodo_plano".
+- `SITUACAO` 1 = ativo, 0 = inativo (não utiliza SIST_SITUACOES).
 
 ## Payload de Exemplo
 
@@ -56,7 +57,7 @@ Define limites de uso e recursos disponíveis para cada locatário (empresa).
   "LIMITE_CLIENTES": 500,
   "LIMITE_USUARIOS": 10,
   "LIMITE_ARMAZENAMENTO_MB": 1024,
-  "SITUACAO_ID": 1,
+  "SITUACAO": 1,
   "CRIADO_EM": "2025-01-20 14:30:00"
 }
 ```

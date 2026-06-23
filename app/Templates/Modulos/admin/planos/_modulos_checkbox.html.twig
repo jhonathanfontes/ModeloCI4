@@ -1,0 +1,74 @@
+<div class="modulos-tree">
+    {% if modulos is empty %}
+    <p style="color:var(--color-text-muted);">Nenhum módulo cadastrado. Crie módulos no gerenciador de menu primeiro.</p>
+    {% else %}
+    {% for modulo in modulos %}
+    <div class="modulo-item" style="margin-bottom:16px;border:1px solid var(--color-border);border-radius:8px;padding:12px;">
+        <div class="modulo-header" style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <input type="checkbox"
+                   name="modulos[]"
+                   value="{{ modulo.ID_MODULO }}"
+                   id="modulo_{{ modulo.ID_MODULO }}"
+                   class="modulo-checkbox"
+                   data-modulo-id="{{ modulo.ID_MODULO }}"
+                   {{ modulo.ID_MODULO in modulosVinculados ? 'checked' : '' }}>
+            <label for="modulo_{{ modulo.ID_MODULO }}" style="font-weight:600;cursor:pointer;">
+                {% if modulo.ICONE %}<i class="{{ modulo.ICONE }}"></i>{% endif %}
+                {{ modulo.NOME }}
+            </label>
+        </div>
+        {% if modulo.servicos is defined and modulo.servicos|length > 0 %}
+        <div class="servicos-list servico-{{ modulo.ID_MODULO }}" style="margin-left:28px;">
+            {% for servico in modulo.servicos %}
+            <div class="servico-item" style="display:flex;align-items:center;gap:8px;padding:4px 0;">
+                <input type="checkbox"
+                       name="servicos[]"
+                       value="{{ servico.ID_SERVICO }}"
+                       id="servico_{{ servico.ID_SERVICO }}"
+                       class="servico-checkbox"
+                       data-modulo-id="{{ modulo.ID_MODULO }}"
+                       {{ servico.ID_SERVICO in servicosVinculados ? 'checked' : '' }}>
+                <label for="servico_{{ servico.ID_SERVICO }}" style="cursor:pointer;font-size:14px;">
+                    {% if servico.ICONE %}<i class="{{ servico.ICONE }}"></i>{% endif %}
+                    {{ servico.NOME }}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.modulo-checkbox').forEach(function(cb) {
+        cb.addEventListener('change', function() {
+            var moduloId = this.dataset.moduloId;
+            var servicos = document.querySelectorAll('.servico-checkbox[data-modulo-id="' + moduloId + '"]');
+            servicos.forEach(function(s) { s.checked = cb.checked; });
+        });
+    });
+
+    document.querySelectorAll('.servico-checkbox').forEach(function(cb) {
+        cb.addEventListener('change', function() {
+            var moduloId = this.dataset.moduloId;
+            var modulo = document.querySelector('.modulo-checkbox[data-modulo-id="' + moduloId + '"]');
+            var servicos = document.querySelectorAll('.servico-checkbox[data-modulo-id="' + moduloId + '"]');
+            var anyChecked = Array.from(servicos).some(function(s) { return s.checked; });
+            modulo.checked = anyChecked;
+            if (!anyChecked) {
+                modulo.indeterminate = false;
+            } else {
+                var allChecked = Array.from(servicos).every(function(s) { return s.checked; });
+                modulo.indeterminate = !allChecked;
+            }
+        });
+    });
+
+    document.querySelectorAll('.servico-checkbox').forEach(function(s) {
+        s.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+});
+</script>

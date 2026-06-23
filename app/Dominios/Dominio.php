@@ -13,20 +13,21 @@ abstract class Dominio
         $registros = [];
         foreach (static::lista() as $codigo => $item) {
             $registros[] = [
-                'UUID'            => \App\Helpers\Uuid::generate(static::modulo() . '_' . $codigo),
-                'MODULO'          => static::modulo(),
-                'CODIGO'          => $codigo,
-                'DESCRICAO'       => $item['descricao'],
-                'COR'             => $item['cor'],
-                'ICONE'           => $item['icone'],
-                'FINALIZADO'      => $item['finalizado'] ?? false,
-                'CONCLUIDA'       => $item['concluida'] ?? false,
-                'CANCELADA'       => $item['cancelada'] ?? false,
-                'PENDENTE'        => $item['pendente'] ?? false,
+                'UUID' => \App\Helpers\Uuid::generate(static::modulo() . '_' . $codigo),
+                'MODULO' => static::modulo(),
+                'CODIGO' => $codigo,
+                'DESCRICAO' => $item['descricao'],
+                'COR' => $item['cor'],
+                'ICONE' => $item['icone'],
+                'FINALIZADO' => $item['finalizado'] ?? false,
+                'CONCLUIDA' => $item['concluida'] ?? false,
+                'CANCELADA' => $item['cancelada'] ?? false,
+                'PENDENTE' => $item['pendente'] ?? false,
                 'BLOQUEIA_EDICAO' => $item['bloqueia_edicao'] ?? false,
-                'GERA_HISTORICO'  => $item['gera_historico'] ?? true,
+                'GERA_HISTORICO' => $item['gera_historico'] ?? true,
             ];
         }
+
         return $registros;
     }
 
@@ -43,12 +44,12 @@ abstract class Dominio
 
             $className = 'App\\Dominios\\' . $file->getBasename('.php');
 
-            if (!class_exists($className)) {
+            if (! class_exists($className)) {
                 continue;
             }
 
             $reflection = new \ReflectionClass($className);
-            if (!$reflection->isAbstract() && $reflection->isSubclassOf(self::class)) {
+            if (! $reflection->isAbstract() && $reflection->isSubclassOf(self::class)) {
                 $classes[] = $className;
             }
         }

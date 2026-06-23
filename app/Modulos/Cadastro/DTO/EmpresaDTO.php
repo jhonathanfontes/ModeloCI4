@@ -19,7 +19,8 @@ class EmpresaDTO
         public readonly ?string $situacaoDescricao = null,
         public readonly ?string $criadoEm = null,
         public readonly ?string $atualizadoEm = null,
-    ) {}
+    ) {
+    }
 
     public static function fromObject(object $row): self
     {
@@ -58,6 +59,6 @@ class EmpresaDTO
             'situacao_descricao' => $this->situacaoDescricao,
             'criado_em' => $this->criadoEm,
             'atualizado_em' => $this->atualizadoEm,
-        ], fn($v) => $v !== null);
+        ], fn ($v) => $v !== null);
     }
 }

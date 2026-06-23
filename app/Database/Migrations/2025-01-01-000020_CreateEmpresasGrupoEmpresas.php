@@ -10,56 +10,56 @@ class CreateEmpresasGrupoEmpresas extends Migration
     {
         $this->forge->addField([
             'ID_GRUPO_EMPRESA' => [
-                'type'           => 'BIGINT',
-                'unsigned'       => true,
+                'type' => 'BIGINT',
+                'unsigned' => true,
                 'auto_increment' => true,
-                'comment'        => 'Identificador único sequencial do vínculo (PK)',
+                'comment' => 'Identificador único sequencial do vínculo (PK)',
             ],
             'UUID' => [
-                'type'       => 'CHAR',
+                'type' => 'CHAR',
                 'constraint' => 36,
-                'comment'    => 'Identificador único público universal (UUID4)',
+                'comment' => 'Identificador único público universal (UUID4)',
             ],
             'GRUPO_ID' => [
-                'type'     => 'BIGINT',
+                'type' => 'BIGINT',
                 'unsigned' => true,
-                'comment'  => 'Chave estrangeira para EMPR_GRUPOS',
+                'comment' => 'Chave estrangeira para EMPR_GRUPOS',
             ],
             'EMPRESA_ID' => [
-                'type'     => 'BIGINT',
+                'type' => 'BIGINT',
                 'unsigned' => true,
-                'comment'  => 'Chave estrangeira para EMPRESAS',
+                'comment' => 'Chave estrangeira para EMPRESAS',
             ],
             'CRIADO_EM' => [
-                'type'    => 'DATETIME',
+                'type' => 'DATETIME',
                 'comment' => 'Data e hora de inserção do registro',
             ],
             'ATUALIZADO_EM' => [
-                'type'    => 'DATETIME',
+                'type' => 'DATETIME',
                 'comment' => 'Data e hora da última modificação',
             ],
             'EXCLUIDO_EM' => [
-                'type'    => 'DATETIME',
-                'null'    => true,
+                'type' => 'DATETIME',
+                'null' => true,
                 'comment' => 'Data de exclusão lógica (Soft Delete)',
             ],
             'CRIADO_POR' => [
-                'type'     => 'BIGINT',
+                'type' => 'BIGINT',
                 'unsigned' => true,
-                'null'     => true,
-                'comment'  => 'ID do usuário que criou o registro',
+                'null' => true,
+                'comment' => 'ID do usuário que criou o registro',
             ],
             'ATUALIZADO_POR' => [
-                'type'     => 'BIGINT',
+                'type' => 'BIGINT',
                 'unsigned' => true,
-                'null'     => true,
-                'comment'  => 'ID do último usuário que alterou o registro',
+                'null' => true,
+                'comment' => 'ID do último usuário que alterou o registro',
             ],
             'EXCLUIDO_POR' => [
-                'type'     => 'BIGINT',
+                'type' => 'BIGINT',
                 'unsigned' => true,
-                'null'     => true,
-                'comment'  => 'ID do usuário que executou a exclusão lógica',
+                'null' => true,
+                'comment' => 'ID do usuário que executou a exclusão lógica',
             ],
         ]);
 

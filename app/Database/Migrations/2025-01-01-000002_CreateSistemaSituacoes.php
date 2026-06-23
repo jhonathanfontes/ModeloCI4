@@ -2,8 +2,8 @@
 
 namespace App\Database\Migrations;
 
-use CodeIgniter\Database\Migration;
 use App\Dominios\Dominio;
+use CodeIgniter\Database\Migration;
 
 class CreateSistemaSituacoes extends Migration
 {
@@ -11,109 +11,109 @@ class CreateSistemaSituacoes extends Migration
     {
         $this->forge->addField([
             'ID_SITUACAO' => [
-                'type'           => 'BIGINT',
-                'unsigned'       => true,
+                'type' => 'BIGINT',
+                'unsigned' => true,
                 'auto_increment' => true,
-                'comment'        => 'Identificador único sequencial da situação (PK)',
+                'comment' => 'Identificador único sequencial da situação (PK)',
             ],
             'UUID' => [
-                'type'       => 'CHAR',
+                'type' => 'CHAR',
                 'constraint' => 36,
-                'comment'    => 'Identificador único público universal (UUID4) para uso em APIs e URLs',
+                'comment' => 'Identificador único público universal (UUID4) para uso em APIs e URLs',
             ],
             'MODULO' => [
-                'type'       => 'VARCHAR',
+                'type' => 'VARCHAR',
                 'constraint' => 100,
-                'comment'    => 'Agrupador do contexto da situação (ex: EMPRESAS, USUARIOS)',
+                'comment' => 'Agrupador do contexto da situação (ex: EMPRESAS, USUARIOS)',
             ],
             'CODIGO' => [
-                'type'       => 'VARCHAR',
+                'type' => 'VARCHAR',
                 'constraint' => 50,
-                'comment'    => 'Código textual da situação (ex: ATIVO, INATIVO, PENDENTE)',
+                'comment' => 'Código textual da situação (ex: ATIVO, INATIVO, PENDENTE)',
             ],
             'DESCRICAO' => [
-                'type'       => 'VARCHAR',
+                'type' => 'VARCHAR',
                 'constraint' => 255,
-                'comment'    => 'Descrição amigável da situação',
+                'comment' => 'Descrição amigável da situação',
             ],
             'COR' => [
-                'type'       => 'VARCHAR',
+                'type' => 'VARCHAR',
                 'constraint' => 20,
-                'null'       => true,
-                'comment'    => 'Cor hexadecimal para representação visual (ex: #28a745)',
+                'null' => true,
+                'comment' => 'Cor hexadecimal para representação visual (ex: #28a745)',
             ],
             'ICONE' => [
-                'type'       => 'VARCHAR',
+                'type' => 'VARCHAR',
                 'constraint' => 50,
-                'null'       => true,
-                'comment'    => 'Ícone para representação visual',
+                'null' => true,
+                'comment' => 'Ícone para representação visual',
             ],
             'FINALIZADO' => [
-                'type'    => 'TINYINT',
+                'type' => 'TINYINT',
                 'constraint' => 1,
                 'default' => 0,
                 'comment' => 'Indica se é uma situação finalizado (não permite transição)',
             ],
             'CONCLUIDA' => [
-                'type'    => 'TINYINT',
+                'type' => 'TINYINT',
                 'constraint' => 1,
                 'default' => 0,
                 'comment' => 'Indica se o registro foi concluído com sucesso',
             ],
             'CANCELADA' => [
-                'type'    => 'TINYINT',
+                'type' => 'TINYINT',
                 'constraint' => 1,
                 'default' => 0,
                 'comment' => 'Indica se o registro foi cancelado',
             ],
             'PENDENTE' => [
-                'type'    => 'TINYINT',
+                'type' => 'TINYINT',
                 'constraint' => 1,
                 'default' => 1,
                 'comment' => 'Indica se o registro está pendente de ação',
             ],
             'BLOQUEIA_EDICAO' => [
-                'type'    => 'TINYINT',
+                'type' => 'TINYINT',
                 'constraint' => 1,
                 'default' => 0,
                 'comment' => 'Bloqueia edição do registro quando True',
             ],
             'GERA_HISTORICO' => [
-                'type'    => 'TINYINT',
+                'type' => 'TINYINT',
                 'constraint' => 1,
                 'default' => 1,
                 'comment' => 'Gera entrada em AUDI_HISTORICOS ao transicionar para esta situação',
             ],
             'CRIADO_EM' => [
-                'type'    => 'DATETIME',
+                'type' => 'DATETIME',
                 'comment' => 'Data e hora exata de inserção do registro',
             ],
             'ATUALIZADO_EM' => [
-                'type'    => 'DATETIME',
+                'type' => 'DATETIME',
                 'comment' => 'Data e hora da última modificação efetuada',
             ],
             'EXCLUIDO_EM' => [
-                'type'    => 'DATETIME',
-                'null'    => true,
+                'type' => 'DATETIME',
+                'null' => true,
                 'comment' => 'Data de exclusão lógica (Soft Delete). Se nulo, o registro está ativo',
             ],
             'CRIADO_POR' => [
-                'type'     => 'BIGINT',
+                'type' => 'BIGINT',
                 'unsigned' => true,
-                'null'     => true,
-                'comment'  => 'ID do usuário responsável pela criação do registro',
+                'null' => true,
+                'comment' => 'ID do usuário responsável pela criação do registro',
             ],
             'ATUALIZADO_POR' => [
-                'type'     => 'BIGINT',
+                'type' => 'BIGINT',
                 'unsigned' => true,
-                'null'     => true,
-                'comment'  => 'ID do último usuário responsável por atualizar o registro',
+                'null' => true,
+                'comment' => 'ID do último usuário responsável por atualizar o registro',
             ],
             'EXCLUIDO_POR' => [
-                'type'     => 'BIGINT',
+                'type' => 'BIGINT',
                 'unsigned' => true,
-                'null'     => true,
-                'comment'  => 'ID do usuário executor da exclusão lógica do registro',
+                'null' => true,
+                'comment' => 'ID do usuário executor da exclusão lógica do registro',
             ],
         ]);
 
@@ -136,7 +136,7 @@ class CreateSistemaSituacoes extends Migration
         $registros = [];
         foreach (Dominio::classes() as $classe) {
             foreach ($classe::dadosBanco() as $dado) {
-                $dado['CRIADO_EM']    = $agora;
+                $dado['CRIADO_EM'] = $agora;
                 $dado['ATUALIZADO_EM'] = $agora;
                 $registros[] = $dado;
             }

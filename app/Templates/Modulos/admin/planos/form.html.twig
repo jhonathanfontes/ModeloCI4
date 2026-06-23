@@ -1,0 +1,167 @@
+{% extends 'Layouts/admin' %}
+{% block page_title %}{{ plano ? 'Editar Plano' : 'Novo Plano' }}{% endblock %}
+{% block page_heading %}{{ plano ? 'Editar Plano' : 'Novo Plano' }}{% endblock %}
+{% block breadcrumb_items %}
+<a href="{{ route_to('admin.dashboard') }}">Admin</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('admin.planos') }}">Planos</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">{{ plano ? 'Editar' : 'Novo' }}</span>
+{% endblock %}
+
+{% block content %}
+
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+{% if errors is defined and errors|length > 0 %}
+<div class="alert alert-error">
+    <ul style="margin:0;padding-left:20px;">
+    {% for field, msg in errors %}
+        <li>{{ msg }}</li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+{% if plano %}
+<div class="tabs">
+    <a href="{{ route_to('admin.planos.editar', plano.uuid) }}" class="tab active">Dados</a>
+    <a href="#modulos" class="tab" onclick="document.getElementById('tab-modulos').style.display='block';document.getElementById('tab-dados').style.display='none';this.classList.add('active');document.querySelector('.tabs a:first-child').classList.remove('active');return false;">Módulos</a>
+</div>
+{% endif %}
+
+<div class="card" id="tab-dados">
+    <div class="card-header">
+        <h3>{{ plano ? 'Editar Plano' : 'Novo Plano' }}</h3>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{{ route_to('admin.planos.salvar') }}" id="planoForm">
+            {% if plano %}
+            <input type="hidden" name="ID_PLANO" value="{{ plano.id }}">
+            {% endif %}
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="NOME">Nome</label>
+                    <input type="text" id="NOME" name="NOME" class="form-control" value="{{ old('NOME', plano.nome ?? '') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="DESCRICAO">Descrição</label>
+                    <textarea id="DESCRICAO" name="DESCRICAO" class="form-control" rows="3">{{ old('DESCRICAO', plano.descricao ?? '') }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="VALOR">Valor (R$)</label>
+                    <input type="number" id="VALOR" name="VALOR" class="form-control" value="{{ old('VALOR', plano.valor ?? '') }}" required step="0.01" min="0" placeholder="0,00">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="PERIODO_ID">Período</label>
+                    <select id="PERIODO_ID" name="PERIODO_ID" class="form-control">
+                        <option value="">Selecione...</option>
+                        {% for t in periodos %}
+                        <option value="{{ t.ID_TIPO }}" {{ (old('PERIODO_ID', plano.periodoId ?? '') == t.ID_TIPO) ? 'selected' : '' }}>
+                            {{ t.DESCRICAO }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="LIMITE_CLIENTES">Limite de Clientes</label>
+                    <input type="number" id="LIMITE_CLIENTES" name="LIMITE_CLIENTES" class="form-control" value="{{ old('LIMITE_CLIENTES', plano.limiteClientes ?? '') }}" min="0" placeholder="Deixe em branco para ilimitado">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="LIMITE_USUARIOS">Limite de Usuários</label>
+                    <input type="number" id="LIMITE_USUARIOS" name="LIMITE_USUARIOS" class="form-control" value="{{ old('LIMITE_USUARIOS', plano.limiteUsuarios ?? '') }}" min="0" placeholder="Deixe em branco para ilimitado">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="LIMITE_ARMAZENAMENTO_MB">Limite de Armazenamento (MB)</label>
+                    <input type="number" id="LIMITE_ARMAZENAMENTO_MB" name="LIMITE_ARMAZENAMENTO_MB" class="form-control" value="{{ old('LIMITE_ARMAZENAMENTO_MB', plano.limiteArmazenamentoMb ?? '') }}" min="0" placeholder="Deixe em branco para ilimitado">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Situação</label>
+                    <label class="toggle-switch" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:6px;">
+                        <input type="hidden" name="SITUACAO" value="0">
+                        <input type="checkbox" id="SITUACAO" name="SITUACAO" value="1" {{ old('SITUACAO', plano.situacao ?? 1) ? 'checked' : '' }} style="width:18px;height:18px;accent-color:var(--color-primary);">
+                        <span style="font-size:14px;color:var(--color-text);">{{ plano is null or plano.situacao ? 'Ativo' : 'Inativo' }}</span>
+                    </label>
+                </div>
+            </div>
+
+            {% if not plano %}
+            <div class="card" style="margin-top:24px;">
+                <div class="card-header">
+                    <h3>Módulos do Plano</h3>
+                </div>
+                <div class="card-body">
+                    {% include 'Modulos/admin/planos/_modulos_checkbox' %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="form-actions">
+                <a href="{{ route_to('admin.planos') }}" class="btn btn-outline">Cancelar</a>
+                <button type="submit" class="btn btn-primary">
+                    {{ plano ? 'Atualizar' : 'Salvar' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if plano %}
+<div class="card" id="tab-modulos" style="display:none;">
+    <div class="card-header">
+        <h3>Módulos do Plano</h3>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{{ route_to('admin.planos.salvar') }}">
+            <input type="hidden" name="ID_PLANO" value="{{ plano.id }}">
+            <input type="hidden" name="NOME" value="{{ plano.nome }}">
+            <input type="hidden" name="VALOR" value="{{ plano.valor }}">
+            <input type="hidden" name="SITUACAO" value="{{ plano.situacao ? 1 : 0 }}">
+
+            {% include 'Modulos/admin/planos/_modulos_checkbox' %}
+
+            <div class="form-actions">
+                <a href="{{ route_to('admin.planos') }}" class="btn btn-outline">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Salvar Módulos</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('SITUACAO')?.addEventListener('change', function() {
+    var label = this.nextElementSibling;
+    if (label) label.textContent = this.checked ? 'Ativo' : 'Inativo';
+});
+{% if plano %}
+document.querySelector('.tabs a[href="#modulos"]').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('tab-modulos').style.display = 'block';
+    document.getElementById('tab-dados').style.display = 'none';
+    this.classList.add('active');
+    document.querySelector('.tabs a:first-child').classList.remove('active');
+});
+document.querySelector('.tabs a:first-child').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('tab-modulos').style.display = 'none';
+    document.getElementById('tab-dados').style.display = 'block';
+    this.classList.add('active');
+    document.querySelector('.tabs a[href="#modulos"]').classList.remove('active');
+});
+{% endif %}
+</script>
+{% endblock %}

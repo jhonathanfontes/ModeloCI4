@@ -1,0 +1,253 @@
+{% extends 'Layouts/admin' %}
+{% block page_title %}Serviços - {{ empresa.nomeFantasia }}{% endblock %}
+{% block page_heading %}Serviços - {{ empresa.nomeFantasia }}{% endblock %}
+{% block breadcrumb_items %}
+<a href="{{ route_to('admin.dashboard') }}">Admin</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('admin.empresas') }}">Empresas</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('admin.empresas.visualizar', empresa.id) }}">{{ empresa.nomeFantasia }}</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">Serviços</span>
+{% endblock %}
+{% block page_actions %}{% endblock %}
+
+{% block content %}
+
+{% if success %}
+<div class="alert alert-success">{{ success }}</div>
+{% endif %}
+
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+{% if errors is defined and errors|length > 0 %}
+<div class="alert alert-error">
+    <ul style="margin:0;padding-left:20px;">
+    {% for field, msg in errors %}
+        <li>{{ msg }}</li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<div class="tabs">
+    <a href="{{ route_to('admin.empresas.visualizar', empresa.id) }}" class="tab">Dados</a>
+    <a href="{{ route_to('admin.empresas.usuarios', empresa.id) }}" class="tab">Usuários</a>
+    <a href="{{ route_to('admin.empresas.servicos', empresa.uuid) }}" class="tab tab-active">Serviços</a>
+</div>
+
+{% if licenca is null %}
+<div class="card">
+    <div class="card-header">
+        <h3>Vincular Plano</h3>
+    </div>
+    <div class="card-body">
+        <p style="margin-bottom:16px;color:var(--color-text-muted);">Selecione um plano para definir quais serviços estarão disponíveis para esta empresa.</p>
+        <form method="post" action="{{ route_to('admin.empresas.servicos.salvar-licenca', empresa.uuid) }}">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="PLANO_ID">Plano</label>
+                    <select id="PLANO_ID" name="PLANO_ID" class="form-control" required>
+                        <option value="">Selecione um plano</option>
+                        {% for p in planos %}
+                        <option value="{{ p.id }}">{{ p.nome }} - {{ moeda(p.valor) }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-actions">
+                <a href="{{ route_to('admin.empresas.visualizar', empresa.id) }}" class="btn btn-outline">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Vincular Plano</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% else %}
+
+<div class="card">
+    <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <h3>Plano: {{ licenca.PLANO_NOME }}</h3>
+        <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('plano-switch').style.display = document.getElementById('plano-switch').style.display === 'none' ? 'block' : 'none';this.textContent = this.textContent === 'Alterar Plano' ? 'Cancelar' : 'Alterar Plano'">Alterar Plano</button>
+    </div>
+    <div id="plano-switch" class="card-body" style="display:none;border-top:1px solid var(--color-border);">
+        <form method="post" action="{{ route_to('admin.empresas.servicos.salvar-licenca', empresa.uuid) }}">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="PLANO_ID_TROCAR">Selecionar novo plano</label>
+                    <select id="PLANO_ID_TROCAR" name="PLANO_ID" class="form-control">
+                        <option value="">Selecione um plano</option>
+                        {% for p in planos %}
+                        <option value="{{ p.id }}" {{ licenca.PLANO_ID == p.id ? 'selected' : '' }}>{{ p.nome }} - {{ moeda(p.valor) }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-actions" style="margin-top:12px;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('plano-switch').style.display='none';document.querySelector('.card-header button').textContent='Alterar Plano'">Cancelar</button>
+                <button type="submit" class="btn btn-primary btn-sm">Confirmar Troca</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card" style="margin-top:24px;">
+    <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <h3>{{ editMode ? 'Liberar Serviços' : 'Serviços Liberados' }}</h3>
+        {% if editMode %}
+        <a href="{{ route_to('admin.empresas.servicos', empresa.uuid) }}" class="btn btn-outline btn-sm">Cancelar</a>
+        {% else %}
+        <a href="{{ route_to('admin.empresas.servicos', empresa.uuid) }}?edit=1" class="btn btn-primary btn-sm">Liberar Serviços</a>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        {% if editMode %}
+        <form method="post" action="{{ route_to('admin.empresas.servicos.salvar', empresa.uuid) }}">
+            {% set allModulos = modulos %}
+            {% if allModulos is empty %}
+            <p style="text-align:center;padding:32px 16px;color:var(--color-text-muted);">
+                Nenhum módulo ou serviço cadastrado.
+            </p>
+            {% else %}
+            {% for modulo in allModulos %}
+            <div class="modulo-item" style="margin-bottom:16px;border:1px solid var(--color-border);border-radius:8px;padding:12px;">
+                <div class="modulo-header" style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                    <input type="checkbox"
+                           id="emp_modulo_{{ modulo.ID_MODULO }}"
+                           class="modulo-checkbox"
+                           data-modulo-id="{{ modulo.ID_MODULO }}"
+                           {{ modulo.ID_MODULO in modulosAtivosIds ? 'checked' : '' }}>
+                    {% if modulo.ICONE %}<i class="{{ modulo.ICONE }}"></i>{% endif %}
+                    <label for="emp_modulo_{{ modulo.ID_MODULO }}" style="cursor:pointer;font-weight:600;">{{ modulo.NOME }}</label>
+                </div>
+                {% if modulo.servicos is defined and modulo.servicos|length > 0 %}
+                <div class="servicos-list" style="margin-left:28px;">
+                    {% for servico in modulo.servicos %}
+                    <div class="servico-item" style="display:flex;align-items:center;gap:8px;padding:4px 0;">
+                        <input type="checkbox"
+                               name="servicos[]"
+                               value="{{ servico.ID_SERVICO }}"
+                               id="emp_servico_{{ servico.ID_SERVICO }}"
+                               class="servico-checkbox"
+                               data-modulo-id="{{ modulo.ID_MODULO }}"
+                               {{ servico.ID_SERVICO in servicosAtivosIds ? 'checked' : '' }}>
+                        <label for="emp_servico_{{ servico.ID_SERVICO }}" style="cursor:pointer;font-size:14px;">
+                            {% if servico.ICONE %}<i class="{{ servico.ICONE }}"></i>{% endif %}
+                            {{ servico.NOME }}
+                        </label>
+                        {% if servico.ID_SERVICO in servicosDoPlanoIds %}
+                        <span class="badge badge-outline" style="font-size:11px;padding:1px 6px;border-radius:4px;background:#eef2ff;color:#4f46e5;border:1px solid #c7d2fe;">plano</span>
+                        {% else %}
+                        <span class="badge badge-outline" style="font-size:11px;padding:1px 6px;border-radius:4px;background:#fef3c7;color:#b45309;border:1px solid #fde68a;">extra</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="form-actions">
+                <a href="{{ route_to('admin.empresas.servicos', empresa.uuid) }}" class="btn btn-outline">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Salvar Serviços</button>
+            </div>
+            {% endif %}
+        </form>
+        {% else %}
+        {% if modulos is empty %}
+        <p style="text-align:center;padding:32px 16px;color:var(--color-text-muted);">
+            Nenhum módulo ou serviço encontrado para este plano.
+        </p>
+        {% else %}
+        {% for modulo in modulos %}
+        <div class="modulo-item" style="margin-bottom:16px;border:1px solid var(--color-border);border-radius:8px;padding:12px;">
+            <div class="modulo-header" style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                <input type="checkbox"
+                       id="emp_modulo_{{ modulo.ID_MODULO }}"
+                       class="modulo-checkbox"
+                       data-modulo-id="{{ modulo.ID_MODULO }}"
+                       {{ modulo.ID_MODULO in modulosAtivosIds ? 'checked' : '' }}
+                       onclick="return false">
+                {% if modulo.ICONE %}<i class="{{ modulo.ICONE }}"></i>{% endif %}
+                <label for="emp_modulo_{{ modulo.ID_MODULO }}" style="font-weight:600;color:var(--color-text);">{{ modulo.NOME }}</label>
+                <span style="font-size:12px;color:var(--color-text-muted);">
+                    ({{ modulo.servicos|length }} servi{{ modulo.servicos|length == 1 ? 'ço' : 'ços' }})
+                </span>
+            </div>
+            {% if modulo.servicos is defined and modulo.servicos|length > 0 %}
+            <div class="servicos-list" style="margin-left:28px;">
+                {% for servico in modulo.servicos %}
+                <div class="servico-item" style="display:flex;align-items:center;gap:8px;padding:4px 0;">
+                    <input type="checkbox"
+                           id="emp_servico_{{ servico.ID_SERVICO }}"
+                           class="servico-checkbox"
+                           data-modulo-id="{{ modulo.ID_MODULO }}"
+                           {{ servico.ID_SERVICO in servicosAtivosIds ? 'checked' : '' }}
+                           onclick="return false">
+                    <label for="emp_servico_{{ servico.ID_SERVICO }}" style="cursor:default;font-size:14px;{{ servico.ID_SERVICO in servicosAtivosIds ? '' : 'color:var(--color-text-muted);' }}">
+                        {% if servico.ICONE %}<i class="{{ servico.ICONE }}"></i>{% endif %}
+                        {{ servico.NOME }}
+                    </label>
+                    {% if servico.ID_SERVICO in servicosDoPlanoIds %}
+                    <span class="badge badge-outline" style="font-size:11px;padding:1px 6px;border-radius:4px;background:#eef2ff;color:#4f46e5;border:1px solid #c7d2fe;">plano</span>
+                    {% else %}
+                    <span class="badge badge-outline" style="font-size:11px;padding:1px 6px;border-radius:4px;background:#fef3c7;color:#b45309;border:1px solid #fde68a;">extra</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    {% if editMode and modulos is not empty %}
+    function syncModulo(moduloId) {
+        var modulo = document.querySelector('.modulo-checkbox[data-modulo-id="' + moduloId + '"]');
+        if (!modulo) return;
+        var servicos = document.querySelectorAll('.servico-checkbox[data-modulo-id="' + moduloId + '"]');
+        var total = servicos.length;
+        var checked = Array.from(servicos).filter(function(s) { return s.checked; }).length;
+
+        if (checked === 0) {
+            modulo.checked = false;
+            modulo.indeterminate = false;
+        } else if (checked === total) {
+            modulo.checked = true;
+            modulo.indeterminate = false;
+        } else {
+            modulo.checked = false;
+            modulo.indeterminate = true;
+        }
+    }
+
+    document.querySelectorAll('.servico-checkbox').forEach(function(cb) {
+        cb.addEventListener('change', function() {
+            syncModulo(this.dataset.moduloId);
+        });
+    });
+
+    document.querySelectorAll('.modulo-checkbox').forEach(function(cb) {
+        cb.addEventListener('change', function() {
+            var servicos = document.querySelectorAll('.servico-checkbox[data-modulo-id="' + this.dataset.moduloId + '"]');
+            servicos.forEach(function(s) { s.checked = cb.checked; });
+        });
+    });
+
+    document.querySelectorAll('.servico-checkbox').forEach(function(s) {
+        s.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    {% endif %}
+})();
+</script>
+{% endblock %}
