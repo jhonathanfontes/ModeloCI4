@@ -748,3 +748,95 @@ select.form-control {
 .icon-grid-item .icon-label {
     display: none;
 }
+
+/* ── Tabs ── */
+.tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-white);
+    border-radius: var(--radius) var(--radius) 0 0;
+    border: 1px solid var(--color-border);
+    border-bottom: none;
+    overflow: hidden;
+}
+
+.tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+}
+
+.tab:hover {
+    color: var(--color-text);
+    background: var(--color-bg);
+}
+
+.tab-active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+    background: var(--color-white);
+}
+
+.tab-active:hover {
+    background: var(--color-white);
+    color: var(--color-primary);
+}
+
+.tab.disabled {
+    color: var(--color-border);
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ── View Grid ── */
+.view-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+@media (max-width: 600px) {
+    .view-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.view-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.view-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.view-value {
+    font-size: 14px;
+    color: var(--color-text);
+    padding: 4px 0;
+}
+
+.tabs + .card {
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.card-header h3 {
+    font-size: 15px;
+    font-weight: 600;
+}

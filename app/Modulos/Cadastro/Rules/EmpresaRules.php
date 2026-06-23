@@ -17,7 +17,7 @@ class EmpresaRules
             ],
             'CPF_CNPJ' => [
                 'label' => 'CPF/CNPJ',
-                'rules' => 'required|exact_length[14]|is_unique[EMPRESAS.CPF_CNPJ]',
+                'rules' => 'required|min_length[11]|max_length[14]|regex_match[/^\d+$/]|is_unique[EMPRESAS.CPF_CNPJ]',
             ],
             'EMAIL' => [
                 'label' => 'E-mail',
@@ -40,7 +40,7 @@ class EmpresaRules
 
     public static function atualizacao(?int $id = null): array
     {
-        $cpfCnpjRule = 'required|exact_length[14]';
+        $cpfCnpjRule = 'required|min_length[11]|max_length[14]|regex_match[/^\d+$/]';
         if ($id !== null) {
             $cpfCnpjRule .= '|is_unique[EMPRESAS.CPF_CNPJ,ID_EMPRESA,' . $id . ']';
         }

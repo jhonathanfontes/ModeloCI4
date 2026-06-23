@@ -29,4 +29,44 @@ document.addEventListener('DOMContentLoaded', function () {
             item.classList.add('active');
         }
     });
+
+    initMasks();
 });
+
+function initMasks() {
+    document.querySelectorAll('[data-mask]').forEach(function (el) {
+        var mask = el.getAttribute('data-mask');
+        el.addEventListener('input', function () {
+            var value = el.value.replace(/\D/g, '');
+            var pattern = getMaskPattern(mask, value.length);
+            el.value = applyMask(value, pattern);
+        });
+    });
+}
+
+function getMaskPattern(mask, len) {
+    switch (mask) {
+        case 'cpf': return '###.###.###-##';
+        case 'cnpj': return '##.###.###/####-##';
+        case 'cpfCnpj': return len <= 11 ? '###.###.###-##' : '##.###.###/####-##';
+        case 'cep': return '#####-###';
+        case 'telefone': return len <= 10 ? '(##) ####-####' : '(##) #####-####';
+        case 'celular': return '(##) #####-####';
+        case 'placa': return 'AAA-####';
+        case 'data': return '##/##/####';
+        default: return '';
+    }
+}
+
+function applyMask(value, pattern) {
+    var result = '';
+    var idx = 0;
+    for (var i = 0; i < pattern.length && idx < value.length; i++) {
+        if (pattern[i] === '#') {
+            result += value[idx++];
+        } else {
+            result += pattern[i];
+        }
+    }
+    return result;
+}

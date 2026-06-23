@@ -1,0 +1,74 @@
+{% extends 'Layouts/admin' %}
+{% block page_title %}Vincular Usuário - {{ empresa.nomeFantasia }}{% endblock %}
+{% block page_heading %}Vincular Usuário - {{ empresa.nomeFantasia }}{% endblock %}
+{% block breadcrumb_items %}
+<a href="{{ route_to('admin.dashboard') }}">Admin</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('admin.empresas') }}">Empresas</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('admin.empresas.visualizar', empresa.id) }}">{{ empresa.nomeFantasia }}</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('admin.empresas.usuarios', empresa.id) }}">Usuários</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">Vincular</span>
+{% endblock %}
+{% block page_actions %}{% endblock %}
+
+{% block content %}
+
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+<div class="tabs">
+    <a href="{{ route_to('admin.empresas.visualizar', empresa.id) }}" class="tab">Dados</a>
+    <a href="{{ route_to('admin.empresas.usuarios', empresa.id) }}" class="tab tab-active">Usuários</a>
+    <a href="#" class="tab disabled">Serviços</a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>Vincular Usuário</h3>
+    </div>
+    <div class="card-body">
+        {% if usuarios is empty %}
+        <p style="text-align:center;padding:32px 16px;color:var(--color-text-muted);">
+            Todos os usuários já estão vinculados a esta empresa.
+        </p>
+        <div class="form-actions">
+            <a href="{{ route_to('admin.empresas.usuarios', empresa.id) }}" class="btn btn-outline">Voltar</a>
+        </div>
+        {% else %}
+        <form method="post" action="{{ route_to('admin.empresas.usuarios.salvar', empresa.id) }}">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="USUARIO_ID">Usuário</label>
+                    <select id="USUARIO_ID" name="USUARIO_ID" class="form-control" required>
+                        <option value="">Selecione um usuário</option>
+                        {% for u in usuarios %}
+                        <option value="{{ u.ID_USUARIO }}">{{ u.NOME }} ({{ u.EMAIL }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="PERFIL_ID">Perfil de Acesso</label>
+                    <select id="PERFIL_ID" name="PERFIL_ID" class="form-control">
+                        <option value="">Sem perfil</option>
+                        {% for p in perfis %}
+                        <option value="{{ p.ID_PERFIL }}">{{ p.NOME }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ route_to('admin.empresas.usuarios', empresa.id) }}" class="btn btn-outline">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Vincular</button>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

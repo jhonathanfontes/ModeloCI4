@@ -14,11 +14,17 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], static functio
     $routes->post('usuarios/salvar',  'Usuarios::salvar',  ['as' => 'admin.usuarios.salvar']);
     $routes->post('usuarios/(:num)/excluir', 'Usuarios::excluir/$1', ['as' => 'admin.usuarios.excluir']);
 
-    $routes->get('empresas',        'Empresas::index',   ['as' => 'admin.empresas']);
-    $routes->get('empresas/novo',   'Empresas::novo',    ['as' => 'admin.empresas.novo']);
-    $routes->get('empresas/(:num)', 'Empresas::editar/$1', ['as' => 'admin.empresas.editar']);
+    $routes->get('empresas',                'Empresas::index',        ['as' => 'admin.empresas']);
+    $routes->get('empresas/novo',           'Empresas::novo',         ['as' => 'admin.empresas.novo']);
+    $routes->get('empresas/visualizar/(:num)', 'Empresas::visualizar/$1', ['as' => 'admin.empresas.visualizar']);
+    $routes->get('empresas/(:num)',          'Empresas::editar/$1',    ['as' => 'admin.empresas.editar']);
     $routes->post('empresas/salvar',  'Empresas::salvar',  ['as' => 'admin.empresas.salvar']);
     $routes->post('empresas/(:num)/excluir', 'Empresas::excluir/$1', ['as' => 'admin.empresas.excluir']);
+
+    $routes->get('empresas/(:num)/usuarios',          'EmpresaUsuarios::index/$1',      ['as' => 'admin.empresas.usuarios']);
+    $routes->get('empresas/(:num)/usuarios/vincular', 'EmpresaUsuarios::vincular/$1',   ['as' => 'admin.empresas.usuarios.vincular']);
+    $routes->post('empresas/(:num)/usuarios/salvar',    'EmpresaUsuarios::salvar/$1',     ['as' => 'admin.empresas.usuarios.salvar']);
+    $routes->post('empresas/(:num)/usuarios/(:num)/desvincular', 'EmpresaUsuarios::desvincular/$1/$2', ['as' => 'admin.empresas.usuarios.desvincular']);
 
     // Menu
     $routes->get('menu',                          'Menu::index',             ['as' => 'admin.menu']);

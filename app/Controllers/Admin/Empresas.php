@@ -5,6 +5,7 @@ namespace App\Controllers\Admin;
 use CodeIgniter\HTTP\ResponseInterface;
 use App\Modulos\Cadastro\Rules\EmpresaRules;
 use App\Modulos\Cadastro\Services\EmpresaService;
+use App\Modulos\Seguranca\Repositories\UsuarioRepository;
 use App\Modulos\Sistema\Models\SituacaoModel;
 
 class Empresas extends BaseController
@@ -45,6 +46,26 @@ class Empresas extends BaseController
         ]);
     }
 
+    public function visualizar(int $id): ResponseInterface|string
+    {
+        $empresa = $this->empresaService->encontrar($id);
+
+        if ($empresa === null) {
+            return redirect()->to(route_to('admin.empresas'))
+                ->with('error', 'Empresa não encontrada.');
+        }
+
+        $usuarios = service('usuarioRepository')->usuariosDaEmpresa($id);
+
+        return $this->render('Modulos/admin/empresas/visualizar', [
+            'title'    => $empresa->nomeFantasia,
+            'empresa'  => $empresa,
+            'usuarios' => $usuarios,
+            'success'  => session()->getFlashdata('success'),
+            'error'    => session()->getFlashdata('error'),
+        ]);
+    }
+
     public function editar(int $id): ResponseInterface|string
     {
         $empresa = $this->empresaService->encontrar($id);
@@ -68,14 +89,6 @@ class Empresas extends BaseController
     {
         $id = (int) ($this->request->getPost('ID_EMPRESA') ?: 0);
 
-        $rules = $id > 0 ? EmpresaRules::atualizacao($id) : EmpresaRules::cadastro();
-
-        if (! $this->validate($rules)) {
-            return redirect()->back()
-                ->withInput()
-                ->with('errors', $this->validator->getErrors());
-        }
-
         $data = [
             'RAZAO_SOCIAL'  => $this->request->getPost('RAZAO_SOCIAL'),
             'NOME_FANTASIA' => $this->request->getPost('NOME_FANTASIA'),
@@ -86,10 +99,22 @@ class Empresas extends BaseController
             'SITUACAO_ID'   => (int) $this->request->getPost('SITUACAO_ID'),
         ];
 
+        $rules = $id > 0 ? EmpresaRules::atualizacao($id) : EmpresaRules::cadastro();
+
+        if (! $this->validateData($data, $rules)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('errors', $this->validator->getErrors());
+        }
+
         $data['ATUALIZADO_POR'] = 1;
 
         if ($id > 0) {
-            $this->empresaService->atualizar($id, $data);
+            if (! $this->empresaService->atualizar($id, $data)) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Erro ao atualizar empresa. Verifique os dados.');
+            }
 
             return redirect()->to(route_to('admin.empresas'))
                 ->with('success', 'Empresa atualizada com sucesso.');

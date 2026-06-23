@@ -53,7 +53,7 @@
                             <div class="user-name">{{ e.nomeFantasia }}</div>
                         </td>
                         <td>{{ e.razaoSocial }}</td>
-                        <td>{{ e.cpfCnpj }}</td>
+                        <td>{{ cnpjCpf(e.cpfCnpj) }}</td>
                         <td>{{ e.email }}</td>
                         <td>
                             {% if e.situacaoCor %}
@@ -70,6 +70,12 @@
                         </td>
                         <td>
                             <div class="action-group">
+                                <a href="{{ route_to('admin.empresas.visualizar', e.id) }}" class="btn btn-sm btn-outline" title="Visualizar">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                </a>
                                 <a href="{{ route_to('admin.empresas.editar', e.id) }}" class="btn btn-sm btn-outline" title="Editar">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>

@@ -34,7 +34,7 @@ class EmpresaModel extends Model
         'UUID'          => 'required|max_length[36]',
         'RAZAO_SOCIAL'  => 'required|max_length[255]',
         'NOME_FANTASIA' => 'required|max_length[255]',
-        'CPF_CNPJ'      => 'required|exact_length[14]',
+        'CPF_CNPJ'      => 'required|min_length[11]|max_length[14]',
         'EMAIL'         => 'required|valid_email|max_length[255]',
         'TELEFONE'      => 'permit_empty|max_length[15]',
         'CELULAR'       => 'permit_empty|max_length[15]',

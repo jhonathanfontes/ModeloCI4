@@ -8,7 +8,19 @@
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
 <span style="color:var(--color-text-muted)">{{ empresa ? 'Editar' : 'Novo' }}</span>
 {% endblock %}
-{% block page_actions %}{% endblock %}
+{% block page_actions %}
+{% if empresa %}
+<a href="{{ route_to('admin.empresas.usuarios', empresa.id) }}" class="btn btn-outline">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+    Usuários
+</a>
+{% endif %}
+{% endblock %}
 
 {% block content %}
 
@@ -23,6 +35,14 @@
         <li>{{ msg }}</li>
     {% endfor %}
     </ul>
+</div>
+{% endif %}
+
+{% if empresa %}
+<div class="tabs">
+    <a href="{{ route_to('admin.empresas.visualizar', empresa.id) }}" class="tab">Dados</a>
+    <a href="{{ route_to('admin.empresas.usuarios', empresa.id) }}" class="tab">Usuários</a>
+    <a href="#" class="tab disabled">Serviços</a>
 </div>
 {% endif %}
 
@@ -49,7 +69,7 @@
 
                 <div class="form-group">
                     <label class="form-label" for="CPF_CNPJ">CPF/CNPJ</label>
-                    <input type="text" id="CPF_CNPJ" name="CPF_CNPJ" class="form-control" value="{{ old('CPF_CNPJ', empresa.cpfCnpj ?? '') }}" placeholder="Apenas números" required>
+                    <input type="text" id="CPF_CNPJ" name="CPF_CNPJ" class="form-control" value="{{ old('CPF_CNPJ', cnpjCpf(empresa.cpfCnpj ?? '')) }}" data-mask="cpfCnpj" placeholder="CPF ou CNPJ" required>
                 </div>
 
                 <div class="form-group">
@@ -59,12 +79,12 @@
 
                 <div class="form-group">
                     <label class="form-label" for="TELEFONE">Telefone</label>
-                    <input type="text" id="TELEFONE" name="TELEFONE" class="form-control" value="{{ old('TELEFONE', empresa.telefone ?? '') }}" placeholder="Apenas números">
+                    <input type="text" id="TELEFONE" name="TELEFONE" class="form-control" value="{{ old('TELEFONE', telefone(empresa.telefone ?? '')) }}" data-mask="telefone" placeholder="(99) 9999-9999">
                 </div>
 
                 <div class="form-group">
                     <label class="form-label" for="CELULAR">Celular</label>
-                    <input type="text" id="CELULAR" name="CELULAR" class="form-control" value="{{ old('CELULAR', empresa.celular ?? '') }}" placeholder="Apenas números">
+                    <input type="text" id="CELULAR" name="CELULAR" class="form-control" value="{{ old('CELULAR', celular(empresa.celular ?? '')) }}" data-mask="celular" placeholder="(99) 99999-9999">
                 </div>
 
                 <div class="form-group">

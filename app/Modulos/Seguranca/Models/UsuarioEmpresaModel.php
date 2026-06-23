@@ -28,7 +28,7 @@ class UsuarioEmpresaModel extends Model
     protected $deletedField  = 'EXCLUIDO_EM';
 
     protected $validationRules = [
-        'UUID'        => 'required|max_length[36]',
+        'UUID'        => 'max_length[36]',
         'USUARIO_ID'  => 'required|integer',
         'EMPRESA_ID'  => 'required|integer',
         'SITUACAO_ID' => 'required|integer',

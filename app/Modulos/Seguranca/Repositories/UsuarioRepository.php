@@ -202,6 +202,42 @@ class UsuarioRepository
         return model(UsuarioEmpresaModel::class)->delete($id);
     }
 
+    public function usuariosDaEmpresa(int $empresaId): array
+    {
+        return model(UsuarioEmpresaModel::class)
+            ->select('
+                USUA_USUARIO_EMPRESAS.*,
+                SEGU_USUARIOS.NOME AS USUARIO_NOME,
+                SEGU_USUARIOS.EMAIL AS USUARIO_EMAIL,
+                PERF_PERFIS.NOME AS PERFIL_NOME
+            ')
+            ->join('SEGU_USUARIOS', 'SEGU_USUARIOS.ID_USUARIO = USUA_USUARIO_EMPRESAS.USUARIO_ID', 'left')
+            ->join('PERF_PERFIS', 'PERF_PERFIS.ID_PERFIL = USUA_USUARIO_EMPRESAS.PERFIL_ID', 'left')
+            ->where('USUA_USUARIO_EMPRESAS.EMPRESA_ID', $empresaId)
+            ->findAll();
+    }
+
+    public function usuariosDisponiveis(int $empresaId, ?string $search = null): array
+    {
+        $db = db_connect();
+        $subQuery = $db->table('USUA_USUARIO_EMPRESAS')
+            ->select('USUARIO_ID')
+            ->where('EMPRESA_ID', $empresaId)
+            ->getCompiledSelect();
+
+        $model = model(UsuarioModel::class);
+        $model->where('SEGU_USUARIOS.ID_USUARIO NOT IN (' . $subQuery . ')', null, false);
+
+        if ($search !== null) {
+            $model->groupStart()
+                ->like('SEGU_USUARIOS.NOME', $search)
+                ->orLike('SEGU_USUARIOS.EMAIL', $search)
+                ->groupEnd();
+        }
+
+        return $model->orderBy('NOME', 'ASC')->findAll();
+    }
+
     public function empresasDoUsuario(int $usuarioId): array
     {
         return model(UsuarioEmpresaModel::class)
