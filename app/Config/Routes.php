@@ -65,4 +65,39 @@ $routes->get('painel/logout', 'Painel\Login::sair',       ['as' => 'painel.logou
 $routes->group('painel', ['namespace' => 'App\Controllers\Painel', 'filter' => 'auth'], static function (RouteCollection $routes) {
     $routes->get('/',                'Dashboard::index', ['as' => 'painel.dashboard']);
     $routes->get('empresa/ativar/(:num)', 'Empresa::ativar/$1', ['as' => 'painel.empresa.ativar']);
+    $routes->group('cadastros', static function (RouteCollection $routes) {
+        // Cadastro CRUD
+        $routes->get('clientes',              'Clientes::index',        ['as' => 'painel.clientes']);
+        $routes->get('clientes/novo',         'Clientes::novo',         ['as' => 'painel.clientes.novo']);
+        $routes->get('clientes/(:num)',       'Clientes::editar/$1',    ['as' => 'painel.clientes.editar']);
+        $routes->post('clientes/salvar',      'Clientes::salvar',       ['as' => 'painel.clientes.salvar']);
+        $routes->post('clientes/(:num)/excluir', 'Clientes::excluir/$1', ['as' => 'painel.clientes.excluir']);
+
+        $routes->get('fornecedores',              'Fornecedores::index',        ['as' => 'painel.fornecedores']);
+        $routes->get('fornecedores/novo',         'Fornecedores::novo',         ['as' => 'painel.fornecedores.novo']);
+        $routes->get('fornecedores/(:num)',       'Fornecedores::editar/$1',     ['as' => 'painel.fornecedores.editar']);
+        $routes->post('fornecedores/salvar',      'Fornecedores::salvar',        ['as' => 'painel.fornecedores.salvar']);
+        $routes->post('fornecedores/(:num)/excluir', 'Fornecedores::excluir/$1', ['as' => 'painel.fornecedores.excluir']);
+
+        $routes->get('funcionarios',              'Funcionarios::index',        ['as' => 'painel.funcionarios']);
+        $routes->get('funcionarios/novo',         'Funcionarios::novo',         ['as' => 'painel.funcionarios.novo']);
+        $routes->get('funcionarios/(:num)',       'Funcionarios::editar/$1',    ['as' => 'painel.funcionarios.editar']);
+        $routes->post('funcionarios/salvar',      'Funcionarios::salvar',       ['as' => 'painel.funcionarios.salvar']);
+        $routes->post('funcionarios/(:num)/excluir', 'Funcionarios::excluir/$1', ['as' => 'painel.funcionarios.excluir']);
+
+        $routes->get('produtos',              'Produtos::index',        ['as' => 'painel.produtos']);
+        $routes->get('produtos/novo',         'Produtos::novo',         ['as' => 'painel.produtos.novo']);
+        $routes->get('produtos/(:num)',       'Produtos::editar/$1',    ['as' => 'painel.produtos.editar']);
+        $routes->post('produtos/salvar',      'Produtos::salvar',       ['as' => 'painel.produtos.salvar']);
+        $routes->post('produtos/(:num)/excluir', 'Produtos::excluir/$1', ['as' => 'painel.produtos.excluir']);
+
+        $routes->get('servicos-cadastro',              'ServicosCadastro::index',        ['as' => 'painel.servicos-cadastro']);
+        $routes->get('servicos-cadastro/novo',         'ServicosCadastro::novo',         ['as' => 'painel.servicos-cadastro.novo']);
+        $routes->get('servicos-cadastro/(:num)',       'ServicosCadastro::editar/$1',     ['as' => 'painel.servicos-cadastro.editar']);
+        $routes->post('servicos-cadastro/salvar',      'ServicosCadastro::salvar',        ['as' => 'painel.servicos-cadastro.salvar']);
+        $routes->post('servicos-cadastro/(:num)/excluir', 'ServicosCadastro::excluir/$1', ['as' => 'painel.servicos-cadastro.excluir']);
+    });
+
+    $routes->get('(:any)/(:any)', 'Pagina::servico/$1/$2');
+    $routes->get('(:any)',        'Pagina::modulo/$1');
 });

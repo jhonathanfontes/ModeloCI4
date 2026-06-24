@@ -62,7 +62,7 @@ class ClienteModel extends Model
 
     public function comTipo(): ClienteModel
     {
-        return $this->select('CLIENTES.*, SIST_TIPOS.NOME AS TIPO_NOME')
+        return $this->select('CLIENTES.*, SIST_TIPOS.DESCRICAO AS TIPO_NOME')
             ->join('SIST_TIPOS', 'SIST_TIPOS.ID_TIPO = CLIENTES.TIPO_ID', 'left');
     }
 }

@@ -14,9 +14,12 @@ class AuthFilter implements FilterInterface
             return redirect()->to(route_to('painel.login'))
                 ->with('error', 'Faça login para acessar o painel.');
         }
+
+        return null;
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
+        return null;
     }
 }

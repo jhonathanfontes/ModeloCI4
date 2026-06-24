@@ -1,0 +1,83 @@
+{% extends 'Layouts/painel' %}
+{% block page_title %}{{ item ? 'Editar Fornecedor' : 'Novo Fornecedor' }}{% endblock %}
+{% block page_heading %}{{ item ? 'Editar Fornecedor' : 'Novo Fornecedor' }}{% endblock %}
+{% block breadcrumb_items %}
+<a href="{{ route_to('painel.dashboard') }}">Painel</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('painel.fornecedores') }}">Fornecedores</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">{{ item ? 'Editar' : 'Novo' }}</span>
+{% endblock %}
+
+{% block content %}
+
+{% if errors is defined and errors|length > 0 %}
+<div class="alert alert-error">
+    <ul style="margin:0;padding-left:20px;">
+    {% for field, msg in errors %}
+        <li>{{ msg }}</li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header">
+        <h3>{{ item ? 'Editar Fornecedor' : 'Novo Fornecedor' }}</h3>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{{ route_to('painel.fornecedores.salvar') }}">
+            {% if item %}
+            <input type="hidden" name="ID_FORNECEDOR" value="{{ item.ID_FORNECEDOR }}">
+            {% endif %}
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="NOME">Nome</label>
+                    <input type="text" id="NOME" name="NOME" class="form-control" value="{{ old('NOME', item.NOME ?? '') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="CPF_CNPJ">CPF/CNPJ</label>
+                    <input type="text" id="CPF_CNPJ" name="CPF_CNPJ" class="form-control" value="{{ old('CPF_CNPJ', cnpjCpf(item.CPF_CNPJ ?? '')) }}" data-mask="cpfCnpj" placeholder="CPF ou CNPJ">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="EMAIL">E-mail</label>
+                    <input type="email" id="EMAIL" name="EMAIL" class="form-control" value="{{ old('EMAIL', item.EMAIL ?? '') }}">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="TELEFONE">Telefone</label>
+                    <input type="text" id="TELEFONE" name="TELEFONE" class="form-control" value="{{ old('TELEFONE', telefone(item.TELEFONE ?? '')) }}" data-mask="telefone" placeholder="(99) 9999-9999">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="CELULAR">Celular</label>
+                    <input type="text" id="CELULAR" name="CELULAR" class="form-control" value="{{ old('CELULAR', celular(item.CELULAR ?? '')) }}" data-mask="celular" placeholder="(99) 99999-9999">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="SITUACAO_ID">Situação</label>
+                    <select id="SITUACAO_ID" name="SITUACAO_ID" class="form-control" required>
+                        <option value="">— Selecione —</option>
+                        {% for s in situacoes %}
+                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID', item.SITUACAO_ID ?? '') == s.ID_SITUACAO) ? 'selected' : '' }}>
+                            {{ s.DESCRICAO }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ route_to('painel.fornecedores') }}" class="btn btn-outline">Cancelar</a>
+                <button type="submit" class="btn btn-primary">
+                    {{ item ? 'Atualizar' : 'Salvar' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

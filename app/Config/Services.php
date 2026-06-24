@@ -80,6 +80,18 @@ class Services extends BaseService
     }
 
     /**
+     * Cliente service.
+     */
+    public static function cliente(bool $getShared = true): \App\Modulos\Cadastro\Services\ClienteService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('cliente');
+        }
+
+        return new \App\Modulos\Cadastro\Services\ClienteService();
+    }
+
+    /**
      * Menu service.
      */
     public static function menu(bool $getShared = true): \App\Modulos\Menu\Services\MenuService

@@ -23,11 +23,6 @@ class CreateEmpresasContatos extends Migration
             'EMPRESA_ID' => [
                 'type' => 'BIGINT',
                 'unsigned' => true,
-                'comment' => 'Chave estrangeira vinculada à empresa responsável na tabela EMPRESAS',
-            ],
-            'EMPRESA_ID' => [
-                'type' => 'BIGINT',
-                'unsigned' => true,
                 'comment' => 'Chave estrangeira vinculada à empresa na tabela EMPRESAS',
             ],
             'NOME' => [

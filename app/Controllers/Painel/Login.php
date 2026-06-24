@@ -3,10 +3,11 @@
 namespace App\Controllers\Painel;
 
 use App\Modulos\Seguranca\Models\UsuarioModel;
+use CodeIgniter\HTTP\ResponseInterface;
 
 class Login extends BaseController
 {
-    public function index(): string
+    public function index(): ResponseInterface|string
     {
         if (session()->has('usuario')) {
             return redirect()->to(route_to('painel.dashboard'));
@@ -17,11 +18,21 @@ class Login extends BaseController
         ]);
     }
 
-    public function autenticar()
+    public function autenticar(): ResponseInterface
     {
         $email = $this->request->getPost('email');
         $senha = $this->request->getPost('senha');
-        $redirect = $this->request->getPost('redirect') ?? route_to('painel.dashboard');
+        $redirect = $this->request->getPost('redirect');
+
+        if ($redirect !== null && $redirect !== '') {
+            $isLocal = (str_starts_with($redirect, '/') && ! str_contains($redirect, '://'))
+                       || str_starts_with($redirect, base_url());
+            if (! $isLocal) {
+                $redirect = route_to('painel.dashboard');
+            }
+        } else {
+            $redirect = route_to('painel.dashboard');
+        }
 
         if (empty($email) || empty($senha)) {
             return redirect()->back()
@@ -54,6 +65,8 @@ class Login extends BaseController
                 ->with('email', $email);
         }
 
+        session()->regenerate();
+
         session()->set('usuario', [
             'id' => (int) $usuario->ID_USUARIO,
             'nome' => $usuario->NOME,
@@ -84,7 +97,7 @@ class Login extends BaseController
             ->with('success', 'Bem-vindo, ' . $usuario->NOME . '!');
     }
 
-    public function sair()
+    public function sair(): ResponseInterface
     {
         session()->destroy();
 

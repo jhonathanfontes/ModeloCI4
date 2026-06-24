@@ -40,16 +40,16 @@
             <div class="nav-section">{{ modulo.nome }}</div>
             {% if modulo.servicos|length > 0 %}
             {% for servico in modulo.servicos %}
-            {% set rota = servico.urlRota ?? servico.urlModulo ?? modulo.urlRota %}
+            {% set rota = servico.urlRota ?? servico.urlModulo %}
             {% if rota %}
-            <a href="{{ route_to(rota) }}" class="nav-item {{ currentRoute starts with rota ? 'nav-item-active' : '' }}">
+            <a href="{{ base_url(moduloAtivo ~ rota) }}" class="nav-item">
                 {% if servico.icone %}<i class="{{ servico.icone }}" style="width:20px;text-align:center;"></i>{% endif %}
                 {{ servico.nome }}
             </a>
             {% endif %}
             {% endfor %}
             {% elseif modulo.urlRota %}
-            <a href="{{ route_to(modulo.urlRota) }}" class="nav-item {{ currentRoute starts with modulo.urlRota ? 'nav-item-active' : '' }}">
+            <a href="{{ base_url(moduloAtivo ~ modulo.urlRota) }}" class="nav-item">
                 {% if modulo.icone %}<i class="{{ modulo.icone }}" style="width:20px;text-align:center;"></i>{% endif %}
                 {{ modulo.nome }}
             </a>

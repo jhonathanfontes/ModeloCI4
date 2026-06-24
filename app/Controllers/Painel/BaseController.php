@@ -46,6 +46,10 @@ abstract class BaseController extends \App\Controllers\BaseController
             }
         }
 
+        if (! isset($data['moduloAtivo'])) {
+            $data['moduloAtivo'] = 'painel';
+        }
+
         if (! isset($data['currentRoute'])) {
             $matchedRoute = service('router')->getMatchedRoute();
             $data['currentRoute'] = $matchedRoute['name'] ?? '';

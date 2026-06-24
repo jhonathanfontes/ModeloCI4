@@ -20,4 +20,16 @@ class JWT extends BaseConfig
      * Token expiration time in seconds (e.g., 3600 for 1 hour).
      */
     public int $expiresIn = 3600;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $envKey = env('JWT_SECRET');
+        if ($envKey !== null && $envKey !== '') {
+            $this->secretKey = (string) $envKey;
+        } elseif ($this->secretKey === 'your_secret_key_here' && ENVIRONMENT === 'production') {
+            throw new \RuntimeException('A chave secreta do JWT (JWT_SECRET) não está configurada no ambiente de produção.');
+        }
+    }
 }

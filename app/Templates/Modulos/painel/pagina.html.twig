@@ -1,0 +1,57 @@
+{% extends 'Layouts/painel' %}
+{% block page_title %}{{ pageTitle }}{% endblock %}
+{% block page_heading %}{{ pageTitle }}{% endblock %}
+{% block breadcrumb_items %}
+<a href="{{ route_to('painel.dashboard') }}">Painel</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">{{ pageTitle }}</span>
+{% endblock %}
+
+{% block content %}
+
+{% if pageDescription %}
+<div class="card" style="margin-bottom:24px;">
+    <div class="card-body">
+        <p style="color:var(--color-text-muted);margin:0;">{{ pageDescription }}</p>
+    </div>
+</div>
+{% endif %}
+
+{% if servicos is defined and servicos|length > 0 %}
+<div class="card">
+    <div class="card-header">
+        <h3>Serviços</h3>
+    </div>
+    <div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;">
+            {% for s in servicos %}
+            <a href="{{ base_url(moduloAtivo ~ s.URL_ROTA) }}" style="display:flex;align-items:center;gap:12px;padding:16px;border:1px solid var(--color-border);border-radius:8px;text-decoration:none;color:var(--color-text);transition:border-color 0.15s,box-shadow 0.15s;">
+                {% if s.ICONE %}
+                <i class="{{ s.ICONE }}" style="font-size:20px;color:var(--color-primary);width:24px;text-align:center;"></i>
+                {% endif %}
+                <div>
+                    <div style="font-weight:600;">{{ s.NOME }}</div>
+                    {% if s.DESCRICAO %}
+                    <div style="font-size:13px;color:var(--color-text-muted);">{{ s.DESCRICAO }}</div>
+                    {% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% elseif servicoNome is not defined %}
+<div class="card">
+    <div class="card-body" style="text-align:center;padding:48px 24px;">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-muted)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:16px;">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+        </svg>
+        <p style="color:var(--color-text-muted);font-size:15px;">Nenhum serviço disponível neste módulo.</p>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -20,8 +20,8 @@ class TwigFunction
             return old($key, $default);
         }));
 
-        static::registerMascaras($twig);
-        static::registerFormatacoes($twig);
+        self::registerMascaras($twig);
+        self::registerFormatacoes($twig);
     }
 
     private static function registerMascaras(\Twig\Environment $twig): void

@@ -1,0 +1,108 @@
+{% extends 'Layouts/painel' %}
+{% block page_title %}{{ item ? 'Editar Produto' : 'Novo Produto' }}{% endblock %}
+{% block page_heading %}{{ item ? 'Editar Produto' : 'Novo Produto' }}{% endblock %}
+{% block breadcrumb_items %}
+<a href="{{ route_to('painel.dashboard') }}">Painel</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('painel.produtos') }}">Produtos</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">{{ item ? 'Editar' : 'Novo' }}</span>
+{% endblock %}
+
+{% block content %}
+
+{% if errors is defined and errors|length > 0 %}
+<div class="alert alert-error">
+    <ul style="margin:0;padding-left:20px;">
+    {% for field, msg in errors %}
+        <li>{{ msg }}</li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header">
+        <h3>{{ item ? 'Editar Produto' : 'Novo Produto' }}</h3>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{{ route_to('painel.produtos.salvar') }}">
+            {% if item %}
+            <input type="hidden" name="ID_PRODUTO" value="{{ item.ID_PRODUTO }}">
+            {% endif %}
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="NOME">Nome</label>
+                    <input type="text" id="NOME" name="NOME" class="form-control" value="{{ old('NOME', item.NOME ?? '') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="DESCRICAO">Descrição</label>
+                    <textarea id="DESCRICAO" name="DESCRICAO" class="form-control" rows="3">{{ old('DESCRICAO', item.DESCRICAO ?? '') }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="CODIGO_BARRAS">Código de Barras</label>
+                    <input type="text" id="CODIGO_BARRAS" name="CODIGO_BARRAS" class="form-control" value="{{ old('CODIGO_BARRAS', item.CODIGO_BARRAS ?? '') }}" placeholder="Apenas números">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="CODIGO_INTERNO">Código Interno</label>
+                    <input type="text" id="CODIGO_INTERNO" name="CODIGO_INTERNO" class="form-control" value="{{ old('CODIGO_INTERNO', item.CODIGO_INTERNO ?? '') }}">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="PRECO_CUSTO">Preço de Custo (R$)</label>
+                    <input type="number" id="PRECO_CUSTO" name="PRECO_CUSTO" class="form-control" value="{{ old('PRECO_CUSTO', item.PRECO_CUSTO ?? '') }}" step="0.01" min="0" placeholder="0,00">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="PRECO_VENDA">Preço de Venda (R$)</label>
+                    <input type="number" id="PRECO_VENDA" name="PRECO_VENDA" class="form-control" value="{{ old('PRECO_VENDA', item.PRECO_VENDA ?? '') }}" step="0.01" min="0" placeholder="0,00" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="UNIDADE">Unidade</label>
+                    <select id="UNIDADE" name="UNIDADE" class="form-control">
+                        <option value="">— Selecione —</option>
+                        <option value="UN" {{ (old('UNIDADE', item.UNIDADE ?? '') == 'UN') ? 'selected' : '' }}>Unidade</option>
+                        <option value="KG" {{ (old('UNIDADE', item.UNIDADE ?? '') == 'KG') ? 'selected' : '' }}>Quilograma</option>
+                        <option value="G" {{ (old('UNIDADE', item.UNIDADE ?? '') == 'G') ? 'selected' : '' }}>Grama</option>
+                        <option value="L" {{ (old('UNIDADE', item.UNIDADE ?? '') == 'L') ? 'selected' : '' }}>Litro</option>
+                        <option value="ML" {{ (old('UNIDADE', item.UNIDADE ?? '') == 'ML') ? 'selected' : '' }}>Mililitro</option>
+                        <option value="M" {{ (old('UNIDADE', item.UNIDADE ?? '') == 'M') ? 'selected' : '' }}>Metro</option>
+                        <option value="CX" {{ (old('UNIDADE', item.UNIDADE ?? '') == 'CX') ? 'selected' : '' }}>Caixa</option>
+                        <option value="PC" {{ (old('UNIDADE', item.UNIDADE ?? '') == 'PC') ? 'selected' : '' }}>Peça</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="ESTOQUE">Estoque</label>
+                    <input type="number" id="ESTOQUE" name="ESTOQUE" class="form-control" value="{{ old('ESTOQUE', item.ESTOQUE ?? '') }}" step="0.001" min="0" placeholder="0">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="SITUACAO_ID">Situação</label>
+                    <select id="SITUACAO_ID" name="SITUACAO_ID" class="form-control" required>
+                        <option value="">— Selecione —</option>
+                        {% for s in situacoes %}
+                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID', item.SITUACAO_ID ?? '') == s.ID_SITUACAO) ? 'selected' : '' }}>
+                            {{ s.DESCRICAO }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ route_to('painel.produtos') }}" class="btn btn-outline">Cancelar</a>
+                <button type="submit" class="btn btn-primary">
+                    {{ item ? 'Atualizar' : 'Salvar' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
