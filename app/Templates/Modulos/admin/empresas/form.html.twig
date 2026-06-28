@@ -10,7 +10,7 @@
 {% endblock %}
 {% block page_actions %}
 {% if empresa %}
-<a href="{{ route_to('admin.empresas.usuarios', empresa.id) }}" class="btn btn-outline">
+<a href="{{ route_to('admin.empresas.usuarios', empresa.uuid) }}" class="btn btn-outline">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
         <circle cx="9" cy="7" r="4"/>
@@ -40,8 +40,10 @@
 
 {% if empresa %}
 <div class="tabs">
-    <a href="{{ route_to('admin.empresas.visualizar', empresa.id) }}" class="tab">Dados</a>
-    <a href="{{ route_to('admin.empresas.usuarios', empresa.id) }}" class="tab">Usuários</a>
+    <a href="{{ route_to('admin.empresas.visualizar', empresa.uuid) }}" class="tab">Dados</a>
+    <a href="{{ route_to('admin.empresas.enderecos', empresa.uuid) }}" class="tab">Endereços</a>
+    <a href="{{ route_to('admin.empresas.contatos', empresa.uuid) }}" class="tab">Contatos</a>
+    <a href="{{ route_to('admin.empresas.usuarios', empresa.uuid) }}" class="tab">Usuários</a>
     <a href="{{ route_to('admin.empresas.servicos', empresa.uuid) }}" class="tab">Serviços</a>
 </div>
 {% endif %}
@@ -52,6 +54,7 @@
     </div>
     <div class="card-body">
         <form method="post" action="{{ route_to('admin.empresas.salvar') }}">
+            {{ csrf_field()|raw }}
             {% if empresa %}
             <input type="hidden" name="ID_EMPRESA" value="{{ empresa.id }}">
             {% endif %}
@@ -87,16 +90,8 @@
                     <input type="text" id="CELULAR" name="CELULAR" class="form-control" value="{{ old('CELULAR', celular(empresa.celular ?? '')) }}" data-mask="celular" placeholder="(99) 99999-9999">
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="SITUACAO_ID">Situação</label>
-                    <select id="SITUACAO_ID" name="SITUACAO_ID" class="form-control" required>
-                        {% for s in situacoes %}
-                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID', empresa.situacaoId ?? '') == s.ID_SITUACAO) ? 'selected' : '' }}>
-                            {{ s.DESCRICAO }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
+                {% import 'Componentes/selectSituacao' as situacao %}
+                {{ situacao.select('SITUACAO_ID', old('SITUACAO_ID', empresa.situacaoId ?? ''), 'SITUACAO_REGISTRO', 'ATIVO,INATIVO,PENDENTE,BLOQUEADO', { label: 'Situação', required: true }) }}
             </div>
 
             <div class="form-actions">
@@ -109,4 +104,66 @@
     </div>
 </div>
 
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cnpjInput = document.getElementById('CPF_CNPJ');
+        if (cnpjInput) {
+            cnpjInput.addEventListener('blur', function() {
+                const cnpj = this.value.replace(/\D/g, '');
+                if (cnpj.length === 14) {
+                    const fields = ['RAZAO_SOCIAL', 'NOME_FANTASIA', 'EMAIL', 'TELEFONE'];
+                    fields.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.placeholder = 'Carregando...';
+                    });
+
+                    fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error('CNPJ não encontrado ou erro na API');
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.razao_social && document.getElementById('RAZAO_SOCIAL')) {
+                                document.getElementById('RAZAO_SOCIAL').value = data.razao_social;
+                                document.getElementById('RAZAO_SOCIAL').dispatchEvent(new Event('input'));
+                            }
+                            if (document.getElementById('NOME_FANTASIA')) {
+                                document.getElementById('NOME_FANTASIA').value = data.nome_fantasia || data.razao_social || '';
+                                document.getElementById('NOME_FANTASIA').dispatchEvent(new Event('input'));
+                            }
+                            if (data.email && document.getElementById('EMAIL')) {
+                                document.getElementById('EMAIL').value = data.email;
+                                document.getElementById('EMAIL').dispatchEvent(new Event('input'));
+                            }
+                            if (data.ddd_telefone_1 && document.getElementById('TELEFONE')) {
+                                document.getElementById('TELEFONE').value = data.ddd_telefone_1;
+                                document.getElementById('TELEFONE').dispatchEvent(new Event('input'));
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Erro ao buscar CNPJ:', err);
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    title: 'Aviso',
+                                    text: 'Não foi possível encontrar dados para este CNPJ automaticamente.',
+                                    icon: 'info',
+                                    confirmButtonText: 'Ok'
+                                });
+                            } else {
+                                alert('Não foi possível encontrar dados para este CNPJ automaticamente.');
+                            }
+                        })
+                        .finally(() => {
+                            fields.forEach(id => {
+                                const el = document.getElementById(id);
+                                if (el) el.placeholder = '';
+                            });
+                        });
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
 {% endblock %}

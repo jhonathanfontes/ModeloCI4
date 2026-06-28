@@ -21,7 +21,7 @@ class PlanoRules
             ],
             'PERIODO_ID' => [
                 'label' => 'Período',
-                'rules' => 'permit_empty|integer|is_not_unique[SIST_TIPOS.ID_TIPO]',
+                'rules' => 'permit_empty|max_length[50]',
             ],
             'LIMITE_CLIENTES' => [
                 'label' => 'Limite de Clientes',

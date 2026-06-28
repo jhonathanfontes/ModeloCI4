@@ -1,0 +1,24 @@
+{% macro select(name, selected = '', modulo = '', codigos = '', options = {}) %}
+    {% set items = dominio_tipos(modulo, codigos) %}
+    {% set id = options.id ?? name %}
+    {% set col = options.col ?? 'col-6' %}
+    {% set required = options.required ? ' required' : '' %}
+    {% set disabled = options.disabled ? ' disabled' : '' %}
+    {% set label = options.label ?? 'Tipo' %}
+    {% set value_key = options.value_key ?? 'ID_TIPO' %}
+    {% set empty_option = options.empty_option is defined ? options.empty_option : '— Selecione —' %}
+
+    <div class="form-group {{ col }}">
+        {% if label is not empty %}
+        <label class="form-label" for="{{ id }}">{{ label }}{% if options.required %}<span style="color:var(--color-error);margin-left:2px;">*</span>{% endif %}</label>
+        {% endif %}
+        <select id="{{ id }}" name="{{ name }}" class="form-control"{{ required }}{{ disabled }}>
+            {% if empty_option is not null %}
+            <option value="">{{ empty_option }}</option>
+            {% endif %}
+            {% for item in items %}
+            <option value="{{ attribute(item, value_key) }}"{{ selected == attribute(item, value_key) ? ' selected' : '' }}>{{ item.DESCRICAO }}</option>
+            {% endfor %}
+        </select>
+    </div>
+{% endmacro %}

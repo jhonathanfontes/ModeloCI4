@@ -1,0 +1,106 @@
+{% extends 'Layouts/admin' %}
+{% block page_title %}{{ item ? 'Editar Contato' : 'Novo Contato' }} - {{ empresa.nomeFantasia }}{% endblock %}
+{% block page_heading %}{{ item ? 'Editar Contato' : 'Novo Contato' }} - {{ empresa.nomeFantasia }}{% endblock %}
+{% block breadcrumb_items %}
+<a href="{{ route_to('admin.dashboard') }}">Admin</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('admin.empresas') }}">Empresas</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('admin.empresas.visualizar', empresa.uuid) }}">{{ empresa.nomeFantasia }}</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('admin.empresas.contatos', empresa.uuid) }}">Contatos</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">{{ item ? 'Editar' : 'Novo' }}</span>
+{% endblock %}
+{% block page_actions %}{% endblock %}
+
+{% block content %}
+
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+{% if errors is defined and errors|length > 0 %}
+<div class="alert alert-error">
+    <ul style="margin:0;padding-left:20px;">
+    {% for field, msg in errors %}
+        <li>{{ msg }}</li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<div class="tabs">
+    <a href="{{ route_to('admin.empresas.visualizar', empresa.uuid) }}" class="tab">Dados</a>
+    <a href="{{ route_to('admin.empresas.enderecos', empresa.uuid) }}" class="tab">Endereços</a>
+    <a href="{{ route_to('admin.empresas.contatos', empresa.uuid) }}" class="tab tab-active">Contatos</a>
+    <a href="{{ route_to('admin.empresas.usuarios', empresa.uuid) }}" class="tab">Usuários</a>
+    <a href="{{ route_to('admin.empresas.servicos', empresa.uuid) }}" class="tab">Serviços</a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>{{ item ? 'Editar Contato' : 'Novo Contato' }}</h3>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{{ route_to('admin.empresas.contatos.salvar', empresa.uuid) }}">
+            {{ csrf_field()|raw }}
+            {% if item %}
+                <input type="hidden" name="ID_CONTATO" value="{{ item.ID_CONTATO }}">
+            {% endif %}
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="NOME">Nome</label>
+                    <input type="text" id="NOME" name="NOME" class="form-control" value="{{ old('NOME', item.NOME ?? '') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="CARGO">Cargo</label>
+                    <input type="text" id="CARGO" name="CARGO" class="form-control" value="{{ old('CARGO', item.CARGO ?? '') }}">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="TIPO_ID">Tipo</label>
+                    <select id="TIPO_ID" name="TIPO_ID" class="form-control">
+                        <option value="">— Selecione —</option>
+                        {% for t in dominio_tipos('TIPO_CONTATO') %}
+                        <option value="{{ t.CODIGO }}" {{ (old('TIPO_ID', item.CODIGO ?? '') == t.CODIGO) ? 'selected' : '' }}>
+                            {{ t.DESCRICAO }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="TELEFONE">Telefone</label>
+                    <input type="text" id="TELEFONE" name="TELEFONE" class="form-control" value="{{ old('TELEFONE', telefone(item.TELEFONE ?? '')) }}" data-mask="telefone" placeholder="(99) 9999-9999">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="EMAIL">E-mail</label>
+                    <input type="email" id="EMAIL" name="EMAIL" class="form-control" value="{{ old('EMAIL', item.EMAIL ?? '') }}">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="WHATSAPP">WhatsApp</label>
+                    <input type="text" id="WHATSAPP" name="WHATSAPP" class="form-control" value="{{ old('WHATSAPP', celular(item.WHATSAPP ?? '')) }}" data-mask="celular" placeholder="(99) 99999-9999">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <input type="checkbox" name="PRINCIPAL" value="1" {{ (old('PRINCIPAL', item.PRINCIPAL ?? '') == '1' or item is null) ? 'checked' : '' }}>
+                        Contato principal
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ route_to('admin.empresas.contatos', empresa.uuid) }}" class="btn btn-outline">Cancelar</a>
+                <button type="submit" class="btn btn-primary">{{ item ? 'Atualizar' : 'Salvar' }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

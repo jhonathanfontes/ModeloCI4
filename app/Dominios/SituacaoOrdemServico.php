@@ -6,11 +6,11 @@ class SituacaoOrdemServico extends Dominio
 {
     public const MODULO = 'SITUACAO_ORDEM_SERVICO';
 
-    public const ABERTA = 'O301';
-    public const EM_ATENDIMENTO = 'O302';
-    public const AGUARDANDO_PECA = 'O303';
-    public const CONCLUIDA = 'O304';
-    public const ENCERRADA = 'O305';
+    public const ABERTA = 'ABERTA';
+    public const EM_ATENDIMENTO = 'EM_ATENDIMENTO';
+    public const AGUARDANDO_PECA = 'AGUARDANDO_PECA';
+    public const CONCLUIDA = 'CONCLUIDA';
+    public const ENCERRADA = 'ENCERRADA';
 
     public static function modulo(): string
     {
@@ -22,6 +22,7 @@ class SituacaoOrdemServico extends Dominio
         return [
 
             self::ABERTA => [
+                'id_situacao' => 50,
                 'codigo' => self::ABERTA,
                 'descricao' => 'Aberta',
                 'cor' => 'primary',
@@ -35,6 +36,7 @@ class SituacaoOrdemServico extends Dominio
             ],
 
             self::EM_ATENDIMENTO => [
+                'id_situacao' => 51,
                 'codigo' => self::EM_ATENDIMENTO,
                 'descricao' => 'Em Atendimento',
                 'cor' => 'info',
@@ -48,6 +50,7 @@ class SituacaoOrdemServico extends Dominio
             ],
 
             self::AGUARDANDO_PECA => [
+                'id_situacao' => 52,
                 'codigo' => self::AGUARDANDO_PECA,
                 'descricao' => 'Aguardando Peça',
                 'cor' => 'warning',
@@ -61,6 +64,7 @@ class SituacaoOrdemServico extends Dominio
             ],
 
             self::CONCLUIDA => [
+                'id_situacao' => 53,
                 'codigo' => self::CONCLUIDA,
                 'descricao' => 'Concluída',
                 'cor' => 'success',
@@ -74,6 +78,7 @@ class SituacaoOrdemServico extends Dominio
             ],
 
             self::ENCERRADA => [
+                'id_situacao' => 54,
                 'codigo' => self::ENCERRADA,
                 'descricao' => 'Encerrada',
                 'cor' => 'dark',

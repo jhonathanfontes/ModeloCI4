@@ -24,6 +24,7 @@
     <div class="card-header"><h3>{{ modulo ? 'Editar Módulo' : 'Novo Módulo' }}</h3></div>
     <div class="card-body">
         <form method="post" action="{{ route_to('admin.menu.modulo.salvar') }}">
+            {{ csrf_field()|raw }}
             {% if modulo %}<input type="hidden" name="ID_MODULO" value="{{ modulo.id }}">{% endif %}
 
             <div class="form-grid">
@@ -59,7 +60,7 @@
                     <label class="form-label" for="SITUACAO_ID">Situação</label>
                     <select id="SITUACAO_ID" name="SITUACAO_ID" class="form-control" required>
                         {% for s in situacoes %}
-                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID', modulo.situacaoId ?? '') == s.ID_SITUACAO) ? 'selected' : '' }}>{{ s.DESCRICAO }}</option>
+                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID', situacaoId ?? '') == s.ID_SITUACAO) ? 'selected' : '' }}>{{ s.DESCRICAO }}</option>
                         {% endfor %}
                     </select>
                 </div>

@@ -38,6 +38,7 @@
     </div>
     <div class="card-body">
         <form method="post" action="{{ route_to('admin.planos.salvar') }}" id="planoForm">
+            {{ csrf_field()|raw }}
             {% if plano %}
             <input type="hidden" name="ID_PLANO" value="{{ plano.id }}">
             {% endif %}
@@ -123,6 +124,7 @@
     </div>
     <div class="card-body">
         <form method="post" action="{{ route_to('admin.planos.salvar') }}">
+            {{ csrf_field()|raw }}
             <input type="hidden" name="ID_PLANO" value="{{ plano.id }}">
             <input type="hidden" name="NOME" value="{{ plano.nome }}">
             <input type="hidden" name="VALOR" value="{{ plano.valor }}">

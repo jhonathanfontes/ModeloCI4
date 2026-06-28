@@ -38,15 +38,16 @@ class Menu extends BaseController
             'title' => 'Novo Módulo',
             'modulo' => null,
             'situacoes' => $this->listarSituacoes(),
+            'situacaoId' => '',
             'success' => session()->getFlashdata('success'),
             'error' => session()->getFlashdata('error'),
             'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
-    public function moduloEditar(int $id): ResponseInterface|string
+    public function moduloEditar(string $uuid): ResponseInterface|string
     {
-        $modulo = $this->menuService->encontrarModulo($id);
+        $modulo = $this->menuService->encontrarModuloPorUuid($uuid);
 
         if ($modulo === null) {
             return redirect()->to(route_to('admin.menu'))
@@ -57,6 +58,7 @@ class Menu extends BaseController
             'title' => 'Editar Módulo',
             'modulo' => $modulo,
             'situacoes' => $this->listarSituacoes(),
+            'situacaoId' => $modulo->SITUACAO_ID,
             'success' => session()->getFlashdata('success'),
             'error' => session()->getFlashdata('error'),
             'errors' => session()->getFlashdata('errors') ?? [],
@@ -103,16 +105,16 @@ class Menu extends BaseController
             ->with('success', 'Módulo criado com sucesso.');
     }
 
-    public function moduloExcluir(int $id): ResponseInterface
+    public function moduloExcluir(string $uuid): ResponseInterface
     {
-        $modulo = $this->menuService->encontrarModulo($id);
+        $modulo = $this->menuService->encontrarModuloPorUuid($uuid);
 
         if ($modulo === null) {
             return redirect()->back()
                 ->with('error', 'Módulo não encontrado.');
         }
 
-        $this->menuService->excluirModulo($id);
+        $this->menuService->excluirModulo($modulo->id);
 
         return redirect()->to(route_to('admin.menu'))
             ->with('success', 'Módulo cancelado com sucesso.');
@@ -120,9 +122,9 @@ class Menu extends BaseController
 
     // ─── Serviços ──────────────────────────────────────────────────
 
-    public function servicos(int $moduloId): ResponseInterface|string
+    public function servicos(string $moduloUuid): ResponseInterface|string
     {
-        $modulo = $this->menuService->encontrarModulo($moduloId);
+        $modulo = $this->menuService->encontrarModuloPorUuid($moduloUuid);
 
         if ($modulo === null) {
             return redirect()->to(route_to('admin.menu'))
@@ -130,7 +132,7 @@ class Menu extends BaseController
         }
 
         $perPage = (int) ($this->request->getGet('per_page') ?: 20);
-        $result = $this->menuService->listarServicos($moduloId, $perPage);
+        $result = $this->menuService->listarServicos($modulo->id, $perPage);
 
         return $this->render('Modulos/admin/menu/servicos', [
             'title' => 'Serviços: ' . $modulo->nome,
@@ -142,9 +144,9 @@ class Menu extends BaseController
         ]);
     }
 
-    public function servicoNovo(int $moduloId): ResponseInterface|string
+    public function servicoNovo(string $moduloUuid): ResponseInterface|string
     {
-        $modulo = $this->menuService->encontrarModulo($moduloId);
+        $modulo = $this->menuService->encontrarModuloPorUuid($moduloUuid);
 
         if ($modulo === null) {
             return redirect()->to(route_to('admin.menu'))
@@ -156,15 +158,16 @@ class Menu extends BaseController
             'modulo' => $modulo,
             'servico' => null,
             'situacoes' => $this->listarSituacoes(),
+            'situacaoId' => '',
             'success' => session()->getFlashdata('success'),
             'error' => session()->getFlashdata('error'),
             'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
-    public function servicoEditar(int $id): ResponseInterface|string
+    public function servicoEditar(string $uuid): ResponseInterface|string
     {
-        $servico = $this->menuService->encontrarServico($id);
+        $servico = $this->menuService->encontrarServicoPorUuid($uuid);
 
         if ($servico === null) {
             return redirect()->to(route_to('admin.menu'))
@@ -178,6 +181,7 @@ class Menu extends BaseController
             'modulo' => $modulo,
             'servico' => $servico,
             'situacoes' => $this->listarSituacoes(),
+            'situacaoId' => $servico->SITUACAO_ID,
             'success' => session()->getFlashdata('success'),
             'error' => session()->getFlashdata('error'),
             'errors' => session()->getFlashdata('errors') ?? [],
@@ -209,10 +213,12 @@ class Menu extends BaseController
 
         $data['ATUALIZADO_POR'] = 1;
 
+        $modulo = $this->menuService->encontrarModulo($moduloId);
+
         if ($id > 0) {
             $this->menuService->atualizarServico($id, $data);
 
-            return redirect()->to(route_to('admin.menu.servicos', $moduloId))
+            return redirect()->to(route_to('admin.menu.servicos', $modulo->uuid))
                 ->with('success', 'Serviço atualizado com sucesso.');
         }
 
@@ -224,61 +230,68 @@ class Menu extends BaseController
                 ->with('error', 'Erro ao criar serviço. Verifique os dados.');
         }
 
-        return redirect()->to(route_to('admin.menu.servicos', $moduloId))
+        return redirect()->to(route_to('admin.menu.servicos', $modulo->uuid))
             ->with('success', 'Serviço criado com sucesso.');
     }
 
-    public function servicoCopiar(int $id): ResponseInterface
+    public function servicoCopiar(string $uuid): ResponseInterface
     {
-        $servico = $this->menuService->encontrarServico($id);
+        $servico = $this->menuService->encontrarServicoPorUuid($uuid);
 
         if ($servico === null) {
             return redirect()->back()
                 ->with('error', 'Serviço não encontrado.');
         }
 
-        $insertId = $this->menuService->copiarServico($id);
+        $insertId = $this->menuService->copiarServico($servico->id);
+
+        $modulo = $this->menuService->encontrarModulo($servico->moduloId);
 
         if ($insertId === null) {
-            return redirect()->to(route_to('admin.menu.servicos', $servico->moduloId))
+            return redirect()->to(route_to('admin.menu.servicos', $modulo->uuid))
                 ->with('error', 'Erro ao copiar serviço.');
         }
 
-        return redirect()->to(route_to('admin.menu.servicos', $servico->moduloId))
+        return redirect()->to(route_to('admin.menu.servicos', $modulo->uuid))
             ->with('success', 'Serviço copiado com sucesso.');
     }
 
-    public function servicoExcluir(int $id): ResponseInterface
+    public function servicoExcluir(string $uuid): ResponseInterface
     {
-        $servico = $this->menuService->encontrarServico($id);
+        $servico = $this->menuService->encontrarServicoPorUuid($uuid);
 
         if ($servico === null) {
             return redirect()->back()
                 ->with('error', 'Serviço não encontrado.');
         }
 
-        $this->menuService->excluirServico($id);
+        $this->menuService->excluirServico($servico->id);
 
-        return redirect()->to(route_to('admin.menu.servicos', $servico->moduloId))
+        $modulo = $this->menuService->encontrarModulo($servico->moduloId);
+
+        return redirect()->to(route_to('admin.menu.servicos', $modulo->uuid))
             ->with('success', 'Serviço cancelado com sucesso.');
     }
 
     // ─── Funcionalidades ───────────────────────────────────────────
 
-    public function funcionalidades(int $servicoId): ResponseInterface|string
+    public function funcionalidades(string $servicoUuid): ResponseInterface|string
     {
-        $servico = $this->menuService->encontrarServico($servicoId);
+        $servico = $this->menuService->encontrarServicoPorUuid($servicoUuid);
 
         if ($servico === null) {
             return redirect()->to(route_to('admin.menu'))
                 ->with('error', 'Serviço não encontrado.');
         }
 
+        $modulo = $this->menuService->encontrarModulo($servico->moduloId);
+
         $perPage = (int) ($this->request->getGet('per_page') ?: 20);
-        $result = $this->menuService->listarFuncionalidades($servicoId, $perPage);
+        $result = $this->menuService->listarFuncionalidades($servico->id, $perPage);
 
         return $this->render('Modulos/admin/menu/funcionalidades', [
             'title' => 'Funcionalidades: ' . $servico->nome,
+            'modulo' => $modulo,
             'servico' => $servico,
             'funcionalidades' => $result['itens'],
             'pager' => $result['pager'],
@@ -287,9 +300,9 @@ class Menu extends BaseController
         ]);
     }
 
-    public function funcionalidadeNovo(int $servicoId): ResponseInterface|string
+    public function funcionalidadeNovo(string $servicoUuid): ResponseInterface|string
     {
-        $servico = $this->menuService->encontrarServico($servicoId);
+        $servico = $this->menuService->encontrarServicoPorUuid($servicoUuid);
 
         if ($servico === null) {
             return redirect()->to(route_to('admin.menu'))
@@ -301,15 +314,16 @@ class Menu extends BaseController
             'servico' => $servico,
             'funcionalidade' => null,
             'situacoes' => $this->listarSituacoes(),
+            'situacaoId' => '',
             'success' => session()->getFlashdata('success'),
             'error' => session()->getFlashdata('error'),
             'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
-    public function funcionalidadeEditar(int $id): ResponseInterface|string
+    public function funcionalidadeEditar(string $uuid): ResponseInterface|string
     {
-        $funcionalidade = $this->menuService->encontrarFuncionalidade($id);
+        $funcionalidade = $this->menuService->encontrarFuncionalidadePorUuid($uuid);
 
         if ($funcionalidade === null) {
             return redirect()->to(route_to('admin.menu'))
@@ -323,6 +337,7 @@ class Menu extends BaseController
             'servico' => $servico,
             'funcionalidade' => $funcionalidade,
             'situacoes' => $this->listarSituacoes(),
+            'situacaoId' => $funcionalidade->SITUACAO_ID,
             'success' => session()->getFlashdata('success'),
             'error' => session()->getFlashdata('error'),
             'errors' => session()->getFlashdata('errors') ?? [],
@@ -350,10 +365,12 @@ class Menu extends BaseController
 
         $data['ATUALIZADO_POR'] = 1;
 
+        $servico = $this->menuService->encontrarServico($servicoId);
+
         if ($id > 0) {
             $this->menuService->atualizarFuncionalidade($id, $data);
 
-            return redirect()->to(route_to('admin.menu.funcionalidades', $servicoId))
+            return redirect()->to(route_to('admin.menu.funcionalidades', $servico->uuid))
                 ->with('success', 'Funcionalidade atualizada com sucesso.');
         }
 
@@ -365,22 +382,24 @@ class Menu extends BaseController
                 ->with('error', 'Erro ao criar funcionalidade. Verifique os dados.');
         }
 
-        return redirect()->to(route_to('admin.menu.funcionalidades', $servicoId))
+        return redirect()->to(route_to('admin.menu.funcionalidades', $servico->uuid))
             ->with('success', 'Funcionalidade criada com sucesso.');
     }
 
-    public function funcionalidadeExcluir(int $id): ResponseInterface
+    public function funcionalidadeExcluir(string $uuid): ResponseInterface
     {
-        $funcionalidade = $this->menuService->encontrarFuncionalidade($id);
+        $funcionalidade = $this->menuService->encontrarFuncionalidadePorUuid($uuid);
 
         if ($funcionalidade === null) {
             return redirect()->back()
                 ->with('error', 'Funcionalidade não encontrada.');
         }
 
-        $this->menuService->excluirFuncionalidade($id);
+        $this->menuService->excluirFuncionalidade($funcionalidade->id);
 
-        return redirect()->to(route_to('admin.menu.funcionalidades', $funcionalidade->servicoId))
+        $servico = $this->menuService->encontrarServico($funcionalidade->servicoId);
+
+        return redirect()->to(route_to('admin.menu.funcionalidades', $servico->uuid))
             ->with('success', 'Funcionalidade cancelada com sucesso.');
     }
 
@@ -388,9 +407,6 @@ class Menu extends BaseController
 
     private function listarSituacoes(): array
     {
-        return model(SituacaoModel::class)
-            ->where('MODULO', \App\Dominios\SituacaoRegistro::MODULO)
-            ->orderBy('DESCRICAO', 'ASC')
-            ->findAll();
+        return array_values(SituacaoRegistro::listarPorModulo(SituacaoRegistro::MODULO));
     }
 }

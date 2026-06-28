@@ -6,7 +6,7 @@
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
 <a href="{{ route_to('admin.menu') }}">Menu</a>
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
-<a href="{{ route_to('admin.menu.servicos', modulo.id) }}">{{ modulo.nome }}</a>
+<a href="{{ route_to('admin.menu.servicos', modulo.uuid) }}">{{ modulo.nome }}</a>
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
 <span style="color:var(--color-text-muted)">{{ servico ? 'Editar' : 'Novo' }}</span>
 {% endblock %}
@@ -26,6 +26,7 @@
     <div class="card-header"><h3>{{ servico ? 'Editar Serviço' : 'Novo Serviço' }}</h3></div>
     <div class="card-body">
         <form method="post" action="{{ route_to('admin.menu.servico.salvar') }}">
+            {{ csrf_field()|raw }}
             {% if servico %}<input type="hidden" name="ID_SERVICO" value="{{ servico.id }}">{% endif %}
             <input type="hidden" name="MODULO_ID" value="{{ modulo.id }}">
 
@@ -72,14 +73,14 @@
                     <label class="form-label" for="SITUACAO_ID">Situação</label>
                     <select id="SITUACAO_ID" name="SITUACAO_ID" class="form-control" required>
                         {% for s in situacoes %}
-                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID', servico.situacaoId ?? '') == s.ID_SITUACAO) ? 'selected' : '' }}>{{ s.DESCRICAO }}</option>
+                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID', situacaoId ?? '') == s.ID_SITUACAO) ? 'selected' : '' }}>{{ s.DESCRICAO }}</option>
                         {% endfor %}
                     </select>
                 </div>
             </div>
 
             <div class="form-actions">
-                <a href="{{ route_to('admin.menu.servicos', modulo.id) }}" class="btn btn-outline">Cancelar</a>
+                <a href="{{ route_to('admin.menu.servicos', modulo.uuid) }}" class="btn btn-outline">Cancelar</a>
                 <button type="submit" class="btn btn-primary">{{ servico ? 'Atualizar' : 'Salvar' }}</button>
             </div>
         </form>

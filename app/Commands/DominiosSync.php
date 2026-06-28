@@ -5,20 +5,19 @@ namespace App\Commands;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
 
+/**
+ * @deprecated Use `sistema:situacao-sync` instead.
+ */
 class DominiosSync extends BaseCommand
 {
-    protected $group = 'Dominios';
+    protected $group = 'Sistema';
     protected $name = 'dominios:sync';
-    protected $description = 'Sincroniza as situações dos domínios com a tabela SIST_SITUACOES.';
+    protected $description = '[DEPRECATED] Use sistema:situacao-sync.';
 
     public function run(array $params)
     {
-        $service = service('situacao');
+        CLI::write('Este comando foi substituído por sistema:situacao-sync.', 'red');
 
-        CLI::write('Sincronizando domínios com SIST_SITUACOES...', 'yellow');
-
-        $total = $service->sync();
-
-        CLI::write("Pronto! {$total} situações sincronizadas.", 'green');
+        $this->call('sistema:situacao-sync', $params);
     }
 }

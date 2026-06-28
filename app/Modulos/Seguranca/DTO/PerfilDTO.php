@@ -26,7 +26,7 @@ class PerfilDTO
             nome: $row->NOME,
             descricao: $row->DESCRICAO ?? null,
             nivel: $row->NIVEL ?? null,
-            situacaoId: (int) $row->SITUACAO_ID,
+            situacaoId: $row->SITUACAO_ID,
             situacaoCodigo: $row->SITUACAO_CODIGO ?? null,
             situacaoCor: $row->SITUACAO_COR ?? null,
             criadoEm: $row->CRIADO_EM ?? null,

@@ -1,0 +1,148 @@
+{# ── Twig Form Macro Components ── #}
+
+{# Input macro (text, number, email, password, hidden, etc.) #}
+{% macro input(name, label, value = '', type = 'text', options = {}) %}
+    {% set id = options.id ?? name %}
+    {% set col = options.col ?? 'col-6' %}
+    {% set required = options.required ? 'required' : '' %}
+    {% set disabled = options.disabled ? 'disabled' : '' %}
+    {% set placeholder = options.placeholder ?? '' %}
+    {% set icon = options.icon ?? '' %}
+    {% set help = options.help ?? '' %}
+    {% set mask = options.mask ?? '' %}
+    {% set min = options.min is defined ? 'min="' ~ options.min ~ '"' : '' %}
+    {% set max = options.max is defined ? 'max="' ~ options.max ~ '"' : '' %}
+    {% set step = options.step is defined ? 'step="' ~ options.step ~ '"' : '' %}
+
+    {% if type == 'hidden' %}
+        <input type="hidden" id="{{ id }}" name="{{ name }}" value="{{ value }}">
+    {% else %}
+        <div class="form-group {{ col }}">
+            {% if label %}
+                <label class="form-label" for="{{ id }}">
+                    {{ label }}{% if options.required %}<span style="color:var(--color-error);margin-left:2px;">*</span>{% endif %}
+                </label>
+            {% endif %}
+
+            {% if icon %}
+                <div class="input-group">
+                    <span class="input-group-icon">
+                        <i class="fa-solid {{ icon }}"></i>
+                    </span>
+                    <input type="{{ type }}" id="{{ id }}" name="{{ name }}" class="form-control" value="{{ value }}" placeholder="{{ placeholder }}" {{ required }} {{ disabled }} {{ min }} {{ max }} {{ step }} {% if mask %}data-mask="{{ mask }}"{% endif %}>
+                </div>
+            {% else %}
+                <input type="{{ type }}" id="{{ id }}" name="{{ name }}" class="form-control" value="{{ value }}" placeholder="{{ placeholder }}" {{ required }} {{ disabled }} {{ min }} {{ max }} {{ step }} {% if mask %}data-mask="{{ mask }}"{% endif %}>
+            {% endif %}
+
+            {% if help %}
+                <span class="form-help">{{ help }}</span>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{# Select macro #}
+{% macro select(name, label, value = '', items = [], options = {}) %}
+    {% set id = options.id ?? name %}
+    {% set col = options.col ?? 'col-6' %}
+    {% set required = options.required ? 'required' : '' %}
+    {% set disabled = options.disabled ? 'disabled' : '' %}
+    {% set empty_option = options.empty_option ?? '— Selecione —' %}
+    {% set value_key = options.value_key ?? '' %}
+    {% set text_key = options.text_key ?? '' %}
+    {% set help = options.help ?? '' %}
+
+    <div class="form-group {{ col }}">
+        {% if label %}
+            <label class="form-label" for="{{ id }}">
+                {{ label }}{% if options.required %}<span style="color:var(--color-error);margin-left:2px;">*</span>{% endif %}
+            </label>
+        {% endif %}
+
+        <select id="{{ id }}" name="{{ name }}" class="form-control" {{ required }} {{ disabled }}>
+            {% if empty_option is not null %}
+                <option value="">{{ empty_option }}</option>
+            {% endif %}
+
+            {% for item in items %}
+                {# Tenta inferir as chaves de valor e texto caso não tenham sido informadas #}
+                {% set item_val = '' %}
+                {% set item_txt = '' %}
+
+                {% if item is iterable or value_key is not empty or text_key is not empty or item.ID_SITUACAO is defined or item.ID_TIPO is defined or item.id is defined or item.value is defined %}
+                    {% if value_key %}
+                        {% set item_val = item[value_key] is defined ? item[value_key] : attribute(item, value_key) %}
+                    {% else %}
+                        {# Auto-identificação de chaves comuns #}
+                        {% if item.ID_SITUACAO is defined %}{% set item_val = item.ID_SITUACAO %}
+                        {% elseif item.ID_TIPO is defined %}{% set item_val = item.ID_TIPO %}
+                        {% elseif item.value is defined %}{% set item_val = item.value %}
+                        {% elseif item.id is defined %}{% set item_val = item.id %}
+                        {% endif %}
+                    {% endif %}
+
+                    {% if text_key %}
+                        {% set item_txt = item[text_key] is defined ? item[text_key] : attribute(item, text_key) %}
+                    {% else %}
+                        {% if item.DESCRICAO is defined %}{% set item_txt = item.DESCRICAO %}
+                        {% elseif item.NOME is defined %}{% set item_txt = item.NOME %}
+                        {% elseif item.label is defined %}{% set item_txt = item.label %}
+                        {% elseif item.text is defined %}{% set item_txt = item.text %}
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    {# Se for um array de valores simples (ex: lista de siglas de UF ou unidades) #}
+                    {% set item_val = item %}
+                    {% set item_txt = item %}
+                {% endif %}
+
+                <option value="{{ item_val }}" {{ (value == item_val) ? 'selected' : '' }}>
+                    {{ item_txt }}
+                </option>
+            {% endfor %}
+        </select>
+
+        {% if help %}
+            <span class="form-help">{{ help }}</span>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{# Textarea macro #}
+{% macro textarea(name, label, value = '', options = {}) %}
+    {% set id = options.id ?? name %}
+    {% set col = options.col ?? 'col-12' %}
+    {% set required = options.required ? 'required' : '' %}
+    {% set disabled = options.disabled ? 'disabled' : '' %}
+    {% set placeholder = options.placeholder ?? '' %}
+    {% set rows = options.rows ?? 3 %}
+    {% set help = options.help ?? '' %}
+
+    <div class="form-group {{ col }}">
+        {% if label %}
+            <label class="form-label" for="{{ id }}">
+                {{ label }}{% if options.required %}<span style="color:var(--color-error);margin-left:2px;">*</span>{% endif %}
+            </label>
+        {% endif %}
+
+        <textarea id="{{ id }}" name="{{ name }}" class="form-control" rows="{{ rows }}" placeholder="{{ placeholder }}" {{ required }} {{ disabled }}>{{ value }}</textarea>
+
+        {% if help %}
+            <span class="form-help">{{ help }}</span>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{# Actions macro #}
+{% macro actions(cancel_url, submit_text = 'Salvar', options = {}) %}
+    <div class="form-actions col-12">
+        <a href="{{ cancel_url }}" class="btn btn-outline">Cancelar</a>
+        <button type="submit" class="btn btn-primary">
+            {% if options.icon %}
+                <i class="fa-solid {{ options.icon }}"></i>
+            {% endif %}
+            {{ submit_text }}
+        </button>
+    </div>
+{% endmacro %}

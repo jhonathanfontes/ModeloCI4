@@ -33,7 +33,7 @@ class EmpresaDTO
             email: $row->EMAIL,
             telefone: $row->TELEFONE ?? null,
             celular: $row->CELULAR ?? null,
-            situacaoId: (int) $row->SITUACAO_ID,
+            situacaoId: $row->SITUACAO_ID,
             situacaoCodigo: $row->SITUACAO_CODIGO ?? null,
             situacaoCor: $row->SITUACAO_COR ?? null,
             situacaoDescricao: $row->SITUACAO_DESCRICAO ?? null,

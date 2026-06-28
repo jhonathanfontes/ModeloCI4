@@ -4,9 +4,14 @@ namespace App\Modulos\Cadastro\Models;
 
 use App\Helpers\Uuid;
 use CodeIgniter\Model;
+use App\Traits\UuidModelTrait;
 
+/**
+ * @method \stdClass|null findByUuid(string $uuid)
+ */
 class ClienteUsuarioModel extends Model
 {
+    use UuidModelTrait;
     protected $table = 'CLIE_USUARIO';
     protected $primaryKey = 'ID_CLIE_USUARIO';
     protected $useAutoIncrement = true;

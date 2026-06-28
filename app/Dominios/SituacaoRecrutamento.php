@@ -6,11 +6,11 @@ class SituacaoRecrutamento extends Dominio
 {
     public const MODULO = 'SITUACAO_RECRUTAMENTO';
 
-    public const SOLICITADO = 'R301';
-    public const TRIAGEM = 'R302';
-    public const ENTREVISTA = 'R303';
-    public const APROVADO = 'R304';
-    public const CONTRATADO = 'R305';
+    public const SOLICITADO = 'SOLICITADO';
+    public const TRIAGEM = 'TRIAGEM';
+    public const ENTREVISTA = 'ENTREVISTA';
+    public const APROVADO = 'APROVADO';
+    public const CONTRATADO = 'CONTRATADO';
 
     public static function modulo(): string
     {
@@ -22,6 +22,7 @@ class SituacaoRecrutamento extends Dominio
         return [
 
             self::SOLICITADO => [
+                'id_situacao' => 60,
                 'codigo' => self::SOLICITADO,
                 'descricao' => 'Solicitado',
                 'cor' => 'primary',
@@ -35,6 +36,7 @@ class SituacaoRecrutamento extends Dominio
             ],
 
             self::TRIAGEM => [
+                'id_situacao' => 61,
                 'codigo' => self::TRIAGEM,
                 'descricao' => 'Triagem',
                 'cor' => 'info',
@@ -48,6 +50,7 @@ class SituacaoRecrutamento extends Dominio
             ],
 
             self::ENTREVISTA => [
+                'id_situacao' => 62,
                 'codigo' => self::ENTREVISTA,
                 'descricao' => 'Entrevista',
                 'cor' => 'info',
@@ -61,6 +64,7 @@ class SituacaoRecrutamento extends Dominio
             ],
 
             self::APROVADO => [
+                'id_situacao' => 63,
                 'codigo' => self::APROVADO,
                 'descricao' => 'Aprovado',
                 'cor' => 'success',
@@ -74,6 +78,7 @@ class SituacaoRecrutamento extends Dominio
             ],
 
             self::CONTRATADO => [
+                'id_situacao' => 64,
                 'codigo' => self::CONTRATADO,
                 'descricao' => 'Contratado',
                 'cor' => 'success',

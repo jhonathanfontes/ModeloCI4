@@ -4,9 +4,14 @@ namespace App\Modulos\Cadastro\Models;
 
 use App\Helpers\Uuid;
 use CodeIgniter\Model;
+use App\Traits\UuidModelTrait;
 
+/**
+ * @method \stdClass|null findByUuid(string $uuid)
+ */
 class FornecedorModel extends Model
 {
+    use UuidModelTrait;
     protected $table = 'FORNECEDORES';
     protected $primaryKey = 'ID_FORNECEDOR';
     protected $useAutoIncrement = true;
@@ -18,6 +23,7 @@ class FornecedorModel extends Model
         'EMPRESA_ID',
         'NOME',
         'CPF_CNPJ',
+        'TIPO_ID',
         'EMAIL',
         'TELEFONE',
         'CELULAR',

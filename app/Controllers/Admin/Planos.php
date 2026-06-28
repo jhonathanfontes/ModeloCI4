@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Admin;
 
+use App\Dominios\SituacaoGeral;
 use App\Modulos\Planos\Rules\PlanoRules;
 use App\Modulos\Planos\Services\PlanoService;
 use App\Modulos\Sistema\Models\TipoModel;
@@ -156,8 +157,8 @@ class Planos extends BaseController
     {
         return model(TipoModel::class)
             ->where('SITUACAO_ID', service('situacao')->getId(
-                \App\Dominios\SituacaoRegistro::MODULO,
-                \App\Dominios\SituacaoRegistro::ATIVO
+                SituacaoGeral::modulo(),
+                SituacaoGeral::ATIVO
             ))
             ->orderBy('DESCRICAO', 'ASC')
             ->findAll();

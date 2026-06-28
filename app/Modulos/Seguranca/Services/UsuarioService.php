@@ -25,6 +25,15 @@ class UsuarioService
         ];
     }
 
+    public function encontrarPorUuid(string $uuid): ?UsuarioDTO
+    {
+        $model = model(UsuarioModel::class);
+
+        $row = $model->comSituacao()->findByUuid($uuid);
+
+        return $row !== null ? UsuarioDTO::fromObject($row) : null;
+    }
+
     public function encontrar(int $id): ?UsuarioDTO
     {
         $model = model(UsuarioModel::class);

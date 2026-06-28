@@ -31,15 +31,51 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     initMasks();
+    initConfirmForms();
 });
+
+function initConfirmForms() {
+    document.addEventListener('submit', function (e) {
+        var form = e.target;
+        var message = form.getAttribute('data-confirm');
+        if (message) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Confirmar',
+                text: message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sim',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#dc3545'
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        }
+    });
+}
 
 function initMasks() {
     document.querySelectorAll('[data-mask]').forEach(function (el) {
         var mask = el.getAttribute('data-mask');
+        
+        // Format initial value if any
+        if (el.value) {
+            var val = el.value.replace(/\D/g, '');
+            var pat = getMaskPattern(mask, val.length);
+            if (pat) {
+                el.value = applyMask(val, pat);
+            }
+        }
+
         el.addEventListener('input', function () {
             var value = el.value.replace(/\D/g, '');
             var pattern = getMaskPattern(mask, value.length);
-            el.value = applyMask(value, pattern);
+            if (pattern) {
+                el.value = applyMask(value, pattern);
+            }
         });
     });
 }
@@ -48,10 +84,12 @@ function getMaskPattern(mask, len) {
     switch (mask) {
         case 'cpf': return '###.###.###-##';
         case 'cnpj': return '##.###.###/####-##';
+        case 'cpf_cnpj':
         case 'cpfCnpj': return len <= 11 ? '###.###.###-##' : '##.###.###/####-##';
         case 'cep': return '#####-###';
-        case 'telefone': return len <= 10 ? '(##) ####-####' : '(##) #####-####';
-        case 'celular': return '(##) #####-####';
+        case 'phone':
+        case 'telefone':
+        case 'celular': return len <= 10 ? '(##) ####-####' : '(##) #####-####';
         case 'placa': return 'AAA-####';
         case 'data': return '##/##/####';
         default: return '';

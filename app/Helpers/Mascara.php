@@ -30,6 +30,10 @@ class Mascara
     {
         $digits = preg_replace('/\D/', '', $value);
 
+        if ($digits === '') {
+            return '';
+        }
+
         return preg_replace(
             '/(\d{5})(\d{3})/',
             '$1-$2',

@@ -33,7 +33,7 @@ class EmpresaRules
             ],
             'SITUACAO_ID' => [
                 'label' => 'Situação',
-                'rules' => 'required|integer|is_not_unique[SIST_SITUACOES.ID_SITUACAO]',
+                'rules' => 'required|max_length[50]',
             ],
         ];
     }

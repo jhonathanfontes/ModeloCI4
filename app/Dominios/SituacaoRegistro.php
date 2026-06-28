@@ -2,162 +2,102 @@
 
 namespace App\Dominios;
 
-class SituacaoRegistro extends Dominio
+class SituacaoRegistro
 {
     public const MODULO = 'SITUACAO_REGISTRO';
 
-    public const HABILITADO = 'S101';
-    public const DESABILITADO = 'S102';
-    public const ATIVO = 'S201';
-    public const INATIVO = 'S202';
-    public const PENDENTE = 'S203';
-    public const BLOQUEADO = 'S204';
-    public const CANCELADO = 'S205';
-    public const EXCLUIDO = 'S206';
+    public const HABILITADO = 'HABILITADO';
+    public const DESABILITADO = 'DESABILITADO';
+    public const ATIVO = 'ATIVO';
+    public const INATIVO = 'INATIVO';
+    public const PENDENTE = 'PENDENTE';
+    public const BLOQUEADO = 'BLOQUEADO';
+    public const CANCELADO = 'CANCELADO';
+    public const EXCLUIDO = 'EXCLUIDO';
 
-    public static function modulo(): string
+    public const MODULO_PEDIDO = 'SITUACAO_PEDIDO';
+    public const MODULO_FINANCEIRA = 'SITUACAO_FINANCEIRA';
+    public const MODULO_PROCESSO = 'SITUACAO_PROCESSO';
+    public const MODULO_ORDEM_SERVICO = 'SITUACAO_ORDEM_SERVICO';
+    public const MODULO_RECRUTAMENTO = 'SITUACAO_RECRUTAMENTO';
+
+    public static function classes(): array
     {
-        return self::MODULO;
+        return [
+            SituacaoGeral::class,
+            SituacaoPedido::class,
+            SituacaoFinanceira::class,
+            SituacaoProcesso::class,
+            SituacaoOrdemServico::class,
+            SituacaoRecrutamento::class,
+        ];
     }
 
     public static function lista(): array
     {
-        return [
-
-            self::HABILITADO => [
-                'codigo' => self::HABILITADO,
-                'descricao' => 'Habilitado',
-                'cor' => 'success',
-                'icone' => 'fas fa-check-circle',
-                'finalizado' => false,
-                'concluida' => false,
-                'cancelada' => false,
-                'pendente' => false,
-                'bloqueia_edicao' => false,
-                'gera_historico' => true,
-            ],
-
-            self::DESABILITADO => [
-                'codigo' => self::DESABILITADO,
-                'descricao' => 'Desabilitado',
-                'cor' => 'danger',
-                'icone' => 'fas fa-ban',
-                'finalizado' => false,
-                'concluida' => false,
-                'cancelada' => false,
-                'pendente' => false,
-                'bloqueia_edicao' => true,
-                'gera_historico' => true,
-            ],
-
-            self::ATIVO => [
-                'codigo' => self::ATIVO,
-                'descricao' => 'Ativo',
-                'cor' => 'success',
-                'icone' => 'fas fa-check-circle',
-                'finalizado' => false,
-                'concluida' => false,
-                'cancelada' => false,
-                'pendente' => false,
-                'bloqueia_edicao' => false,
-                'gera_historico' => true,
-            ],
-
-            self::INATIVO => [
-                'codigo' => self::INATIVO,
-                'descricao' => 'Inativo',
-                'cor' => 'secondary',
-                'icone' => 'fas fa-pause-circle',
-                'finalizado' => false,
-                'concluida' => false,
-                'cancelada' => false,
-                'pendente' => false,
-                'bloqueia_edicao' => true,
-                'gera_historico' => true,
-            ],
-
-            self::BLOQUEADO => [
-                'codigo' => self::BLOQUEADO,
-                'descricao' => 'Bloqueado',
-                'cor' => 'danger',
-                'icone' => 'fas fa-lock',
-                'finalizado' => false,
-                'concluida' => false,
-                'cancelada' => false,
-                'pendente' => false,
-                'bloqueia_edicao' => true,
-                'gera_historico' => true,
-            ],
-
-            self::PENDENTE => [
-                'codigo' => self::PENDENTE,
-                'descricao' => 'Pendente',
-                'cor' => 'warning',
-                'icone' => 'fas fa-clock',
-                'finalizado' => false,
-                'concluida' => false,
-                'cancelada' => false,
-                'pendente' => true,
-                'bloqueia_edicao' => false,
-                'gera_historico' => true,
-            ],
-
-            self::CANCELADO => [
-                'codigo' => self::CANCELADO,
-                'descricao' => 'Cancelado',
-                'cor' => 'dark',
-                'icone' => 'fas fa-ban',
-                'finalizado' => true,
-                'concluida' => false,
-                'cancelada' => true,
-                'pendente' => false,
-                'bloqueia_edicao' => true,
-                'gera_historico' => true,
-            ],
-
-            self::EXCLUIDO => [
-                'codigo' => self::EXCLUIDO,
-                'descricao' => 'Excluído',
-                'cor' => 'danger',
-                'icone' => 'fas fa-trash',
-                'finalizado' => true,
-                'concluida' => false,
-                'cancelada' => true,
-                'pendente' => false,
-                'bloqueia_edicao' => true,
-                'gera_historico' => true,
-            ],
-
-        ];
+        $todos = [];
+        foreach (static::classes() as $classe) {
+            $modulo = $classe::modulo();
+            foreach ($classe::lista() as $codigo => $item) {
+                $item['modulo'] = $modulo;
+                $todos[$codigo] = $item;
+            }
+        }
+        return $todos;
     }
 
-    public static function cadastro(): array
+    public static function dadosBanco(): array
     {
-        return self::obter([
-            self::HABILITADO,
-            self::DESABILITADO,
-        ]);
+        $registros = [];
+        foreach (static::classes() as $classe) {
+            $modulo = $classe::modulo();
+            foreach ($classe::lista() as $codigo => $item) {
+                $registros[] = [
+                    'ID_SITUACAO' => $item['id_situacao'],
+                    'UUID' => \App\Helpers\Uuid::generate('SIST_SITUACOES_' . $modulo . '_' . $codigo),
+                    'MODULO' => $modulo,
+                    'CODIGO' => $codigo,
+                    'DESCRICAO' => $item['descricao'],
+                    'COR' => $item['cor'],
+                    'ICONE' => $item['icone'],
+                    'FINALIZADO' => $item['finalizado'] ?? false,
+                    'CONCLUIDA' => $item['concluida'] ?? false,
+                    'CANCELADA' => $item['cancelada'] ?? false,
+                    'PENDENTE' => $item['pendente'] ?? false,
+                    'BLOQUEIA_EDICAO' => $item['bloqueia_edicao'] ?? false,
+                    'GERA_HISTORICO' => $item['gera_historico'] ?? true,
+                ];
+            }
+        }
+        return $registros;
     }
 
-    public static function situacao(): array
+    public static function listarPorModulo(string $modulo): array
     {
-        return self::obter([
-            self::ATIVO,
-            self::INATIVO,
-            self::PENDENTE,
-            self::BLOQUEADO,
-            self::CANCELADO,
-            self::EXCLUIDO,
-        ]);
+        return array_filter(
+            static::lista(),
+            fn(array $item) => ($item['modulo'] ?? '') === $modulo
+        );
     }
 
-    public static function usuario(): array
+    public static function item(string $codigo): ?array
     {
-        return self::obter([
-            self::ATIVO,
-            self::INATIVO,
-            self::PENDENTE,
-            self::BLOQUEADO,
-        ]);
+        return static::lista()[$codigo] ?? null;
     }
+
+    public static function descricao(string $codigo): string
+    {
+        return static::item($codigo)['descricao'] ?? '';
+    }
+
+    public static function cor(string $codigo): string
+    {
+        return static::item($codigo)['cor'] ?? 'secondary';
+    }
+
+    public static function icone(string $codigo): string
+    {
+        return static::item($codigo)['icone'] ?? '';
+    }
+
 }

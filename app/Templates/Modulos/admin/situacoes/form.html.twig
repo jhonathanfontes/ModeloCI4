@@ -1,0 +1,114 @@
+{% extends 'Layouts/admin' %}
+
+{% block page_title %}{{ situacao ? 'Editar' : 'Nova' }} Situação{% endblock %}
+{% block page_heading %}{{ situacao ? 'Editar' : 'Nova' }} Situação{% endblock %}
+
+{% block breadcrumb_items %}
+<a href="{{ route_to('admin.dashboard') }}">Admin</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('admin.situacoes') }}">Situações</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">{{ situacao ? 'Editar' : 'Nova' }}</span>
+{% endblock %}
+
+{% block content %}
+{% if success %}<div class="alert alert-success">{{ success }}</div>{% endif %}
+{% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+
+<div class="card">
+    <div class="card-header"><h3>{{ situacao ? 'Editar Situação' : 'Nova Situação' }}</h3></div>
+    <div class="card-body">
+        <form method="post" action="{{ route_to('admin.situacoes.salvar') }}">
+            {{ csrf_field()|raw }}
+            {% if situacao %}
+            <input type="hidden" name="ID_SITUACAO" value="{{ situacao.ID_SITUACAO }}">
+            {% endif %}
+
+            {% if errors is not empty %}
+            <div class="alert alert-error">
+                <strong>Verifique os seguintes erros:</strong>
+                <ul style="margin:8px 0 0 20px;">
+                    {% for field, msg in errors %}
+                    <li>{{ msg }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="MODULO">Módulo</label>
+                    <input type="text" id="MODULO" name="MODULO" class="form-control" value="{{ old('MODULO', situacao.MODULO ?? '') }}" required maxlength="100" placeholder="Ex: CADASTRO_CLIENTE">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="CODIGO">Código</label>
+                    <input type="text" id="CODIGO" name="CODIGO" class="form-control" value="{{ old('CODIGO', situacao.CODIGO ?? '') }}" {{ situacao ? 'readonly' : 'required' }} maxlength="50" placeholder="Ex: ATIVO, CANCELADO">
+                    {% if situacao %}
+                    <small style="color:var(--color-text-muted);font-size:11px;">O código não pode ser alterado após a criação.</small>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="DESCRICAO">Descrição</label>
+                    <input type="text" id="DESCRICAO" name="DESCRICAO" class="form-control" value="{{ old('DESCRICAO', situacao.DESCRICAO ?? '') }}" required maxlength="255" placeholder="Ex: Ativo, Cancelado, Pendente">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="COR">Cor (hex)</label>
+                    <input type="color" id="COR" name="COR" class="form-control" value="{{ old('COR', situacao.COR ?? '#6b7280') }}" style="height:42px;padding:4px;max-width:80px;">
+                    <small style="color:var(--color-text-muted);font-size:11px;">Usada para identificar visualmente a situação.</small>
+                </div>
+
+                <div class="form-group" style="grid-column:1/-1;">
+                    <label class="form-label">Flags</label>
+                    <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:4px;">
+                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;">
+                            <input type="hidden" name="FINALIZADO" value="0">
+                            <input type="checkbox" name="FINALIZADO" value="1" {{ old('FINALIZADO', situacao.FINALIZADO ?? 0) ? 'checked' : '' }} style="width:16px;height:16px;">
+                            Finalizado
+                        </label>
+                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;">
+                            <input type="hidden" name="CONCLUIDA" value="0">
+                            <input type="checkbox" name="CONCLUIDA" value="1" {{ old('CONCLUIDA', situacao.CONCLUIDA ?? 0) ? 'checked' : '' }} style="width:16px;height:16px;">
+                            Concluída
+                        </label>
+                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;">
+                            <input type="hidden" name="CANCELADA" value="0">
+                            <input type="checkbox" name="CANCELADA" value="1" {{ old('CANCELADA', situacao.CANCELADA ?? 0) ? 'checked' : '' }} style="width:16px;height:16px;">
+                            Cancelada
+                        </label>
+                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;">
+                            <input type="hidden" name="PENDENTE" value="0">
+                            <input type="checkbox" name="PENDENTE" value="1" {{ old('PENDENTE', situacao.PENDENTE ?? 0) ? 'checked' : '' }} style="width:16px;height:16px;">
+                            Pendente
+                        </label>
+                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;">
+                            <input type="hidden" name="BLOQUEIA_EDICAO" value="0">
+                            <input type="checkbox" name="BLOQUEIA_EDICAO" value="1" {{ old('BLOQUEIA_EDICAO', situacao.BLOQUEIA_EDICAO ?? 0) ? 'checked' : '' }} style="width:16px;height:16px;">
+                            Bloqueia Edição
+                        </label>
+                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;">
+                            <input type="hidden" name="GERA_HISTORICO" value="0">
+                            <input type="checkbox" name="GERA_HISTORICO" value="1" {{ old('GERA_HISTORICO', situacao.GERA_HISTORICO ?? 0) ? 'checked' : '' }} style="width:16px;height:16px;">
+                            Gera Histórico
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ route_to('admin.situacoes') }}" class="btn btn-outline">Cancelar</a>
+                <button type="submit" class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    {{ situacao ? 'Atualizar' : 'Salvar' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

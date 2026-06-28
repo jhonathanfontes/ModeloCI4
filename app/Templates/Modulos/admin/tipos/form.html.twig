@@ -1,0 +1,76 @@
+{% extends 'Layouts/admin' %}
+
+{% block page_title %}{{ tipo ? 'Editar' : 'Novo' }} Tipo{% endblock %}
+{% block page_heading %}{{ tipo ? 'Editar' : 'Novo' }} Tipo{% endblock %}
+
+{% block breadcrumb_items %}
+<a href="{{ route_to('admin.dashboard') }}">Admin</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('admin.tipos') }}">Tipos</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">{{ tipo ? 'Editar' : 'Novo' }}</span>
+{% endblock %}
+
+{% block content %}
+{% if success %}<div class="alert alert-success">{{ success }}</div>{% endif %}
+{% if error %}<div class="alert alert-error">{{ error }}</div>{% endif %}
+
+<div class="card">
+    <div class="card-header"><h3>{{ tipo ? 'Editar Tipo' : 'Novo Tipo' }}</h3></div>
+    <div class="card-body">
+        <form method="post" action="{{ route_to('admin.tipos.salvar') }}">
+            {{ csrf_field()|raw }}
+            {% if tipo %}
+            <input type="hidden" name="ID_TIPO" value="{{ tipo.ID_TIPO }}">
+            {% endif %}
+
+            {% if errors is not empty %}
+            <div class="alert alert-error">
+                <strong>Verifique os seguintes erros:</strong>
+                <ul style="margin:8px 0 0 20px;">
+                    {% for field, msg in errors %}
+                    <li>{{ msg }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="MODULO">Módulo</label>
+                    <input type="text" id="MODULO" name="MODULO" class="form-control" value="{{ old('MODULO', tipo.MODULO ?? '') }}" required maxlength="100" placeholder="Ex: TIPO_PESSOA, TIPO_ENDERECO">
+                    <small style="color:var(--color-text-muted);font-size:11px;">Valores disponíveis: {{ modulosTipos|join(', ') }}</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="CODIGO">Código</label>
+                    <input type="text" id="CODIGO" name="CODIGO" class="form-control" value="{{ old('CODIGO', tipo.CODIGO ?? '') }}" {{ tipo ? 'readonly' : 'required' }} maxlength="50" placeholder="Ex: PF, PJ, RESIDENCIAL">
+                    {% if tipo %}
+                    <small style="color:var(--color-text-muted);font-size:11px;">O código não pode ser alterado após a criação.</small>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="DESCRICAO">Descrição</label>
+                    <input type="text" id="DESCRICAO" name="DESCRICAO" class="form-control" value="{{ old('DESCRICAO', tipo.DESCRICAO ?? '') }}" required maxlength="255" placeholder="Ex: Pessoa Física, Residencial">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="ORDEM">Ordem</label>
+                    <input type="number" id="ORDEM" name="ORDEM" class="form-control" value="{{ old('ORDEM', tipo.ORDEM ?? 0) }}" min="0" placeholder="0">
+                </div>
+
+                {% import 'Componentes/selectSituacao' as situacao %}
+                {{ situacao.select('SITUACAO_ID', old('SITUACAO_ID', tipo.SITUACAO_ID ?? ''), 'SITUACAO_REGISTRO', '', { label: 'Situação', required: true }) }}
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ route_to('admin.tipos') }}" class="btn btn-outline">Cancelar</a>
+                <button type="submit" class="btn btn-primary">
+                    {{ tipo ? 'Atualizar' : 'Salvar' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

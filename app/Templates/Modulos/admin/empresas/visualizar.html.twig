@@ -9,7 +9,7 @@
 <span style="color:var(--color-text-muted)">{{ empresa.nomeFantasia }}</span>
 {% endblock %}
 {% block page_actions %}
-<a href="{{ route_to('admin.empresas.editar', empresa.id) }}" class="btn btn-outline">
+<a href="{{ route_to('admin.empresas.editar', empresa.uuid) }}" class="btn btn-outline">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -29,72 +29,125 @@
 {% endif %}
 
 <div class="tabs">
-    <a href="{{ route_to('admin.empresas.visualizar', empresa.id) }}" class="tab tab-active">Dados</a>
-    <a href="{{ route_to('admin.empresas.usuarios', empresa.id) }}" class="tab">Usuários ({{ usuarios|length }})</a>
+    <a href="{{ route_to('admin.empresas.visualizar', empresa.uuid) }}" class="tab tab-active">Dados</a>
+    <a href="{{ route_to('admin.empresas.enderecos', empresa.uuid) }}" class="tab">Endereços</a>
+    <a href="{{ route_to('admin.empresas.contatos', empresa.uuid) }}" class="tab">Contatos</a>
+    <a href="{{ route_to('admin.empresas.usuarios', empresa.uuid) }}" class="tab">Usuários ({{ usuarios|length }})</a>
     <a href="{{ route_to('admin.empresas.servicos', empresa.uuid) }}" class="tab">Serviços</a>
 </div>
 
-<div class="card">
-    <div class="card-header">
-        <h3>Informações da Empresa</h3>
-    </div>
+<div class="card" style="margin-bottom:20px;">
     <div class="card-body">
-        <div class="view-grid">
-            <div class="view-group">
-                <span class="view-label">Razão Social</span>
-                <span class="view-value">{{ empresa.razaoSocial }}</span>
+        <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+            <div style="width:56px;height:56px;border-radius:12px;background:var(--color-primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
             </div>
-
-            <div class="view-group">
-                <span class="view-label">Nome Fantasia</span>
-                <span class="view-value">{{ empresa.nomeFantasia }}</span>
+            <div style="flex:1;min-width:0;">
+                <div style="font-size:18px;font-weight:600;color:var(--color-text);margin-bottom:2px;">{{ empresa.razaoSocial }}</div>
+                <div style="font-size:13px;color:var(--color-text-muted);">{{ empresa.nomeFantasia }} &middot; {{ cnpjCpf(empresa.cpfCnpj) }}</div>
             </div>
-
-            <div class="view-group">
-                <span class="view-label">CPF/CNPJ</span>
-                <span class="view-value">{{ cnpjCpf(empresa.cpfCnpj) }}</span>
-            </div>
-
-            <div class="view-group">
-                <span class="view-label">E-mail</span>
-                <span class="view-value">{{ empresa.email }}</span>
-            </div>
-
-            <div class="view-group">
-                <span class="view-label">Telefone</span>
-                <span class="view-value">{{ empresa.telefone ? telefone(empresa.telefone) : '-' }}</span>
-            </div>
-
-            <div class="view-group">
-                <span class="view-label">Celular</span>
-                <span class="view-value">{{ empresa.celular ? celular(empresa.celular) : '-' }}</span>
-            </div>
-
-            <div class="view-group">
-                <span class="view-label">Situação</span>
-                <span class="view-value">
-                    {% if empresa.situacaoCor %}
-                    <span class="status" style="background:{{ empresa.situacaoCor }}18;color:{{ empresa.situacaoCor }}">
-                        <span class="status-dot" style="background:{{ empresa.situacaoCor }}"></span>
-                        {{ empresa.situacaoDescricao ?? empresa.situacaoCodigo }}
-                    </span>
-                    {% else %}
-                    <span class="status status-active">
-                        <span class="status-dot"></span>
-                        Ativo
-                    </span>
-                    {% endif %}
+            <div>
+                {% if empresa.situacaoCor %}
+                <span class="status" style="background:{{ empresa.situacaoCor }}18;color:{{ empresa.situacaoCor }}">
+                    <span class="status-dot" style="background:{{ empresa.situacaoCor }}"></span>
+                    {{ empresa.situacaoDescricao ?? empresa.situacaoCodigo }}
                 </span>
+                {% else %}
+                <span class="status status-active">
+                    <span class="status-dot"></span>
+                    Ativo
+                </span>
+                {% endif %}
             </div>
+        </div>
+    </div>
+</div>
 
-            <div class="view-group">
-                <span class="view-label">Criado em</span>
-                <span class="view-value">{{ dataBR(empresa.criadoEm) }}</span>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+    <div class="card">
+        <div class="card-header">
+            <h3>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                    <line x1="8" y1="21" x2="16" y2="21"/>
+                    <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+                Dados da Empresa
+            </h3>
+        </div>
+        <div class="card-body">
+            <div class="view-grid">
+                <div class="view-group">
+                    <span class="view-label">Razão Social</span>
+                    <span class="view-value">{{ empresa.razaoSocial }}</span>
+                </div>
+                <div class="view-group">
+                    <span class="view-label">Nome Fantasia</span>
+                    <span class="view-value">{{ empresa.nomeFantasia }}</span>
+                </div>
+                <div class="view-group">
+                    <span class="view-label">CPF/CNPJ</span>
+                    <span class="view-value">{{ cnpjCpf(empresa.cpfCnpj) }}</span>
+                </div>
             </div>
+        </div>
+    </div>
 
-            <div class="view-group">
-                <span class="view-label">Atualizado em</span>
-                <span class="view-value">{{ dataBR(empresa.atualizadoEm) }}</span>
+    <div class="card">
+        <div class="card-header">
+            <h3>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                    <polyline points="22,6 12,13 2,6"/>
+                </svg>
+                Contato
+            </h3>
+        </div>
+        <div class="card-body">
+            <div class="view-grid">
+                <div class="view-group">
+                    <span class="view-label">E-mail</span>
+                    <span class="view-value">
+                        {% if empresa.email %}
+                        <a href="mailto:{{ empresa.email }}" style="color:var(--color-primary);text-decoration:none;">{{ empresa.email }}</a>
+                        {% else %}-{% endif %}
+                    </span>
+                </div>
+                <div class="view-group">
+                    <span class="view-label">Telefone</span>
+                    <span class="view-value">{{ empresa.telefone ? telefone(empresa.telefone) : '-' }}</span>
+                </div>
+                <div class="view-group">
+                    <span class="view-label">Celular</span>
+                    <span class="view-value">{{ empresa.celular ? celular(empresa.celular) : '-' }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                Registro
+            </h3>
+        </div>
+        <div class="card-body">
+            <div class="view-grid">
+                <div class="view-group">
+                    <span class="view-label">Criado em</span>
+                    <span class="view-value">{{ dataBR(empresa.criadoEm) }}</span>
+                </div>
+                <div class="view-group">
+                    <span class="view-label">Atualizado em</span>
+                    <span class="view-value">{{ dataBR(empresa.atualizadoEm) }}</span>
+                </div>
             </div>
         </div>
     </div>

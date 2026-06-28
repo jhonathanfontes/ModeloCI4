@@ -25,6 +25,7 @@
     </div>
     <div class="card-body">
         <form method="post" action="{{ route_to('admin.usuarios.salvar') }}" class="form">
+            {{ csrf_field()|raw }}
             {% if usuario %}
             <input type="hidden" name="ID_USUARIO" value="{{ usuario.id }}">
             {% endif %}
@@ -67,17 +68,8 @@
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="SITUACAO_ID" class="form-label">Situação</label>
-                    <select id="SITUACAO_ID" name="SITUACAO_ID" class="form-control" required>
-                        <option value="">— Selecione —</option>
-                        {% for s in situacoes %}
-                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID') ?? usuario.situacaoId ?? '') == s.ID_SITUACAO ? 'selected' : '' }}>
-                            {{ s.DESCRICAO }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
+                {% import 'Componentes/selectSituacao' as situacao %}
+                {{ situacao.select('SITUACAO_ID', old('SITUACAO_ID', usuario.situacaoId ?? ''), 'SITUACAO_REGISTRO', 'ATIVO,INATIVO,PENDENTE,BLOQUEADO', { label: 'Situação', required: true }) }}
             </div>
 
             <div class="form-actions">

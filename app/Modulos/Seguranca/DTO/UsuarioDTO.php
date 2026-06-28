@@ -32,7 +32,7 @@ class UsuarioDTO
             tipo: $row->TIPO ?? null,
             ultimoLogin: $row->ULTIMO_LOGIN ?? null,
             tentativasLogin: $row->TENTATIVAS_LOGIN ?? null,
-            situacaoId: (int) $row->SITUACAO_ID,
+            situacaoId: $row->SITUACAO_ID,
             situacaoCodigo: $row->SITUACAO_CODIGO ?? null,
             situacaoCor: $row->SITUACAO_COR ?? null,
             situacaoDescricao: $row->SITUACAO_DESCRICAO ?? null,

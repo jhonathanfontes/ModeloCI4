@@ -4,9 +4,14 @@ namespace App\Modulos\Cadastro\Models;
 
 use App\Helpers\Uuid;
 use CodeIgniter\Model;
+use App\Traits\UuidModelTrait;
 
+/**
+ * @method \stdClass|null findByUuid(string $uuid)
+ */
 class ClienteModel extends Model
 {
+    use UuidModelTrait;
     protected $table = 'CLIENTES';
     protected $primaryKey = 'ID_CLIENTE';
     protected $useAutoIncrement = true;
@@ -30,7 +35,7 @@ class ClienteModel extends Model
     protected $deletedField = 'EXCLUIDO_EM';
 
     protected $validationRules = [
-        'UUID' => 'required|max_length[36]',
+        'UUID' => 'permit_empty|max_length[36]',
         'EMPRESA_ID' => 'required|integer',
         'NOME' => 'required|max_length[255]',
         'TIPO_ID' => 'required|integer',
@@ -52,6 +57,12 @@ class ClienteModel extends Model
     {
         return $this->select('CLIENTES.*, EMPRESAS.NOME_FANTASIA AS EMPRESA_NOME')
             ->join('EMPRESAS', 'EMPRESAS.ID_EMPRESA = CLIENTES.EMPRESA_ID', 'left');
+    }
+
+    public function comPessoa(): ClienteModel
+    {
+        return $this->select('CLIENTES.*, PESSOAS.CPF_CNPJ, PESSOAS.DATA_NASCIMENTO')
+            ->join('PESSOAS', 'PESSOAS.ID_PESSOA = CLIENTES.PESSOA_ID', 'left');
     }
 
     public function comSituacao(): ClienteModel

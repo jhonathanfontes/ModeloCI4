@@ -2,13 +2,13 @@
 
 namespace App\Controllers\Admin;
 
-use App\Dominios\SituacaoRegistro;
+use App\Dominios\SituacaoGeral;
+use App\Helpers\Uuid;
 use App\Modulos\Cadastro\Models\EmpresaLicencaModel;
 use App\Modulos\Cadastro\Models\EmpresaModuloModel;
 use App\Modulos\Cadastro\Models\EmpresaServicoModel;
 use App\Modulos\Cadastro\Services\EmpresaService;
 use App\Modulos\Planos\Services\PlanoService;
-use App\Helpers\Uuid;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class EmpresaServicos extends BaseController
@@ -114,8 +114,8 @@ class EmpresaServicos extends BaseController
             'EMPRESA_ID' => $empresa->id,
             'PLANO_ID' => $planoId,
             'SITUACAO_ID' => service('situacao')->getId(
-                SituacaoRegistro::MODULO,
-                SituacaoRegistro::ATIVO
+                SituacaoGeral::modulo(),
+                SituacaoGeral::ATIVO
             ),
         ]);
 

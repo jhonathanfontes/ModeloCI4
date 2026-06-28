@@ -35,6 +35,10 @@ abstract class BaseController extends \App\Controllers\BaseController
             $data['empresaAtiva'] = $session->get('empresaAtiva');
         }
 
+        if (! isset($data['qtdEmpresas'])) {
+            $data['qtdEmpresas'] = $session->get('qtdEmpresas') ?? 0;
+        }
+
         if (! isset($data['menuModulos'])) {
             $empresaAtiva = $data['empresaAtiva'] ?? null;
 

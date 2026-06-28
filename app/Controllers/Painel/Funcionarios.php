@@ -4,7 +4,6 @@ namespace App\Controllers\Painel;
 
 use App\Dominios\SituacaoRegistro;
 use App\Modulos\Cadastro\Models\FuncionarioModel;
-use App\Modulos\Sistema\Models\SituacaoModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class Funcionarios extends BaseController
@@ -44,17 +43,17 @@ class Funcionarios extends BaseController
         return $this->render('Modulos/painel/funcionarios/form', [
             'title' => 'Novo Funcionário',
             'item' => null,
-            'situacoes' => $this->listarSituacoes(),
+            'departamentos' => $this->listarDepartamentos(),
             'success' => session()->getFlashdata('success'),
             'error' => session()->getFlashdata('error'),
             'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
-    public function editar(int $id): ResponseInterface|string
+    public function editar(string $uuid): ResponseInterface|string
     {
         $model = model(FuncionarioModel::class);
-        $item = $model->comSituacao()->find($id);
+        $item = $model->comSituacao()->findByUuid($uuid);
 
         if ($item === null) {
             return redirect()->to(route_to('painel.funcionarios'))
@@ -64,7 +63,7 @@ class Funcionarios extends BaseController
         return $this->render('Modulos/painel/funcionarios/form', [
             'title' => 'Editar Funcionário',
             'item' => $item,
-            'situacoes' => $this->listarSituacoes(),
+            'departamentos' => $this->listarDepartamentos(),
             'success' => session()->getFlashdata('success'),
             'error' => session()->getFlashdata('error'),
             'errors' => session()->getFlashdata('errors') ?? [],
@@ -79,6 +78,10 @@ class Funcionarios extends BaseController
             return redirect()->back()->with('error', 'Selecione uma empresa primeiro.');
         }
 
+        if (! $this->validate(\App\Modulos\Cadastro\Rules\FuncionarioRules::cadastro())) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
         $id = (int) ($this->request->getPost('ID_FUNCIONARIO') ?: 0);
         $model = model(FuncionarioModel::class);
 
@@ -87,6 +90,7 @@ class Funcionarios extends BaseController
             'NOME' => $this->request->getPost('NOME'),
             'EMAIL' => $this->request->getPost('EMAIL'),
             'CARGO' => $this->request->getPost('CARGO'),
+            'TIPO_ID' => (int) $this->request->getPost('TIPO_ID'),
             'DEPARTAMENTO_ID' => $this->request->getPost('DEPARTAMENTO_ID') ? (int) $this->request->getPost('DEPARTAMENTO_ID') : null,
             'TELEFONE' => preg_replace('/\D/', '', $this->request->getPost('TELEFONE') ?? ''),
             'SITUACAO_ID' => (int) $this->request->getPost('SITUACAO_ID'),
@@ -115,25 +119,33 @@ class Funcionarios extends BaseController
             ->with('success', 'Funcionário criado com sucesso.');
     }
 
-    public function excluir(int $id): ResponseInterface
+    public function excluir(string $uuid): ResponseInterface
     {
         $model = model(FuncionarioModel::class);
+        $item = $model->findByUuid($uuid);
+
+        if ($item === null) {
+            return redirect()->back()
+                ->with('error', 'Funcionário não encontrado.');
+        }
+
         $situacaoCancelado = service('situacao')->getId(
             SituacaoRegistro::MODULO,
             SituacaoRegistro::CANCELADO
         );
 
-        $model->update($id, ['SITUACAO_ID' => $situacaoCancelado]);
+        $model->update($item->ID_FUNCIONARIO, ['SITUACAO_ID' => $situacaoCancelado]);
 
         return redirect()->to(route_to('painel.funcionarios'))
             ->with('success', 'Funcionário cancelado com sucesso.');
     }
 
-    private function listarSituacoes(): array
+    private function listarDepartamentos(): array
     {
-        return model(SituacaoModel::class)
-            ->where('MODULO', SituacaoRegistro::MODULO)
-            ->orderBy('DESCRICAO', 'ASC')
-            ->findAll();
+        return db_connect()->table('ORGA_DEPARTAMENTOS')
+            ->orderBy('NOME', 'ASC')
+            ->get()
+            ->getResult();
     }
+
 }

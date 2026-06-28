@@ -4,9 +4,14 @@ namespace App\Modulos\Cadastro\Models;
 
 use App\Helpers\Uuid;
 use CodeIgniter\Model;
+use App\Traits\UuidModelTrait;
 
+/**
+ * @method \stdClass|null findByUuid(string $uuid)
+ */
 class ClienteContatoModel extends Model
 {
+    use UuidModelTrait;
     protected $table = 'CLIE_CONTATOS';
     protected $primaryKey = 'ID_CONTATO';
     protected $useAutoIncrement = true;
@@ -31,7 +36,7 @@ class ClienteContatoModel extends Model
     protected $deletedField = 'EXCLUIDO_EM';
 
     protected $validationRules = [
-        'UUID' => 'required|max_length[36]',
+        'UUID' => 'permit_empty|max_length[36]',
         'CLIENTE_ID' => 'required|integer',
         'NOME' => 'required|max_length[150]',
     ];

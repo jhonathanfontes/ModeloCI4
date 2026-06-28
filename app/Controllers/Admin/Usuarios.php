@@ -4,7 +4,6 @@ namespace App\Controllers\Admin;
 
 use App\Modulos\Seguranca\Rules\UsuarioRules;
 use App\Modulos\Seguranca\Services\UsuarioService;
-use App\Modulos\Sistema\Models\SituacaoModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class Usuarios extends BaseController
@@ -38,16 +37,15 @@ class Usuarios extends BaseController
         return $this->render('Modulos/admin/usuarios/form', [
             'title' => 'Novo Usuário',
             'usuario' => null,
-            'situacoes' => $this->listarSituacoes(),
             'success' => session()->getFlashdata('success'),
             'error' => session()->getFlashdata('error'),
             'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
-    public function editar(int $id): ResponseInterface|string
+    public function editar(string $uuid): ResponseInterface|string
     {
-        $usuario = $this->usuarioService->encontrar($id);
+        $usuario = $this->usuarioService->encontrarPorUuid($uuid);
 
         if ($usuario === null) {
             return redirect()->to(route_to('admin.usuarios'))
@@ -57,7 +55,6 @@ class Usuarios extends BaseController
         return $this->render('Modulos/admin/usuarios/form', [
             'title' => 'Editar Usuário',
             'usuario' => $usuario,
-            'situacoes' => $this->listarSituacoes(),
             'success' => session()->getFlashdata('success'),
             'error' => session()->getFlashdata('error'),
             'errors' => session()->getFlashdata('errors') ?? [],
@@ -110,26 +107,18 @@ class Usuarios extends BaseController
             ->with('success', 'Usuário criado com sucesso.');
     }
 
-    public function excluir(int $id): ResponseInterface
+    public function excluir(string $uuid): ResponseInterface
     {
-        $usuario = $this->usuarioService->encontrar($id);
+        $usuario = $this->usuarioService->encontrarPorUuid($uuid);
 
         if ($usuario === null) {
             return redirect()->back()
                 ->with('error', 'Usuário não encontrado.');
         }
 
-        $this->usuarioService->excluir($id);
+        $this->usuarioService->excluir($usuario->id);
 
         return redirect()->to(route_to('admin.usuarios'))
             ->with('success', 'Usuário cancelado com sucesso.');
-    }
-
-    private function listarSituacoes(): array
-    {
-        return model(SituacaoModel::class)
-            ->where('MODULO', \App\Dominios\SituacaoRegistro::MODULO)
-            ->orderBy('DESCRICAO', 'ASC')
-            ->findAll();
     }
 }

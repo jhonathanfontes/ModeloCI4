@@ -4,9 +4,14 @@ namespace App\Modulos\Cadastro\Models;
 
 use App\Helpers\Uuid;
 use CodeIgniter\Model;
+use App\Traits\UuidModelTrait;
 
+/**
+ * @method \stdClass|null findByUuid(string $uuid)
+ */
 class FuncionarioModel extends Model
 {
+    use UuidModelTrait;
     protected $table = 'FUNCIONARIOS';
     protected $primaryKey = 'ID_FUNCIONARIO';
     protected $useAutoIncrement = true;
@@ -19,6 +24,7 @@ class FuncionarioModel extends Model
         'NOME',
         'EMAIL',
         'CARGO',
+        'TIPO_ID',
         'DEPARTAMENTO_ID',
         'TELEFONE',
         'SITUACAO_ID',

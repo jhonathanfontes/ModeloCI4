@@ -4,9 +4,14 @@ namespace App\Modulos\Cadastro\Models;
 
 use App\Helpers\Uuid;
 use CodeIgniter\Model;
+use App\Traits\UuidModelTrait;
 
+/**
+ * @method \stdClass|null findByUuid(string $uuid)
+ */
 class ClienteEnderecoModel extends Model
 {
+    use UuidModelTrait;
     protected $table = 'CLIE_ENDERECOS';
     protected $primaryKey = 'ID_ENDERECO';
     protected $useAutoIncrement = true;
@@ -34,7 +39,7 @@ class ClienteEnderecoModel extends Model
     protected $deletedField = 'EXCLUIDO_EM';
 
     protected $validationRules = [
-        'UUID' => 'required|max_length[36]',
+        'UUID' => 'permit_empty|max_length[36]',
         'CLIENTE_ID' => 'required|integer',
         'TIPO_ID' => 'required|integer',
         'CEP' => 'required|exact_length[8]',

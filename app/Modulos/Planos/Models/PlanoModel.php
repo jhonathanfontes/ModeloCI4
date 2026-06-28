@@ -4,9 +4,14 @@ namespace App\Modulos\Planos\Models;
 
 use App\Helpers\Uuid;
 use CodeIgniter\Model;
+use App\Traits\UuidModelTrait;
 
+/**
+ * @method \stdClass|null findByUuid(string $uuid)
+ */
 class PlanoModel extends Model
 {
+    use UuidModelTrait;
     protected $table = 'SIST_PLANOS';
     protected $primaryKey = 'ID_PLANO';
     protected $useAutoIncrement = true;
@@ -35,7 +40,7 @@ class PlanoModel extends Model
         'UUID' => 'required|max_length[36]',
         'NOME' => 'required|max_length[100]',
         'VALOR' => 'required|decimal',
-        'PERIODO_ID' => 'permit_empty|integer|is_not_unique[SIST_TIPOS.ID_TIPO]',
+        'PERIODO_ID' => 'permit_empty|max_length[50]',
         'LIMITE_CLIENTES' => 'permit_empty|integer',
         'LIMITE_USUARIOS' => 'permit_empty|integer',
         'LIMITE_ARMAZENAMENTO_MB' => 'permit_empty|integer',

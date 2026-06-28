@@ -19,16 +19,16 @@ class EmpresaUsuarios extends BaseController
         $this->usuarioRepository = service('usuarioRepository');
     }
 
-    public function index(int $empresaId): ResponseInterface|string
+    public function index(string $empresaUuid): ResponseInterface|string
     {
-        $empresa = $this->empresaService->encontrar($empresaId);
+        $empresa = $this->empresaService->encontrarPorUuid($empresaUuid);
 
         if ($empresa === null) {
             return redirect()->to(route_to('admin.empresas'))
                 ->with('error', 'Empresa não encontrada.');
         }
 
-        $usuarios = $this->usuarioRepository->usuariosDaEmpresa($empresaId);
+        $usuarios = $this->usuarioRepository->usuariosDaEmpresa($empresa->id);
         $perfis = $this->usuarioRepository->listarPerfis();
 
         return $this->render('Modulos/admin/empresas/usuarios', [
@@ -42,16 +42,16 @@ class EmpresaUsuarios extends BaseController
         ]);
     }
 
-    public function vincular(int $empresaId): ResponseInterface|string
+    public function vincular(string $empresaUuid): ResponseInterface|string
     {
-        $empresa = $this->empresaService->encontrar($empresaId);
+        $empresa = $this->empresaService->encontrarPorUuid($empresaUuid);
 
         if ($empresa === null) {
             return redirect()->to(route_to('admin.empresas'))
                 ->with('error', 'Empresa não encontrada.');
         }
 
-        $usuariosDisponiveis = $this->usuarioRepository->usuariosDisponiveis($empresaId);
+        $usuariosDisponiveis = $this->usuarioRepository->usuariosDisponiveis($empresa->id);
         $perfis = $this->usuarioRepository->listarPerfis();
 
         return $this->render('Modulos/admin/empresas/usuarios_vincular', [
@@ -65,9 +65,9 @@ class EmpresaUsuarios extends BaseController
         ]);
     }
 
-    public function salvar(int $empresaId): ResponseInterface
+    public function salvar(string $empresaUuid): ResponseInterface
     {
-        $empresa = $this->empresaService->encontrar($empresaId);
+        $empresa = $this->empresaService->encontrarPorUuid($empresaUuid);
 
         if ($empresa === null) {
             return redirect()->to(route_to('admin.empresas'))
@@ -84,7 +84,7 @@ class EmpresaUsuarios extends BaseController
 
         $dados = [
             'USUARIO_ID' => $usuarioId,
-            'EMPRESA_ID' => $empresaId,
+            'EMPRESA_ID' => $empresa->id,
         ];
 
         if ($perfilId !== null) {
@@ -98,13 +98,13 @@ class EmpresaUsuarios extends BaseController
                 ->with('error', 'Erro ao vincular usuário. Verifique se já não está vinculado.');
         }
 
-        return redirect()->to(route_to('admin.empresas.usuarios', $empresaId))
+        return redirect()->to(route_to('admin.empresas.usuarios', $empresaUuid))
             ->with('success', 'Usuário vinculado com sucesso.');
     }
 
-    public function desvincular(int $empresaId, int $vinculoId): ResponseInterface
+    public function desvincular(string $empresaUuid, int $vinculoId): ResponseInterface
     {
-        $empresa = $this->empresaService->encontrar($empresaId);
+        $empresa = $this->empresaService->encontrarPorUuid($empresaUuid);
 
         if ($empresa === null) {
             return redirect()->to(route_to('admin.empresas'))
@@ -113,7 +113,7 @@ class EmpresaUsuarios extends BaseController
 
         $this->usuarioRepository->desvincularEmpresa($vinculoId);
 
-        return redirect()->to(route_to('admin.empresas.usuarios', $empresaId))
+        return redirect()->to(route_to('admin.empresas.usuarios', $empresaUuid))
             ->with('success', 'Usuário desvinculado com sucesso.');
     }
 }

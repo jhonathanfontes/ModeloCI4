@@ -6,12 +6,12 @@ class SituacaoPedido extends Dominio
 {
     public const MODULO = 'SITUACAO_PEDIDO';
 
-    public const SOLICITADO = 'C301';
-    public const COTACAO = 'C302';
-    public const AGUARDANDO_APROVACAO = 'C303';
-    public const APROVADO = 'C304';
-    public const COMPRADO = 'C305';
-    public const RECEBIDO = 'C306';
+    public const SOLICITADO = 'SOLICITADO';
+    public const COTACAO = 'COTACAO';
+    public const AGUARDANDO_APROVACAO = 'AGUARDANDO_APROVACAO';
+    public const APROVADO = 'APROVADO';
+    public const COMPRADO = 'COMPRADO';
+    public const RECEBIDO = 'RECEBIDO';
 
     public static function modulo(): string
     {
@@ -23,6 +23,7 @@ class SituacaoPedido extends Dominio
         return [
 
             self::SOLICITADO => [
+                'id_situacao' => 11,
                 'codigo' => self::SOLICITADO,
                 'descricao' => 'Solicitado',
                 'cor' => 'primary',
@@ -36,6 +37,7 @@ class SituacaoPedido extends Dominio
             ],
 
             self::COTACAO => [
+                'id_situacao' => 12,
                 'codigo' => self::COTACAO,
                 'descricao' => 'Cotação',
                 'cor' => 'info',
@@ -49,6 +51,7 @@ class SituacaoPedido extends Dominio
             ],
 
             self::AGUARDANDO_APROVACAO => [
+                'id_situacao' => 13,
                 'codigo' => self::AGUARDANDO_APROVACAO,
                 'descricao' => 'Aguardando Aprovação',
                 'cor' => 'warning',
@@ -62,6 +65,7 @@ class SituacaoPedido extends Dominio
             ],
 
             self::APROVADO => [
+                'id_situacao' => 14,
                 'codigo' => self::APROVADO,
                 'descricao' => 'Aprovado',
                 'cor' => 'success',
@@ -75,6 +79,7 @@ class SituacaoPedido extends Dominio
             ],
 
             self::COMPRADO => [
+                'id_situacao' => 15,
                 'codigo' => self::COMPRADO,
                 'descricao' => 'Comprado',
                 'cor' => 'success',
@@ -88,6 +93,7 @@ class SituacaoPedido extends Dominio
             ],
 
             self::RECEBIDO => [
+                'id_situacao' => 16,
                 'codigo' => self::RECEBIDO,
                 'descricao' => 'Recebido',
                 'cor' => 'success',

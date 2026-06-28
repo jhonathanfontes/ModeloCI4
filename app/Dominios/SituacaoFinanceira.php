@@ -6,14 +6,14 @@ class SituacaoFinanceira extends Dominio
 {
     public const MODULO = 'SITUACAO_FINANCEIRA';
 
-    public const ABERTO = 'F301';
-    public const PAGO = 'F302';
-    public const PENDENTE = 'F303';
-    public const PARCIAL = 'F304';
-    public const VENCIDO = 'F305';
-    public const NEGOCIADO = 'F306';
-    public const CANCELADO = 'F307';
-    public const ESTORNADO = 'F308';
+    public const ABERTO = 'ABERTO';
+    public const PAGO = 'PAGO';
+    public const PENDENTE = 'PENDENTE';
+    public const PARCIAL = 'PARCIAL';
+    public const VENCIDO = 'VENCIDO';
+    public const NEGOCIADO = 'NEGOCIADO';
+    public const CANCELADO = 'CANCELADO';
+    public const ESTORNADO = 'ESTORNADO';
 
     public static function modulo(): string
     {
@@ -25,6 +25,7 @@ class SituacaoFinanceira extends Dominio
         return [
 
             self::ABERTO => [
+                'id_situacao' => 20,
                 'codigo' => self::ABERTO,
                 'descricao' => 'Aberto',
                 'cor' => 'primary',
@@ -38,6 +39,7 @@ class SituacaoFinanceira extends Dominio
             ],
 
             self::PENDENTE => [
+                'id_situacao' => 22,
                 'codigo' => self::PENDENTE,
                 'descricao' => 'Pendente',
                 'cor' => 'warning',
@@ -51,6 +53,7 @@ class SituacaoFinanceira extends Dominio
             ],
 
             self::PARCIAL => [
+                'id_situacao' => 23,
                 'codigo' => self::PARCIAL,
                 'descricao' => 'Pagamento Parcial',
                 'cor' => 'info',
@@ -64,6 +67,7 @@ class SituacaoFinanceira extends Dominio
             ],
 
             self::PAGO => [
+                'id_situacao' => 21,
                 'codigo' => self::PAGO,
                 'descricao' => 'Pago',
                 'cor' => 'success',
@@ -77,6 +81,7 @@ class SituacaoFinanceira extends Dominio
             ],
 
             self::VENCIDO => [
+                'id_situacao' => 24,
                 'codigo' => self::VENCIDO,
                 'descricao' => 'Vencido',
                 'cor' => 'danger',
@@ -90,6 +95,7 @@ class SituacaoFinanceira extends Dominio
             ],
 
             self::NEGOCIADO => [
+                'id_situacao' => 25,
                 'codigo' => self::NEGOCIADO,
                 'descricao' => 'Negociado',
                 'cor' => 'secondary',
@@ -103,6 +109,7 @@ class SituacaoFinanceira extends Dominio
             ],
 
             self::CANCELADO => [
+                'id_situacao' => 26,
                 'codigo' => self::CANCELADO,
                 'descricao' => 'Cancelado',
                 'cor' => 'dark',
@@ -116,6 +123,7 @@ class SituacaoFinanceira extends Dominio
             ],
 
             self::ESTORNADO => [
+                'id_situacao' => 27,
                 'codigo' => self::ESTORNADO,
                 'descricao' => 'Estornado',
                 'cor' => 'danger',

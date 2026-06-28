@@ -25,7 +25,7 @@ class FuncionalidadeRules
             ],
             'SITUACAO_ID' => [
                 'label' => 'Situação',
-                'rules' => 'required|integer|is_not_unique[SIST_SITUACOES.ID_SITUACAO]',
+                'rules' => 'required|string',
             ],
         ];
     }

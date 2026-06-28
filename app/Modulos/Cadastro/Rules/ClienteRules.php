@@ -7,9 +7,9 @@ class ClienteRules
     public static function cadastro(): array
     {
         return [
-            'EMPRESA_ID' => [
-                'label' => 'Empresa',
-                'rules' => 'required|integer|is_not_unique[EMPRESAS.ID_EMPRESA]',
+            'CPF_CNPJ' => [
+                'label' => 'CPF/CNPJ',
+                'rules' => 'permit_empty|max_length[14]',
             ],
             'NOME' => [
                 'label' => 'Nome',
@@ -19,13 +19,17 @@ class ClienteRules
                 'label' => 'Nome Fantasia',
                 'rules' => 'permit_empty|max_length[255]',
             ],
+            'DATA_NASCIMENTO' => [
+                'label' => 'Data de Nascimento',
+                'rules' => 'permit_empty|valid_date',
+            ],
             'TIPO_ID' => [
                 'label' => 'Tipo',
-                'rules' => 'required|integer|is_not_unique[SIST_TIPOS.ID_TIPO]',
+                'rules' => 'required|max_length[50]',
             ],
             'SITUACAO_ID' => [
                 'label' => 'Situação',
-                'rules' => 'required|integer|is_not_unique[SIST_SITUACOES.ID_SITUACAO]',
+                'rules' => 'required|string',
             ],
         ];
     }
@@ -33,41 +37,13 @@ class ClienteRules
     public static function endereco(): array
     {
         return [
-            'CLIENTE_ID' => [
-                'label' => 'Cliente',
-                'rules' => 'required|integer|is_not_unique[CLIENTES.ID_CLIENTE]',
-            ],
             'TIPO_ID' => [
                 'label' => 'Tipo de Endereço',
-                'rules' => 'required|integer|is_not_unique[SIST_TIPOS.ID_TIPO]',
+                'rules' => 'required|max_length[50]',
             ],
-            'CEP' => [
-                'label' => 'CEP',
-                'rules' => 'required|exact_length[8]',
-            ],
-            'LOGRADOURO' => [
-                'label' => 'Logradouro',
-                'rules' => 'required|max_length[255]',
-            ],
-            'NUMERO' => [
-                'label' => 'Número',
-                'rules' => 'required|max_length[20]',
-            ],
-            'COMPLEMENTO' => [
-                'label' => 'Complemento',
-                'rules' => 'permit_empty|max_length[100]',
-            ],
-            'BAIRRO' => [
-                'label' => 'Bairro',
-                'rules' => 'required|max_length[120]',
-            ],
-            'CIDADE' => [
-                'label' => 'Cidade',
-                'rules' => 'required|max_length[120]',
-            ],
-            'UF' => [
-                'label' => 'UF',
-                'rules' => 'required|exact_length[2]',
+            'SITUACAO_ID' => [
+                'label' => 'Situação',
+                'rules' => 'required|string',
             ],
         ];
     }
@@ -75,10 +51,6 @@ class ClienteRules
     public static function contato(): array
     {
         return [
-            'CLIENTE_ID' => [
-                'label' => 'Cliente',
-                'rules' => 'required|integer|is_not_unique[CLIENTES.ID_CLIENTE]',
-            ],
             'NOME' => [
                 'label' => 'Nome do Contato',
                 'rules' => 'required|max_length[150]',
@@ -127,7 +99,7 @@ class ClienteRules
             ],
             'SITUACAO_ID' => [
                 'label' => 'Situação',
-                'rules' => 'required|integer|is_not_unique[SIST_SITUACOES.ID_SITUACAO]',
+                'rules' => 'required|string',
             ],
         ];
     }

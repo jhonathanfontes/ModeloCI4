@@ -5,19 +5,24 @@ namespace App\Modulos\Sistema\Models;
 use App\Helpers\Uuid;
 use CodeIgniter\Model;
 
+/**
+ * @method \stdClass|null first(...$params)
+ * @method \stdClass[]    findAll(...$params)
+ * @method \stdClass|null findByUuid(string $uuid)
+ */
 class TipoModel extends Model
 {
     protected $table = 'SIST_TIPOS';
     protected $primaryKey = 'ID_TIPO';
-    protected $useAutoIncrement = true;
+    protected $useAutoIncrement = false;
     protected $returnType = 'object';
     protected $useSoftDeletes = true;
 
     protected $allowedFields = [
+        'ID_TIPO',
         'UUID',
-        'MODULO_ID',
+        'MODULO',
         'CODIGO',
-        'NOME',
         'DESCRICAO',
         'ORDEM',
         'SITUACAO_ID',
@@ -31,8 +36,9 @@ class TipoModel extends Model
 
     protected $validationRules = [
         'UUID' => 'required|max_length[36]',
+        'MODULO' => 'required|max_length[100]',
         'CODIGO' => 'required|max_length[50]',
-        'NOME' => 'required|max_length[100]',
+        'DESCRICAO' => 'required|max_length[255]',
         'SITUACAO_ID' => 'required|integer',
     ];
 
@@ -43,7 +49,6 @@ class TipoModel extends Model
         if (! isset($data['data']['UUID'])) {
             $data['data']['UUID'] = Uuid::generate('SIST_TIPOS_' . microtime());
         }
-
         return $data;
     }
 }

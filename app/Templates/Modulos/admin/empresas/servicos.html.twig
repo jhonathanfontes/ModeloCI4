@@ -6,7 +6,7 @@
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
 <a href="{{ route_to('admin.empresas') }}">Empresas</a>
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
-<a href="{{ route_to('admin.empresas.visualizar', empresa.id) }}">{{ empresa.nomeFantasia }}</a>
+<a href="{{ route_to('admin.empresas.visualizar', empresa.uuid) }}">{{ empresa.nomeFantasia }}</a>
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
 <span style="color:var(--color-text-muted)">Serviços</span>
 {% endblock %}
@@ -33,8 +33,10 @@
 {% endif %}
 
 <div class="tabs">
-    <a href="{{ route_to('admin.empresas.visualizar', empresa.id) }}" class="tab">Dados</a>
-    <a href="{{ route_to('admin.empresas.usuarios', empresa.id) }}" class="tab">Usuários</a>
+    <a href="{{ route_to('admin.empresas.visualizar', empresa.uuid) }}" class="tab">Dados</a>
+    <a href="{{ route_to('admin.empresas.enderecos', empresa.uuid) }}" class="tab">Endereços</a>
+    <a href="{{ route_to('admin.empresas.contatos', empresa.uuid) }}" class="tab">Contatos</a>
+    <a href="{{ route_to('admin.empresas.usuarios', empresa.uuid) }}" class="tab">Usuários</a>
     <a href="{{ route_to('admin.empresas.servicos', empresa.uuid) }}" class="tab tab-active">Serviços</a>
 </div>
 
@@ -46,6 +48,7 @@
     <div class="card-body">
         <p style="margin-bottom:16px;color:var(--color-text-muted);">Selecione um plano para definir quais serviços estarão disponíveis para esta empresa.</p>
         <form method="post" action="{{ route_to('admin.empresas.servicos.salvar-licenca', empresa.uuid) }}">
+            {{ csrf_field()|raw }}
             <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label" for="PLANO_ID">Plano</label>
@@ -57,53 +60,34 @@
                     </select>
                 </div>
             </div>
-            <div class="form-actions">
-                <a href="{{ route_to('admin.empresas.visualizar', empresa.id) }}" class="btn btn-outline">Cancelar</a>
+            <div class="form-actions" style="margin-top:12px;">
+                <a href="{{ route_to('admin.empresas') }}" class="btn btn-outline">Cancelar</a>
                 <button type="submit" class="btn btn-primary">Vincular Plano</button>
             </div>
         </form>
     </div>
 </div>
-{% else %}
-
-<div class="card">
-    <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-        <h3>Plano: {{ licenca.PLANO_NOME }}</h3>
-        <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('plano-switch').style.display = document.getElementById('plano-switch').style.display === 'none' ? 'block' : 'none';this.textContent = this.textContent === 'Alterar Plano' ? 'Cancelar' : 'Alterar Plano'">Alterar Plano</button>
-    </div>
-    <div id="plano-switch" class="card-body" style="display:none;border-top:1px solid var(--color-border);">
-        <form method="post" action="{{ route_to('admin.empresas.servicos.salvar-licenca', empresa.uuid) }}">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label" for="PLANO_ID_TROCAR">Selecionar novo plano</label>
-                    <select id="PLANO_ID_TROCAR" name="PLANO_ID" class="form-control">
-                        <option value="">Selecione um plano</option>
-                        {% for p in planos %}
-                        <option value="{{ p.id }}" {{ licenca.PLANO_ID == p.id ? 'selected' : '' }}>{{ p.nome }} - {{ moeda(p.valor) }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            <div class="form-actions" style="margin-top:12px;">
-                <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('plano-switch').style.display='none';document.querySelector('.card-header button').textContent='Alterar Plano'">Cancelar</button>
-                <button type="submit" class="btn btn-primary btn-sm">Confirmar Troca</button>
-            </div>
-        </form>
-    </div>
-</div>
+{% endif %}
 
 <div class="card" style="margin-top:24px;">
     <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
         <h3>{{ editMode ? 'Liberar Serviços' : 'Serviços Liberados' }}</h3>
-        {% if editMode %}
-        <a href="{{ route_to('admin.empresas.servicos', empresa.uuid) }}" class="btn btn-outline btn-sm">Cancelar</a>
-        {% else %}
-        <a href="{{ route_to('admin.empresas.servicos', empresa.uuid) }}?edit=1" class="btn btn-primary btn-sm">Liberar Serviços</a>
+        {% if licenca is not null %}
+            {% if editMode %}
+            <a href="{{ route_to('admin.empresas.servicos', empresa.uuid) }}" class="btn btn-outline btn-sm">Cancelar</a>
+            {% else %}
+            <a href="{{ route_to('admin.empresas.servicos', empresa.uuid) }}?edit=1" class="btn btn-primary btn-sm">Liberar Serviços</a>
+            {% endif %}
         {% endif %}
     </div>
     <div class="card-body">
-        {% if editMode %}
+        {% if licenca is null %}
+        <p style="text-align:center;padding:32px 16px;color:var(--color-text-muted);">
+            Nenhum plano vinculado. Selecione um plano acima para liberar os serviços.
+        </p>
+        {% elseif editMode %}
         <form method="post" action="{{ route_to('admin.empresas.servicos.salvar', empresa.uuid) }}">
+            {{ csrf_field()|raw }}
             {% set allModulos = modulos %}
             {% if allModulos is empty %}
             <p style="text-align:center;padding:32px 16px;color:var(--color-text-muted);">
@@ -147,7 +131,6 @@
                 {% endif %}
             </div>
             {% endfor %}
-
             <div class="form-actions">
                 <a href="{{ route_to('admin.empresas.servicos', empresa.uuid) }}" class="btn btn-outline">Cancelar</a>
                 <button type="submit" class="btn btn-primary">Salvar Serviços</button>
@@ -204,7 +187,6 @@
         {% endif %}
     </div>
 </div>
-{% endif %}
 
 {% endblock %}
 

@@ -2,12 +2,35 @@
 
 namespace App\Modulos\Cadastro\DTO;
 
+/**
+ * @property-read ?int $ID_CLIENTE
+ * @property-read ?string $UUID
+ * @property-read ?int $EMPRESA_ID
+ * @property-read ?int $PESSOA_ID
+ * @property-read ?string $CPF_CNPJ
+ * @property-read ?string $DATA_NASCIMENTO
+ * @property-read ?string $NOME
+ * @property-read ?string $NOME_FANTASIA
+ * @property-read ?int $TIPO_ID
+ * @property-read ?string $TIPO_NOME
+ * @property-read ?string $TIPO_DESCRICAO
+ * @property-read ?int $SITUACAO_ID
+ * @property-read ?string $SITUACAO_CODIGO
+ * @property-read ?string $SITUACAO_COR
+ * @property-read ?string $SITUACAO_DESCRICAO
+ * @property-read ?string $EMPRESA_NOME
+ * @property-read ?string $CRIADO_EM
+ * @property-read ?string $ATUALIZADO_EM
+ */
 class ClienteDTO
 {
     public function __construct(
         public readonly ?int $id = null,
         public readonly ?string $uuid = null,
         public readonly ?int $empresaId = null,
+        public readonly ?int $pessoaId = null,
+        public readonly ?string $cpfCnpj = null,
+        public readonly ?string $dataNascimento = null,
         public readonly ?string $nome = null,
         public readonly ?string $nomeFantasia = null,
         public readonly ?int $tipoId = null,
@@ -22,17 +45,55 @@ class ClienteDTO
     ) {
     }
 
+    public function __get(string $name)
+    {
+        return match ($name) {
+            'ID_CLIENTE' => $this->id,
+            'UUID' => $this->uuid,
+            'EMPRESA_ID' => $this->empresaId,
+            'PESSOA_ID' => $this->pessoaId,
+            'CPF_CNPJ' => $this->cpfCnpj,
+            'DATA_NASCIMENTO' => $this->dataNascimento,
+            'NOME' => $this->nome,
+            'NOME_FANTASIA' => $this->nomeFantasia,
+            'TIPO_ID' => $this->tipoId,
+            'TIPO_NOME', 'TIPO_DESCRICAO' => $this->tipoNome,
+            'SITUACAO_ID' => $this->situacaoId,
+            'SITUACAO_CODIGO' => $this->situacaoCodigo,
+            'SITUACAO_COR' => $this->situacaoCor,
+            'SITUACAO_DESCRICAO' => $this->situacaoDescricao,
+            'EMPRESA_NOME' => $this->empresaNome,
+            'CRIADO_EM' => $this->criadoEm,
+            'ATUALIZADO_EM' => $this->atualizadoEm,
+            default => null,
+        };
+    }
+
+    public function __isset(string $name): bool
+    {
+        return in_array($name, [
+            'ID_CLIENTE', 'UUID', 'EMPRESA_ID', 'PESSOA_ID', 'CPF_CNPJ',
+            'DATA_NASCIMENTO', 'NOME', 'NOME_FANTASIA', 'TIPO_ID',
+            'TIPO_NOME', 'TIPO_DESCRICAO', 'SITUACAO_ID', 'SITUACAO_CODIGO',
+            'SITUACAO_COR', 'SITUACAO_DESCRICAO', 'EMPRESA_NOME',
+            'CRIADO_EM', 'ATUALIZADO_EM',
+        ], true) && $this->__get($name) !== null;
+    }
+
     public static function fromObject(object $row): self
     {
         return new self(
             id: (int) $row->ID_CLIENTE,
             uuid: $row->UUID ?? null,
             empresaId: (int) $row->EMPRESA_ID,
+            pessoaId: isset($row->PESSOA_ID) ? (int) $row->PESSOA_ID : null,
+            cpfCnpj: $row->CPF_CNPJ ?? null,
+            dataNascimento: $row->DATA_NASCIMENTO ?? null,
             nome: $row->NOME,
             nomeFantasia: $row->NOME_FANTASIA ?? null,
             tipoId: (int) $row->TIPO_ID,
             tipoNome: $row->TIPO_NOME ?? null,
-            situacaoId: (int) $row->SITUACAO_ID,
+            situacaoId: $row->SITUACAO_ID,
             situacaoCodigo: $row->SITUACAO_CODIGO ?? null,
             situacaoCor: $row->SITUACAO_COR ?? null,
             situacaoDescricao: $row->SITUACAO_DESCRICAO ?? null,

@@ -25,7 +25,7 @@ class UsuarioRules
             ],
             'SITUACAO_ID' => [
                 'label' => 'Situação',
-                'rules' => 'required|integer|is_not_unique[SIST_SITUACOES.ID_SITUACAO]',
+                'rules' => 'required|string',
             ],
         ];
     }
@@ -33,13 +33,17 @@ class UsuarioRules
     public static function atualizacao(): array
     {
         return [
+            'ID_USUARIO' => [
+                'label' => 'ID do Usuário',
+                'rules' => 'required|integer',
+            ],
             'NOME' => [
                 'label' => 'Nome',
                 'rules' => 'required|max_length[255]',
             ],
             'EMAIL' => [
                 'label' => 'E-mail',
-                'rules' => 'required|valid_email|max_length[255]|is_unique[SEGU_USUARIOS.EMAIL,ID_USUARIO]',
+                'rules' => 'required|valid_email|max_length[255]|is_unique[SEGU_USUARIOS.EMAIL,ID_USUARIO,{ID_USUARIO}]',
             ],
             'TIPO' => [
                 'label' => 'Tipo',
@@ -65,7 +69,7 @@ class UsuarioRules
             ],
             'SITUACAO_ID' => [
                 'label' => 'Situação',
-                'rules' => 'required|integer|is_not_unique[SIST_SITUACOES.ID_SITUACAO]',
+                'rules' => 'required|string',
             ],
         ];
     }
@@ -87,7 +91,7 @@ class UsuarioRules
             ],
             'SITUACAO_ID' => [
                 'label' => 'Situação',
-                'rules' => 'required|integer|is_not_unique[SIST_SITUACOES.ID_SITUACAO]',
+                'rules' => 'required|string',
             ],
         ];
     }

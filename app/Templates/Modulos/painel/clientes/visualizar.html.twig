@@ -1,0 +1,265 @@
+{% extends 'Layouts/painel' %}
+
+{% block page_title %}Visualizar Cliente: {{ cliente.NOME }}{% endblock %}
+{% block page_heading %}Visualizar Cliente: {{ cliente.NOME }}{% endblock %}
+
+{% block breadcrumb_items %}
+<a href="{{ route_to('painel.dashboard') }}">Painel</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<a href="{{ route_to('painel.clientes') }}">Clientes</a>
+<span style="color:var(--color-text-muted);margin:0 4px;">/</span>
+<span style="color:var(--color-text-muted)">{{ cliente.NOME }}</span>
+{% endblock %}
+
+{% block page_actions %}
+<a href="{{ route_to('painel.clientes.editar', cliente.UUID) }}" class="btn btn-primary">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+    </svg>
+    Editar Cliente
+</a>
+{% endblock %}
+
+{% block content %}
+
+{% if success %}
+<div class="alert alert-success">{{ success }}</div>
+{% endif %}
+
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header">
+        <h3>Dados Cadastrais</h3>
+    </div>
+    <div class="card-body">
+        <div class="view-grid">
+            <div class="view-group">
+                <span class="view-label">Nome/Razão Social</span>
+                <span class="view-value" style="font-weight:600;">{{ cliente.NOME }}</span>
+            </div>
+
+            <div class="view-group">
+                <span class="view-label">Nome Fantasia</span>
+                <span class="view-value">{{ cliente.NOME_FANTASIA ?? '—' }}</span>
+            </div>
+
+            <div class="view-group">
+                <span class="view-label">CPF/CNPJ</span>
+                <span class="view-value">{{ cliente.CPF_CNPJ ? cnpjCpf(cliente.CPF_CNPJ) : '—' }}</span>
+            </div>
+
+            <div class="view-group">
+                <span class="view-label">Data Nasc./Fundação</span>
+                <span class="view-value">{{ cliente.DATA_NASCIMENTO ? dataBR(cliente.DATA_NASCIMENTO) : '—' }}</span>
+            </div>
+
+            <div class="view-group">
+                <span class="view-label">Tipo</span>
+                <span class="view-value">{{ cliente.TIPO_DESCRICAO ?? cliente.TIPO_NOME ?? '—' }}</span>
+            </div>
+
+            <div class="view-group">
+                <span class="view-label">Situação</span>
+                <span class="view-value">
+                    {% if cliente.SITUACAO_COR %}
+                    <span class="status" style="background:{{ cliente.SITUACAO_COR }}18;color:{{ cliente.SITUACAO_COR }}">
+                        <span class="status-dot" style="background:{{ cliente.SITUACAO_COR }}"></span>
+                        {{ cliente.SITUACAO_DESCRICAO ?? cliente.SITUACAO_CODIGO }}
+                    </span>
+                    {% else %}
+                    <span class="status status-active">
+                        <span class="status-dot"></span>
+                        Ativo
+                    </span>
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="view-group">
+                <span class="view-label">Criado em</span>
+                <span class="view-value">{{ cliente.CRIADO_EM ? dataBR(cliente.CRIADO_EM) : '—' }}</span>
+            </div>
+
+            <div class="view-group">
+                <span class="view-label">Atualizado em</span>
+                <span class="view-value">{{ cliente.ATUALIZADO_EM ? dataBR(cliente.ATUALIZADO_EM) : '—' }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-grid" style="margin-top:24px;">
+    <!-- Endereço Principal -->
+    <div class="card" style="margin-bottom:0;">
+        <div class="card-header">
+            <h3>Endereço Principal</h3>
+        </div>
+        <div class="card-body">
+            {% if enderecoPrincipal %}
+            <div class="view-grid" style="grid-template-columns: 1fr;">
+                <div class="view-group">
+                    <span class="view-label">CEP</span>
+                    <span class="view-value">{{ enderecoPrincipal.CEP ? cep(enderecoPrincipal.CEP) : '—' }}</span>
+                </div>
+                <div class="view-group">
+                    <span class="view-label">Logradouro</span>
+                    <span class="view-value">{{ enderecoPrincipal.LOGRADOURO ?? '—' }}, Nº {{ enderecoPrincipal.NUMERO ?? '—' }}</span>
+                </div>
+                {% if enderecoPrincipal.COMPLEMENTO %}
+                <div class="view-group">
+                    <span class="view-label">Complemento</span>
+                    <span class="view-value">{{ enderecoPrincipal.COMPLEMENTO }}</span>
+                </div>
+                {% endif %}
+                <div class="view-group">
+                    <span class="view-label">Bairro</span>
+                    <span class="view-value">{{ enderecoPrincipal.BAIRRO ?? '—' }}</span>
+                </div>
+                <div class="view-group">
+                    <span class="view-label">Cidade / UF</span>
+                    <span class="view-value">{{ enderecoPrincipal.CIDADE ?? '—' }} — {{ enderecoPrincipal.UF ?? '—' }}</span>
+                </div>
+            </div>
+            {% else %}
+            <div style="color:var(--color-text-muted);text-align:center;padding:16px;">Nenhum endereço principal cadastrado.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Contato Principal -->
+    <div class="card" style="margin-bottom:0;">
+        <div class="card-header">
+            <h3>Contato Principal</h3>
+        </div>
+        <div class="card-body">
+            {% if contatoPrincipal %}
+            <div class="view-grid" style="grid-template-columns: 1fr;">
+                <div class="view-group">
+                    <span class="view-label">Nome do Contato</span>
+                    <span class="view-value">{{ contatoPrincipal.NOME ?? '—' }}</span>
+                </div>
+                <div class="view-group">
+                    <span class="view-label">Telefone</span>
+                    <span class="view-value">{{ contatoPrincipal.TELEFONE ? telefone(contatoPrincipal.TELEFONE) : '—' }}</span>
+                </div>
+                <div class="view-group">
+                    <span class="view-label">E-mail</span>
+                    <span class="view-value">{{ contatoPrincipal.EMAIL ?? '—' }}</span>
+                </div>
+                <div class="view-group">
+                    <span class="view-label">WhatsApp</span>
+                    <span class="view-value">{{ contatoPrincipal.WHATSAPP ? celular(contatoPrincipal.WHATSAPP) : '—' }}</span>
+                </div>
+            </div>
+            {% else %}
+            <div style="color:var(--color-text-muted);text-align:center;padding:16px;">Nenhum contato principal cadastrado.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="card" style="margin-top:24px;">
+    <div class="card-header">
+        <h3>Lista de Endereços</h3>
+    </div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>CEP</th>
+                        <th>Logradouro</th>
+                        <th>Número</th>
+                        <th>Bairro</th>
+                        <th>Cidade</th>
+                        <th>UF</th>
+                        <th>Principal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if enderecos is empty %}
+                    <tr>
+                        <td colspan="8" style="text-align:center;padding:24px 16px;color:var(--color-text-muted);">
+                            Nenhum endereço cadastrado.
+                        </td>
+                    </tr>
+                    {% else %}
+                    {% for e in enderecos %}
+                    <tr>
+                        <td>{{ e.TIPO_DESCRICAO ?? e.TIPO_CODIGO ?? '—' }}</td>
+                        <td>{{ e.CEP ? cep(e.CEP) : '—' }}</td>
+                        <td>{{ e.LOGRADOURO }}</td>
+                        <td>{{ e.NUMERO }}</td>
+                        <td>{{ e.BAIRRO }}</td>
+                        <td>{{ e.CIDADE }}</td>
+                        <td>{{ e.UF }}</td>
+                        <td>
+                            {% if e.PRINCIPAL %}
+                            <span class="status status-active" style="background:#10b98118;color:#10b981;">Sim</span>
+                            {% else %}
+                            —
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="margin-top:24px;margin-bottom:24px;">
+    <div class="card-header">
+        <h3>Lista de Contatos</h3>
+    </div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Cargo</th>
+                        <th>Telefone</th>
+                        <th>E-mail</th>
+                        <th>WhatsApp</th>
+                        <th>Principal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if contatos is empty %}
+                    <tr>
+                        <td colspan="6" style="text-align:center;padding:24px 16px;color:var(--color-text-muted);">
+                            Nenhum contato cadastrado.
+                        </td>
+                    </tr>
+                    {% else %}
+                    {% for c in contatos %}
+                    <tr>
+                        <td>{{ c.NOME }}</td>
+                        <td>{{ c.CARGO ?? '—' }}</td>
+                        <td>{{ c.TELEFONE ? telefone(c.TELEFONE) : '—' }}</td>
+                        <td>{{ c.EMAIL ?? '—' }}</td>
+                        <td>{{ c.WHATSAPP ? celular(c.WHATSAPP) : '—' }}</td>
+                        <td>
+                            {% if c.PRINCIPAL %}
+                            <span class="status status-active" style="background:#10b98118;color:#10b981;">Sim</span>
+                            {% else %}
+                            —
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

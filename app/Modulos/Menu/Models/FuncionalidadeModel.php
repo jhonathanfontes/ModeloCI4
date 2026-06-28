@@ -4,9 +4,14 @@ namespace App\Modulos\Menu\Models;
 
 use App\Helpers\Uuid;
 use CodeIgniter\Model;
+use App\Traits\UuidModelTrait;
 
+/**
+ * @method \stdClass|null findByUuid(string $uuid)
+ */
 class FuncionalidadeModel extends Model
 {
+    use UuidModelTrait;
     protected $table = 'MENU_FUNCIONALIDADES';
     protected $primaryKey = 'ID_FUNCIONALIDADE';
     protected $useAutoIncrement = true;

@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{{ base_url('assets/css/painel.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {% block styles %}{% endblock %}
 </head>
 <body>
@@ -58,24 +59,26 @@
             {% endif %}
         </nav>
 
-            {% if empresaAtiva %}
-            <div class="painel-empresa-ativa" title="Empresa ativa">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-                </svg>
-                <span>{{ empresaAtiva.nome }}</span>
-            </div>
-            {% endif %}
-
             <div class="painel-sidebar-footer">
             <div class="painel-user">
                 <div class="avatar">{{ usuario.nome|slice(0, 1)|upper }}</div>
                 <div class="painel-user-info">
                     <span class="painel-user-name">{{ usuario.nome }}</span>
                     <span class="painel-user-email">{{ usuario.email }}</span>
+                    {% if empresaAtiva %}
+                    <span class="painel-user-empresa">{{ empresaAtiva.nome }}</span>
+                    {% endif %}
                 </div>
             </div>
+            {% if empresaAtiva and qtdEmpresas > 1 %}
+            <a href="{{ route_to('painel.dashboard') }}" class="nav-item" style="gap:8px;padding:6px 12px;font-size:12px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+                Trocar empresa
+            </a>
+            {% endif %}
             <a href="{{ route_to('painel.logout') }}" class="nav-item logout">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>

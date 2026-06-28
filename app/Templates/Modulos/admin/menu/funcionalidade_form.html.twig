@@ -6,7 +6,7 @@
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
 <a href="{{ route_to('admin.menu') }}">Menu</a>
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
-<a href="{{ route_to('admin.menu.funcionalidades', servico.id) }}">{{ servico.nome }}</a>
+<a href="{{ route_to('admin.menu.funcionalidades', servico.uuid) }}">{{ servico.nome }}</a>
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
 <span style="color:var(--color-text-muted)">{{ funcionalidade ? 'Editar' : 'Nova' }}</span>
 {% endblock %}
@@ -26,6 +26,7 @@
     <div class="card-header"><h3>{{ funcionalidade ? 'Editar Funcionalidade' : 'Nova Funcionalidade' }}</h3></div>
     <div class="card-body">
         <form method="post" action="{{ route_to('admin.menu.funcionalidade.salvar') }}">
+            {{ csrf_field()|raw }}
             {% if funcionalidade %}<input type="hidden" name="ID_FUNCIONALIDADE" value="{{ funcionalidade.id }}">{% endif %}
             <input type="hidden" name="SERVICO_ID" value="{{ servico.id }}">
 
@@ -46,14 +47,14 @@
                     <label class="form-label" for="SITUACAO_ID">Situação</label>
                     <select id="SITUACAO_ID" name="SITUACAO_ID" class="form-control" required>
                         {% for s in situacoes %}
-                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID', funcionalidade.situacaoId ?? '') == s.ID_SITUACAO) ? 'selected' : '' }}>{{ s.DESCRICAO }}</option>
+                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID', situacaoId ?? '') == s.ID_SITUACAO) ? 'selected' : '' }}>{{ s.DESCRICAO }}</option>
                         {% endfor %}
                     </select>
                 </div>
             </div>
 
             <div class="form-actions">
-                <a href="{{ route_to('admin.menu.funcionalidades', servico.id) }}" class="btn btn-outline">Cancelar</a>
+                <a href="{{ route_to('admin.menu.funcionalidades', servico.uuid) }}" class="btn btn-outline">Cancelar</a>
                 <button type="submit" class="btn btn-primary">{{ funcionalidade ? 'Atualizar' : 'Salvar' }}</button>
             </div>
         </form>

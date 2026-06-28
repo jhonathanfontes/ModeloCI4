@@ -1,6 +1,11 @@
 {% extends 'Layouts/painel' %}
+{% import 'Componentes/form.html.twig' as forms %}
+{% import 'Componentes/selectSituacao' as situacao %}
+{% import 'Componentes/selectTipo' as tipo %}
+
 {% block page_title %}{{ item ? 'Editar Serviço' : 'Novo Serviço' }}{% endblock %}
 {% block page_heading %}{{ item ? 'Editar Serviço' : 'Novo Serviço' }}{% endblock %}
+
 {% block breadcrumb_items %}
 <a href="{{ route_to('painel.dashboard') }}">Painel</a>
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
@@ -28,48 +33,44 @@
     <div class="card-body">
         <form method="post" action="{{ route_to('painel.servicos-cadastro.salvar') }}">
             {% if item %}
-            <input type="hidden" name="ID_SERVICO" value="{{ item.ID_SERVICO }}">
+                {{ forms.input('ID_SERVICO', '', item.ID_SERVICO, 'hidden') }}
             {% endif %}
 
             <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label" for="NOME">Nome</label>
-                    <input type="text" id="NOME" name="NOME" class="form-control" value="{{ old('NOME', item.NOME ?? '') }}" required>
-                </div>
+                {{ forms.input('NOME', 'Nome do Serviço', old('NOME', item.NOME ?? ''), 'text', {
+                    required: true,
+                    col: 'col-12',
+                    icon: 'fa-screwdriver-wrench',
+                    placeholder: 'Ex: Instalação de Ar Condicionado'
+                }) }}
 
-                <div class="form-group">
-                    <label class="form-label" for="DESCRICAO">Descrição</label>
-                    <textarea id="DESCRICAO" name="DESCRICAO" class="form-control" rows="3">{{ old('DESCRICAO', item.DESCRICAO ?? '') }}</textarea>
-                </div>
+                {{ forms.textarea('DESCRICAO', 'Descrição', old('DESCRICAO', item.DESCRICAO ?? ''), {
+                    col: 'col-12',
+                    rows: 3,
+                    placeholder: 'Descreva os detalhes do serviço prestado...'
+                }) }}
 
-                <div class="form-group">
-                    <label class="form-label" for="PRECO">Preço (R$)</label>
-                    <input type="number" id="PRECO" name="PRECO" class="form-control" value="{{ old('PRECO', item.PRECO ?? '') }}" step="0.01" min="0" placeholder="0,00" required>
-                </div>
+                {{ forms.input('PRECO', 'Preço Cobrado (R$)', old('PRECO', item.PRECO ?? ''), 'number', {
+                    required: true,
+                    col: 'col-4 col-md-12',
+                    icon: 'fa-tag',
+                    placeholder: '0.00',
+                    min: 0,
+                    step: 0.01
+                }) }}
 
-                <div class="form-group">
-                    <label class="form-label" for="DURACAO_MINUTOS">Duração (minutos)</label>
-                    <input type="number" id="DURACAO_MINUTOS" name="DURACAO_MINUTOS" class="form-control" value="{{ old('DURACAO_MINUTOS', item.DURACAO_MINUTOS ?? '') }}" min="0" placeholder="Deixe em branco para não informado">
-                </div>
+                {{ forms.input('DURACAO_MINUTOS', 'Duração Estimada (minutos)', old('DURACAO_MINUTOS', item.DURACAO_MINUTOS ?? ''), 'number', {
+                    col: 'col-4 col-md-12',
+                    icon: 'fa-clock',
+                    placeholder: 'Ex: 60',
+                    min: 0
+                }) }}
 
-                <div class="form-group">
-                    <label class="form-label" for="SITUACAO_ID">Situação</label>
-                    <select id="SITUACAO_ID" name="SITUACAO_ID" class="form-control" required>
-                        <option value="">— Selecione —</option>
-                        {% for s in situacoes %}
-                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID', item.SITUACAO_ID ?? '') == s.ID_SITUACAO) ? 'selected' : '' }}>
-                            {{ s.DESCRICAO }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
+                {{ tipo.select('TIPO_ID', old('TIPO_ID', item.TIPO_ID ?? ''), 'TIPO_SERVICO', '', { label: 'Tipo', col: 'col-6 col-md-12' }) }}
 
-            <div class="form-actions">
-                <a href="{{ route_to('painel.servicos-cadastro') }}" class="btn btn-outline">Cancelar</a>
-                <button type="submit" class="btn btn-primary">
-                    {{ item ? 'Atualizar' : 'Salvar' }}
-                </button>
+                {{ situacao.select('SITUACAO_ID', old('SITUACAO_ID', item.SITUACAO_ID ?? ''), 'SITUACAO_REGISTRO', '', { label: 'Situação', required: true, col: 'col-4 col-md-12' }) }}
+
+                {{ forms.actions(route_to('painel.servicos-cadastro'), item ? 'Atualizar' : 'Salvar') }}
             </div>
         </form>
     </div>

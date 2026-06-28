@@ -4,7 +4,6 @@ namespace App\Controllers\Painel;
 
 use App\Dominios\SituacaoRegistro;
 use App\Modulos\Cadastro\Models\ServicoOfertaModel;
-use App\Modulos\Sistema\Models\SituacaoModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class ServicosCadastro extends BaseController
@@ -44,17 +43,16 @@ class ServicosCadastro extends BaseController
         return $this->render('Modulos/painel/servicos_cadastro/form', [
             'title' => 'Novo Serviço',
             'item' => null,
-            'situacoes' => $this->listarSituacoes(),
             'success' => session()->getFlashdata('success'),
             'error' => session()->getFlashdata('error'),
             'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
-    public function editar(int $id): ResponseInterface|string
+    public function editar(string $uuid): ResponseInterface|string
     {
         $model = model(ServicoOfertaModel::class);
-        $item = $model->comSituacao()->find($id);
+        $item = $model->comSituacao()->findByUuid($uuid);
 
         if ($item === null) {
             return redirect()->to(route_to('painel.servicos-cadastro'))
@@ -64,7 +62,6 @@ class ServicosCadastro extends BaseController
         return $this->render('Modulos/painel/servicos_cadastro/form', [
             'title' => 'Editar Serviço',
             'item' => $item,
-            'situacoes' => $this->listarSituacoes(),
             'success' => session()->getFlashdata('success'),
             'error' => session()->getFlashdata('error'),
             'errors' => session()->getFlashdata('errors') ?? [],
@@ -79,6 +76,10 @@ class ServicosCadastro extends BaseController
             return redirect()->back()->with('error', 'Selecione uma empresa primeiro.');
         }
 
+        if (! $this->validate(\App\Modulos\Cadastro\Rules\ServicoRules::cadastro())) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
         $id = (int) ($this->request->getPost('ID_SERVICO') ?: 0);
         $model = model(ServicoOfertaModel::class);
 
@@ -88,6 +89,7 @@ class ServicosCadastro extends BaseController
             'DESCRICAO' => $this->request->getPost('DESCRICAO'),
             'PRECO' => (float) ($this->request->getPost('PRECO') ?: 0),
             'DURACAO_MINUTOS' => $this->request->getPost('DURACAO_MINUTOS') ? (int) $this->request->getPost('DURACAO_MINUTOS') : null,
+            'TIPO_ID' => (int) $this->request->getPost('TIPO_ID'),
             'SITUACAO_ID' => (int) $this->request->getPost('SITUACAO_ID'),
         ];
 
@@ -114,25 +116,25 @@ class ServicosCadastro extends BaseController
             ->with('success', 'Serviço criado com sucesso.');
     }
 
-    public function excluir(int $id): ResponseInterface
+    public function excluir(string $uuid): ResponseInterface
     {
         $model = model(ServicoOfertaModel::class);
+        $item = $model->findByUuid($uuid);
+
+        if ($item === null) {
+            return redirect()->back()
+                ->with('error', 'Serviço não encontrado.');
+        }
+
         $situacaoCancelado = service('situacao')->getId(
             SituacaoRegistro::MODULO,
             SituacaoRegistro::CANCELADO
         );
 
-        $model->update($id, ['SITUACAO_ID' => $situacaoCancelado]);
+        $model->update($item->ID_SERVICO, ['SITUACAO_ID' => $situacaoCancelado]);
 
         return redirect()->to(route_to('painel.servicos-cadastro'))
             ->with('success', 'Serviço cancelado com sucesso.');
     }
 
-    private function listarSituacoes(): array
-    {
-        return model(SituacaoModel::class)
-            ->where('MODULO', SituacaoRegistro::MODULO)
-            ->orderBy('DESCRICAO', 'ASC')
-            ->findAll();
-    }
 }

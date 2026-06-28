@@ -1,6 +1,11 @@
 {% extends 'Layouts/painel' %}
+{% import 'Componentes/form.html.twig' as forms %}
+{% import 'Componentes/selectSituacao' as situacao %}
+{% import 'Componentes/selectTipo' as tipo %}
+
 {% block page_title %}{{ item ? 'Editar Funcionário' : 'Novo Funcionário' }}{% endblock %}
 {% block page_heading %}{{ item ? 'Editar Funcionário' : 'Novo Funcionário' }}{% endblock %}
+
 {% block breadcrumb_items %}
 <a href="{{ route_to('painel.dashboard') }}">Painel</a>
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
@@ -28,48 +33,50 @@
     <div class="card-body">
         <form method="post" action="{{ route_to('painel.funcionarios.salvar') }}">
             {% if item %}
-            <input type="hidden" name="ID_FUNCIONARIO" value="{{ item.ID_FUNCIONARIO }}">
+                {{ forms.input('ID_FUNCIONARIO', '', item.ID_FUNCIONARIO, 'hidden') }}
             {% endif %}
 
             <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label" for="NOME">Nome</label>
-                    <input type="text" id="NOME" name="NOME" class="form-control" value="{{ old('NOME', item.NOME ?? '') }}" required>
-                </div>
+                {{ forms.input('NOME', 'Nome', old('NOME', item.NOME ?? ''), 'text', {
+                    required: true,
+                    col: 'col-6 col-md-12',
+                    icon: 'fa-user',
+                    placeholder: 'Nome completo'
+                }) }}
 
-                <div class="form-group">
-                    <label class="form-label" for="EMAIL">E-mail</label>
-                    <input type="email" id="EMAIL" name="EMAIL" class="form-control" value="{{ old('EMAIL', item.EMAIL ?? '') }}" required>
-                </div>
+                {{ forms.input('EMAIL', 'E-mail', old('EMAIL', item.EMAIL ?? ''), 'email', {
+                    required: true,
+                    col: 'col-6 col-md-12',
+                    icon: 'fa-envelope',
+                    placeholder: 'usuario@empresa.com'
+                }) }}
 
-                <div class="form-group">
-                    <label class="form-label" for="CARGO">Cargo</label>
-                    <input type="text" id="CARGO" name="CARGO" class="form-control" value="{{ old('CARGO', item.CARGO ?? '') }}">
-                </div>
+                {{ forms.input('CARGO', 'Cargo', old('CARGO', item.CARGO ?? ''), 'text', {
+                    col: 'col-6 col-md-12',
+                    icon: 'fa-briefcase',
+                    placeholder: 'Ex: Gerente de Vendas'
+                }) }}
 
-                <div class="form-group">
-                    <label class="form-label" for="TELEFONE">Telefone</label>
-                    <input type="text" id="TELEFONE" name="TELEFONE" class="form-control" value="{{ old('TELEFONE', telefone(item.TELEFONE ?? '')) }}" data-mask="telefone" placeholder="(99) 9999-9999">
-                </div>
+                {{ tipo.select('TIPO_ID', old('TIPO_ID', item.TIPO_ID ?? ''), 'TIPO_FUNCIONARIO', '', { label: 'Tipo', col: 'col-6 col-md-12' }) }}
 
-                <div class="form-group">
-                    <label class="form-label" for="SITUACAO_ID">Situação</label>
-                    <select id="SITUACAO_ID" name="SITUACAO_ID" class="form-control" required>
-                        <option value="">— Selecione —</option>
-                        {% for s in situacoes %}
-                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID', item.SITUACAO_ID ?? '') == s.ID_SITUACAO) ? 'selected' : '' }}>
-                            {{ s.DESCRICAO }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
+                {% set selectedDepto = old('DEPARTAMENTO_ID', item.DEPARTAMENTO_ID ?? '') %}
+                {{ forms.select('DEPARTAMENTO_ID', 'Departamento', selectedDepto, departamentos, {
+                    col: 'col-6 col-md-12',
+                    empty_option: '-- Selecione --',
+                    value_key: 'ID_DEPARTAMENTO',
+                    text_key: 'NOME'
+                }) }}
 
-            <div class="form-actions">
-                <a href="{{ route_to('painel.funcionarios') }}" class="btn btn-outline">Cancelar</a>
-                <button type="submit" class="btn btn-primary">
-                    {{ item ? 'Atualizar' : 'Salvar' }}
-                </button>
+                {{ forms.input('TELEFONE', 'Telefone', old('TELEFONE', telefone(item.TELEFONE ?? '')), 'text', {
+                    col: 'col-6 col-md-12',
+                    icon: 'fa-phone',
+                    placeholder: '(99) 9999-9999',
+                    mask: 'telefone'
+                }) }}
+
+                {{ situacao.select('SITUACAO_ID', old('SITUACAO_ID', item.SITUACAO_ID ?? ''), 'SITUACAO_REGISTRO', '', { label: 'Situação', required: true, col: 'col-6 col-md-12' }) }}
+
+                {{ forms.actions(route_to('painel.funcionarios'), item ? 'Atualizar' : 'Salvar') }}
             </div>
         </form>
     </div>

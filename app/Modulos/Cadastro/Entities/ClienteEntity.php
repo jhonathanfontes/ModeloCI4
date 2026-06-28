@@ -11,7 +11,7 @@ class ClienteEntity extends Entity
         'ID_CLIENTE' => 'integer',
         'EMPRESA_ID' => 'integer',
         'PESSOA_ID' => '?integer',
-        'TIPO_ID' => 'integer',
+        'TIPO_ID' => 'string',
         'SITUACAO_ID' => 'integer',
         'CRIADO_POR' => '?integer',
         'ATUALIZADO_POR' => '?integer',

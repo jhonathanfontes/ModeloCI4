@@ -4,6 +4,7 @@ namespace App\Libraries\Twig;
 
 use App\Helpers\Formatacao;
 use App\Helpers\Mascara;
+use App\Libraries\Dominio;
 use Twig\TwigFunction as TwigFunctionAlias;
 
 class TwigFunction
@@ -20,8 +21,13 @@ class TwigFunction
             return old($key, $default);
         }));
 
+        $twig->addFunction(new TwigFunctionAlias('csrf_field', static function (): string {
+            return csrf_field();
+        }, ['is_safe' => ['html']]));
+
         self::registerMascaras($twig);
         self::registerFormatacoes($twig);
+        self::registerDominios($twig);
     }
 
     private static function registerMascaras(\Twig\Environment $twig): void
@@ -35,6 +41,28 @@ class TwigFunction
         $twig->addFunction(new TwigFunctionAlias('cnpjCpf', static fn (string $v): string => Mascara::cnpjCpf($v)));
         $twig->addFunction(new TwigFunctionAlias('placa', static fn (string $v): string => Mascara::placa($v)));
         $twig->addFunction(new TwigFunctionAlias('removeMascara', static fn (string $v): string => Mascara::remove($v)));
+    }
+
+    private static function registerDominios(\Twig\Environment $twig): void
+    {
+        $twig->addFunction(new TwigFunctionAlias('situacoes_empresa', static fn (): array => Dominio::situacoesEmpresa()));
+        $twig->addFunction(new TwigFunctionAlias('situacoes_usuario', static fn (): array => Dominio::situacoesUsuario()));
+        $twig->addFunction(new TwigFunctionAlias('tipos_endereco', static fn (): array => Dominio::tiposEndereco()));
+
+        $twig->addFunction(new TwigFunctionAlias('dominio_situacoes', static function (string $modulo, string $codigos = ''): array {
+            $filter = $codigos !== '' ? explode(',', $codigos) : [];
+
+            return $filter === []
+                ? Dominio::situacoesPorModulo($modulo)
+                : Dominio::situacoes($filter, $modulo);
+        }));
+        $twig->addFunction(new TwigFunctionAlias('dominio_tipos', static function (string $modulo, string $codigos = ''): array {
+            $filter = $codigos !== '' ? explode(',', $codigos) : [];
+
+            return $filter === []
+                ? Dominio::tiposPorModulo($modulo)
+                : Dominio::tipos($filter, $modulo);
+        }));
     }
 
     private static function registerFormatacoes(\Twig\Environment $twig): void

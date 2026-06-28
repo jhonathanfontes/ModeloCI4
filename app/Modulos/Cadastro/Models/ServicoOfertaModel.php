@@ -4,9 +4,14 @@ namespace App\Modulos\Cadastro\Models;
 
 use App\Helpers\Uuid;
 use CodeIgniter\Model;
+use App\Traits\UuidModelTrait;
 
+/**
+ * @method \stdClass|null findByUuid(string $uuid)
+ */
 class ServicoOfertaModel extends Model
 {
+    use UuidModelTrait;
     protected $table = 'SERVICOS';
     protected $primaryKey = 'ID_SERVICO';
     protected $useAutoIncrement = true;
@@ -20,6 +25,7 @@ class ServicoOfertaModel extends Model
         'DESCRICAO',
         'PRECO',
         'DURACAO_MINUTOS',
+        'TIPO_ID',
         'SITUACAO_ID',
     ];
 

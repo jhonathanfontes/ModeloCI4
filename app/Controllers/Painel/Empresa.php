@@ -35,6 +35,8 @@ class Empresa extends BaseController
             'perfilNome' => $encontrada->PERFIL_NOME ?? '',
         ]);
 
+        session()->set('qtdEmpresas', count($empresas));
+
         return redirect()->to(route_to('painel.dashboard'))
             ->with('success', 'Empresa ' . $encontrada->EMPRESA_NOME . ' selecionada.');
     }

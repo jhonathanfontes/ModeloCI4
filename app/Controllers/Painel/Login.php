@@ -84,6 +84,8 @@ class Login extends BaseController
 
         $qtd = count($empresas);
 
+        session()->set('qtdEmpresas', $qtd);
+
         if ($qtd === 1) {
             $empresa = $empresas[0];
             session()->set('empresaAtiva', [

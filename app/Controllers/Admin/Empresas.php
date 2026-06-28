@@ -4,7 +4,6 @@ namespace App\Controllers\Admin;
 
 use App\Modulos\Cadastro\Rules\EmpresaRules;
 use App\Modulos\Cadastro\Services\EmpresaService;
-use App\Modulos\Sistema\Models\SituacaoModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class Empresas extends BaseController
@@ -38,23 +37,22 @@ class Empresas extends BaseController
         return $this->render('Modulos/admin/empresas/form', [
             'title' => 'Nova Empresa',
             'empresa' => null,
-            'situacoes' => $this->listarSituacoes(),
             'success' => session()->getFlashdata('success'),
             'error' => session()->getFlashdata('error'),
             'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
-    public function visualizar(int $id): ResponseInterface|string
+    public function visualizar(string $uuid): ResponseInterface|string
     {
-        $empresa = $this->empresaService->encontrar($id);
+        $empresa = $this->empresaService->encontrarPorUuid($uuid);
 
         if ($empresa === null) {
             return redirect()->to(route_to('admin.empresas'))
                 ->with('error', 'Empresa não encontrada.');
         }
 
-        $usuarios = service('usuarioRepository')->usuariosDaEmpresa($id);
+        $usuarios = service('usuarioRepository')->usuariosDaEmpresa($empresa->id);
 
         return $this->render('Modulos/admin/empresas/visualizar', [
             'title' => $empresa->nomeFantasia,
@@ -65,9 +63,9 @@ class Empresas extends BaseController
         ]);
     }
 
-    public function editar(int $id): ResponseInterface|string
+    public function editar(string $uuid): ResponseInterface|string
     {
-        $empresa = $this->empresaService->encontrar($id);
+        $empresa = $this->empresaService->encontrarPorUuid($uuid);
 
         if ($empresa === null) {
             return redirect()->to(route_to('admin.empresas'))
@@ -77,7 +75,6 @@ class Empresas extends BaseController
         return $this->render('Modulos/admin/empresas/form', [
             'title' => 'Editar Empresa',
             'empresa' => $empresa,
-            'situacoes' => $this->listarSituacoes(),
             'success' => session()->getFlashdata('success'),
             'error' => session()->getFlashdata('error'),
             'errors' => session()->getFlashdata('errors') ?? [],
@@ -131,26 +128,18 @@ class Empresas extends BaseController
             ->with('success', 'Empresa criada com sucesso.');
     }
 
-    public function excluir(int $id): ResponseInterface
+    public function excluir(string $uuid): ResponseInterface
     {
-        $empresa = $this->empresaService->encontrar($id);
+        $empresa = $this->empresaService->encontrarPorUuid($uuid);
 
         if ($empresa === null) {
             return redirect()->back()
                 ->with('error', 'Empresa não encontrada.');
         }
 
-        $this->empresaService->excluir($id);
+        $this->empresaService->excluir($empresa->id);
 
         return redirect()->to(route_to('admin.empresas'))
             ->with('success', 'Empresa cancelada com sucesso.');
-    }
-
-    private function listarSituacoes(): array
-    {
-        return model(SituacaoModel::class)
-            ->where('MODULO', \App\Dominios\SituacaoRegistro::MODULO)
-            ->orderBy('DESCRICAO', 'ASC')
-            ->findAll();
     }
 }

@@ -4,8 +4,6 @@ namespace App\Modulos\Menu\Services;
 
 use App\Dominios\SituacaoRegistro;
 use App\Helpers\Uuid;
-use App\Modulos\Cadastro\Models\EmpresaModuloModel;
-use App\Modulos\Cadastro\Models\EmpresaServicoModel;
 use App\Modulos\Menu\DTO\FuncionalidadeDTO;
 use App\Modulos\Menu\DTO\ModuloDTO;
 use App\Modulos\Menu\DTO\ServicoDTO;
@@ -81,6 +79,15 @@ class MenuService
         return $row !== null ? ModuloDTO::fromObject($row) : null;
     }
 
+    public function encontrarModuloPorUuid(string $uuid): ?ModuloDTO
+    {
+        $model = model(ModuloModel::class);
+
+        $row = $model->comSituacao()->findByUuid($uuid);
+
+        return $row !== null ? ModuloDTO::fromObject($row) : null;
+    }
+
     public function criarModulo(array $data): ?int
     {
         $model = model(ModuloModel::class);
@@ -143,6 +150,15 @@ class MenuService
         $model = model(ServicoModel::class);
 
         $row = $model->comModulo()->comSituacao()->find($id);
+
+        return $row !== null ? ServicoDTO::fromObject($row) : null;
+    }
+
+    public function encontrarServicoPorUuid(string $uuid): ?ServicoDTO
+    {
+        $model = model(ServicoModel::class);
+
+        $row = $model->comModulo()->comSituacao()->findByUuid($uuid);
 
         return $row !== null ? ServicoDTO::fromObject($row) : null;
     }
@@ -243,6 +259,15 @@ class MenuService
         $model = model(FuncionalidadeModel::class);
 
         $row = $model->comServico()->comSituacao()->find($id);
+
+        return $row !== null ? FuncionalidadeDTO::fromObject($row) : null;
+    }
+
+    public function encontrarFuncionalidadePorUuid(string $uuid): ?FuncionalidadeDTO
+    {
+        $model = model(FuncionalidadeModel::class);
+
+        $row = $model->comServico()->comSituacao()->findByUuid($uuid);
 
         return $row !== null ? FuncionalidadeDTO::fromObject($row) : null;
     }

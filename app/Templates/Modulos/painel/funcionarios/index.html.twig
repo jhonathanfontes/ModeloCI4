@@ -62,13 +62,13 @@
                         </td>
                         <td>
                             <div class="action-group">
-                                <a href="{{ route_to('painel.funcionarios.editar', i.ID_FUNCIONARIO) }}" class="btn btn-sm btn-outline" title="Editar">
+                                <a href="{{ route_to('painel.funcionarios.editar', i.UUID) }}" class="btn btn-sm btn-outline" title="Editar">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                                     </svg>
                                 </a>
-                                <form method="post" action="{{ route_to('painel.funcionarios.excluir', i.ID_FUNCIONARIO) }}" class="inline-form" onsubmit="return confirm('Tem certeza que deseja cancelar este funcionário?')">
+                                <form method="post" action="{{ route_to('painel.funcionarios.excluir', i.UUID) }}" class="inline-form" data-confirm="Tem certeza que deseja cancelar este funcionário?">
                                     <button type="submit" class="btn btn-sm btn-outline btn-danger" title="Cancelar">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <polyline points="3 6 5 6 21 6"/>

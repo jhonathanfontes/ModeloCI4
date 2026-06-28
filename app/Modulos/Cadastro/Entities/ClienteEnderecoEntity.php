@@ -9,7 +9,7 @@ class ClienteEnderecoEntity extends Entity
     protected $casts = [
         'ID_ENDERECO' => 'integer',
         'CLIENTE_ID' => 'integer',
-        'TIPO_ID' => 'integer',
+        'TIPO_ID' => 'string',
         'PRINCIPAL' => 'boolean',
         'CRIADO_POR' => '?integer',
         'ATUALIZADO_POR' => '?integer',

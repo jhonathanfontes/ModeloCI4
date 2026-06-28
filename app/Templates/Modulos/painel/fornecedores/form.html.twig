@@ -1,6 +1,11 @@
 {% extends 'Layouts/painel' %}
+{% import 'Componentes/form.html.twig' as forms %}
+{% import 'Componentes/selectSituacao' as situacao %}
+{% import 'Componentes/selectTipo' as tipo %}
+
 {% block page_title %}{{ item ? 'Editar Fornecedor' : 'Novo Fornecedor' }}{% endblock %}
 {% block page_heading %}{{ item ? 'Editar Fornecedor' : 'Novo Fornecedor' }}{% endblock %}
+
 {% block breadcrumb_items %}
 <a href="{{ route_to('painel.dashboard') }}">Painel</a>
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
@@ -28,56 +33,125 @@
     <div class="card-body">
         <form method="post" action="{{ route_to('painel.fornecedores.salvar') }}">
             {% if item %}
-            <input type="hidden" name="ID_FORNECEDOR" value="{{ item.ID_FORNECEDOR }}">
+                {{ forms.input('ID_FORNECEDOR', '', item.ID_FORNECEDOR, 'hidden') }}
             {% endif %}
 
             <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label" for="NOME">Nome</label>
-                    <input type="text" id="NOME" name="NOME" class="form-control" value="{{ old('NOME', item.NOME ?? '') }}" required>
-                </div>
+                {{ forms.input('NOME', 'Nome', old('NOME', item.NOME ?? ''), 'text', {
+                    required: true,
+                    col: 'col-6 col-md-12',
+                    icon: 'fa-user',
+                    placeholder: 'Razão Social / Nome completo'
+                }) }}
 
-                <div class="form-group">
-                    <label class="form-label" for="CPF_CNPJ">CPF/CNPJ</label>
-                    <input type="text" id="CPF_CNPJ" name="CPF_CNPJ" class="form-control" value="{{ old('CPF_CNPJ', cnpjCpf(item.CPF_CNPJ ?? '')) }}" data-mask="cpfCnpj" placeholder="CPF ou CNPJ">
-                </div>
+                {{ forms.input('CPF_CNPJ', 'CPF/CNPJ', old('CPF_CNPJ', cnpjCpf(item.CPF_CNPJ ?? '')), 'text', {
+                    col: 'col-6 col-md-12',
+                    icon: 'fa-address-card',
+                    placeholder: 'CPF ou CNPJ (apenas números)',
+                    mask: 'cpfCnpj'
+                }) }}
 
-                <div class="form-group">
-                    <label class="form-label" for="EMAIL">E-mail</label>
-                    <input type="email" id="EMAIL" name="EMAIL" class="form-control" value="{{ old('EMAIL', item.EMAIL ?? '') }}">
-                </div>
+                {{ tipo.select('TIPO_ID', old('TIPO_ID', item.TIPO_ID ?? ''), 'TIPO_PESSOA', '', { label: 'Tipo', col: 'col-6 col-md-12' }) }}
 
-                <div class="form-group">
-                    <label class="form-label" for="TELEFONE">Telefone</label>
-                    <input type="text" id="TELEFONE" name="TELEFONE" class="form-control" value="{{ old('TELEFONE', telefone(item.TELEFONE ?? '')) }}" data-mask="telefone" placeholder="(99) 9999-9999">
-                </div>
+                {{ forms.input('EMAIL', 'E-mail', old('EMAIL', item.EMAIL ?? ''), 'email', {
+                    col: 'col-6 col-md-12',
+                    icon: 'fa-envelope',
+                    placeholder: 'contato@fornecedor.com'
+                }) }}
 
-                <div class="form-group">
-                    <label class="form-label" for="CELULAR">Celular</label>
-                    <input type="text" id="CELULAR" name="CELULAR" class="form-control" value="{{ old('CELULAR', celular(item.CELULAR ?? '')) }}" data-mask="celular" placeholder="(99) 99999-9999">
-                </div>
+                {{ forms.input('TELEFONE', 'Telefone', old('TELEFONE', telefone(item.TELEFONE ?? '')), 'text', {
+                    col: 'col-6 col-md-12',
+                    icon: 'fa-phone',
+                    placeholder: '(99) 9999-9999',
+                    mask: 'telefone'
+                }) }}
 
-                <div class="form-group">
-                    <label class="form-label" for="SITUACAO_ID">Situação</label>
-                    <select id="SITUACAO_ID" name="SITUACAO_ID" class="form-control" required>
-                        <option value="">— Selecione —</option>
-                        {% for s in situacoes %}
-                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID', item.SITUACAO_ID ?? '') == s.ID_SITUACAO) ? 'selected' : '' }}>
-                            {{ s.DESCRICAO }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
+                {{ forms.input('CELULAR', 'Celular', old('CELULAR', celular(item.CELULAR ?? '')), 'text', {
+                    col: 'col-6 col-md-12',
+                    icon: 'fa-mobile-screen-button',
+                    placeholder: '(99) 99999-9999',
+                    mask: 'celular'
+                }) }}
 
-            <div class="form-actions">
-                <a href="{{ route_to('painel.fornecedores') }}" class="btn btn-outline">Cancelar</a>
-                <button type="submit" class="btn btn-primary">
-                    {{ item ? 'Atualizar' : 'Salvar' }}
-                </button>
+                {{ situacao.select('SITUACAO_ID', old('SITUACAO_ID', item.SITUACAO_ID ?? ''), 'SITUACAO_REGISTRO', '', { label: 'Situação', required: true, col: 'col-6 col-md-12' }) }}
+
+                {{ forms.actions(route_to('painel.fornecedores'), item ? 'Atualizar' : 'Salvar') }}
             </div>
         </form>
     </div>
 </div>
 
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cnpjInput = document.getElementById('CPF_CNPJ');
+        if (cnpjInput) {
+            cnpjInput.addEventListener('blur', function() {
+                const cnpj = this.value.replace(/\D/g, '');
+                if (cnpj.length === 14) {
+                    const fields = ['NOME', 'EMAIL', 'TELEFONE'];
+                    fields.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.placeholder = 'Carregando...';
+                    });
+
+                    fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error('CNPJ não encontrado ou erro na API');
+                            return response.json();
+                        })
+                        .then(data => {
+                            // Preencher tipo como Pessoa Jurídica
+                            const tipoSelect = document.getElementById('TIPO_ID');
+                            if (tipoSelect) {
+                                for (let i = 0; i < tipoSelect.options.length; i++) {
+                                    const text = tipoSelect.options[i].text.toLowerCase();
+                                    const val = tipoSelect.options[i].value;
+                                    if (text.includes('jurídica') || text.includes('juridica') || val == '2') {
+                                        tipoSelect.value = val;
+                                        tipoSelect.dispatchEvent(new Event('change'));
+                                        break;
+                                    }
+                                }
+                            }
+
+                            // Preencher campos básicos
+                            if (data.razao_social && document.getElementById('NOME')) {
+                                document.getElementById('NOME').value = data.razao_social;
+                                document.getElementById('NOME').dispatchEvent(new Event('input'));
+                            }
+                            if (data.email && document.getElementById('EMAIL')) {
+                                document.getElementById('EMAIL').value = data.email;
+                                document.getElementById('EMAIL').dispatchEvent(new Event('input'));
+                            }
+                            if (data.ddd_telefone_1 && document.getElementById('TELEFONE')) {
+                                document.getElementById('TELEFONE').value = data.ddd_telefone_1;
+                                document.getElementById('TELEFONE').dispatchEvent(new Event('input'));
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Erro ao buscar CNPJ:', err);
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    title: 'Aviso',
+                                    text: 'Não foi possível encontrar dados para este CNPJ automaticamente.',
+                                    icon: 'info',
+                                    confirmButtonText: 'Ok'
+                                });
+                            } else {
+                                alert('Não foi possível encontrar dados para este CNPJ automaticamente.');
+                            }
+                        })
+                        .finally(() => {
+                            fields.forEach(id => {
+                                const el = document.getElementById(id);
+                                if (el) el.placeholder = '';
+                            });
+                        });
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
 {% endblock %}

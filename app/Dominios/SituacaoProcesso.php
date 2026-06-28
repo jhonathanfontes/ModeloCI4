@@ -6,17 +6,17 @@ class SituacaoProcesso extends Dominio
 {
     public const MODULO = 'SITUACAO_PROCESSO';
 
-    public const RASCUNHO = 'P101';
-    public const PENDENTE = 'P102';
-    public const EM_ANALISE = 'P103';
-    public const APROVADO = 'P104';
-    public const REPROVADO = 'P105';
-    public const DEVOLVIDO = 'P106';
-    public const AGUARDANDO = 'P107';
-    public const EM_EXECUCAO = 'P108';
-    public const SUSPENSO = 'P109';
-    public const FINALIZADO = 'P110';
-    public const CANCELADO = 'P111';
+    public const RASCUNHO = 'RASCUNHO';
+    public const PENDENTE = 'PENDENTE';
+    public const EM_ANALISE = 'EM_ANALISE';
+    public const APROVADO = 'APROVADO';
+    public const REPROVADO = 'REPROVADO';
+    public const DEVOLVIDO = 'DEVOLVIDO';
+    public const AGUARDANDO = 'AGUARDANDO';
+    public const EM_EXECUCAO = 'EM_EXECUCAO';
+    public const SUSPENSO = 'SUSPENSO';
+    public const FINALIZADO = 'FINALIZADO';
+    public const CANCELADO = 'CANCELADO';
 
     public static function modulo(): string
     {
@@ -28,6 +28,7 @@ class SituacaoProcesso extends Dominio
         return [
 
             self::RASCUNHO => [
+                'id_situacao' => 30,
                 'codigo' => self::RASCUNHO,
                 'descricao' => 'Rascunho',
                 'cor' => 'secondary',
@@ -41,6 +42,7 @@ class SituacaoProcesso extends Dominio
             ],
 
             self::PENDENTE => [
+                'id_situacao' => 31,
                 'codigo' => self::PENDENTE,
                 'descricao' => 'Pendente',
                 'cor' => 'warning',
@@ -54,6 +56,7 @@ class SituacaoProcesso extends Dominio
             ],
 
             self::EM_ANALISE => [
+                'id_situacao' => 32,
                 'codigo' => self::EM_ANALISE,
                 'descricao' => 'Em Análise',
                 'cor' => 'info',
@@ -67,6 +70,7 @@ class SituacaoProcesso extends Dominio
             ],
 
             self::APROVADO => [
+                'id_situacao' => 33,
                 'codigo' => self::APROVADO,
                 'descricao' => 'Aprovado',
                 'cor' => 'success',
@@ -80,6 +84,7 @@ class SituacaoProcesso extends Dominio
             ],
 
             self::REPROVADO => [
+                'id_situacao' => 34,
                 'codigo' => self::REPROVADO,
                 'descricao' => 'Reprovado',
                 'cor' => 'danger',
@@ -93,6 +98,7 @@ class SituacaoProcesso extends Dominio
             ],
 
             self::DEVOLVIDO => [
+                'id_situacao' => 35,
                 'codigo' => self::DEVOLVIDO,
                 'descricao' => 'Devolvido',
                 'cor' => 'warning',
@@ -106,6 +112,7 @@ class SituacaoProcesso extends Dominio
             ],
 
             self::AGUARDANDO => [
+                'id_situacao' => 36,
                 'codigo' => self::AGUARDANDO,
                 'descricao' => 'Aguardando',
                 'cor' => 'primary',
@@ -119,6 +126,7 @@ class SituacaoProcesso extends Dominio
             ],
 
             self::EM_EXECUCAO => [
+                'id_situacao' => 37,
                 'codigo' => self::EM_EXECUCAO,
                 'descricao' => 'Em Execução',
                 'cor' => 'primary',
@@ -132,6 +140,7 @@ class SituacaoProcesso extends Dominio
             ],
 
             self::SUSPENSO => [
+                'id_situacao' => 38,
                 'codigo' => self::SUSPENSO,
                 'descricao' => 'Suspenso',
                 'cor' => 'dark',
@@ -145,6 +154,7 @@ class SituacaoProcesso extends Dominio
             ],
 
             self::FINALIZADO => [
+                'id_situacao' => 39,
                 'codigo' => self::FINALIZADO,
                 'descricao' => 'Finalizado',
                 'cor' => 'success',
@@ -158,6 +168,7 @@ class SituacaoProcesso extends Dominio
             ],
 
             self::CANCELADO => [
+                'id_situacao' => 40,
                 'codigo' => self::CANCELADO,
                 'descricao' => 'Cancelado',
                 'cor' => 'danger',

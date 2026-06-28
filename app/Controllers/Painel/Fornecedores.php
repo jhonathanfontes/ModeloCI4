@@ -4,7 +4,6 @@ namespace App\Controllers\Painel;
 
 use App\Dominios\SituacaoRegistro;
 use App\Modulos\Cadastro\Models\FornecedorModel;
-use App\Modulos\Sistema\Models\SituacaoModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class Fornecedores extends BaseController
@@ -44,17 +43,16 @@ class Fornecedores extends BaseController
         return $this->render('Modulos/painel/fornecedores/form', [
             'title' => 'Novo Fornecedor',
             'item' => null,
-            'situacoes' => $this->listarSituacoes(),
             'success' => session()->getFlashdata('success'),
             'error' => session()->getFlashdata('error'),
             'errors' => session()->getFlashdata('errors') ?? [],
         ]);
     }
 
-    public function editar(int $id): ResponseInterface|string
+    public function editar(string $uuid): ResponseInterface|string
     {
         $model = model(FornecedorModel::class);
-        $item = $model->comSituacao()->find($id);
+        $item = $model->comSituacao()->findByUuid($uuid);
 
         if ($item === null) {
             return redirect()->to(route_to('painel.fornecedores'))
@@ -64,7 +62,6 @@ class Fornecedores extends BaseController
         return $this->render('Modulos/painel/fornecedores/form', [
             'title' => 'Editar Fornecedor',
             'item' => $item,
-            'situacoes' => $this->listarSituacoes(),
             'success' => session()->getFlashdata('success'),
             'error' => session()->getFlashdata('error'),
             'errors' => session()->getFlashdata('errors') ?? [],
@@ -79,6 +76,10 @@ class Fornecedores extends BaseController
             return redirect()->back()->with('error', 'Selecione uma empresa primeiro.');
         }
 
+        if (! $this->validate(\App\Modulos\Cadastro\Rules\FornecedorRules::cadastro())) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
         $id = (int) ($this->request->getPost('ID_FORNECEDOR') ?: 0);
         $model = model(FornecedorModel::class);
 
@@ -86,6 +87,7 @@ class Fornecedores extends BaseController
             'EMPRESA_ID' => (int) $empresaAtiva['id'],
             'NOME' => $this->request->getPost('NOME'),
             'CPF_CNPJ' => preg_replace('/\D/', '', $this->request->getPost('CPF_CNPJ') ?? ''),
+            'TIPO_ID' => (int) $this->request->getPost('TIPO_ID'),
             'EMAIL' => $this->request->getPost('EMAIL'),
             'TELEFONE' => preg_replace('/\D/', '', $this->request->getPost('TELEFONE') ?? ''),
             'CELULAR' => preg_replace('/\D/', '', $this->request->getPost('CELULAR') ?? ''),
@@ -115,25 +117,25 @@ class Fornecedores extends BaseController
             ->with('success', 'Fornecedor criado com sucesso.');
     }
 
-    public function excluir(int $id): ResponseInterface
+    public function excluir(string $uuid): ResponseInterface
     {
         $model = model(FornecedorModel::class);
+        $item = $model->findByUuid($uuid);
+
+        if ($item === null) {
+            return redirect()->back()
+                ->with('error', 'Fornecedor não encontrado.');
+        }
+
         $situacaoCancelado = service('situacao')->getId(
             SituacaoRegistro::MODULO,
             SituacaoRegistro::CANCELADO
         );
 
-        $model->update($id, ['SITUACAO_ID' => $situacaoCancelado]);
+        $model->update($item->ID_FORNECEDOR, ['SITUACAO_ID' => $situacaoCancelado]);
 
         return redirect()->to(route_to('painel.fornecedores'))
             ->with('success', 'Fornecedor cancelado com sucesso.');
     }
 
-    private function listarSituacoes(): array
-    {
-        return model(SituacaoModel::class)
-            ->where('MODULO', SituacaoRegistro::MODULO)
-            ->orderBy('DESCRICAO', 'ASC')
-            ->findAll();
-    }
 }

@@ -4,9 +4,14 @@ namespace App\Modulos\Planos\Models;
 
 use App\Helpers\Uuid;
 use CodeIgniter\Model;
+use App\Traits\UuidModelTrait;
 
+/**
+ * @method \stdClass|null findByUuid(string $uuid)
+ */
 class PlanoServicoModel extends Model
 {
+    use UuidModelTrait;
     protected $table = 'SIST_PLANO_SERVICOS';
     protected $primaryKey = 'ID_PLANO_SERVICO';
     protected $useAutoIncrement = true;

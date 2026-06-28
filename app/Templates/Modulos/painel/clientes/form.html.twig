@@ -1,77 +1,359 @@
-{% extends 'Layouts/painel' %}
-{% block page_title %}{{ cliente ? 'Editar Cliente' : 'Novo Cliente' }}{% endblock %}
-{% block page_heading %}{{ cliente ? 'Editar Cliente' : 'Novo Cliente' }}{% endblock %}
-{% block breadcrumb_items %}
+{% extends 'Layouts/painel' %} {% import 'Componentes/form.html.twig' as forms %} {% import 'Componentes/selectSituacao' as situacao %} {% import 'Componentes/selectTipo' as tipo %} {% block page_title %}{{ cliente ? 'Editar Cliente' : 'Novo Cliente'
+}}{% endblock %} {% block page_heading %}{{ cliente ? 'Editar Cliente' : 'Novo Cliente' }}{% endblock %} {% block breadcrumb_items %}
 <a href="{{ route_to('painel.dashboard') }}">Painel</a>
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
 <a href="{{ route_to('painel.clientes') }}">Clientes</a>
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
-<span style="color:var(--color-text-muted)">{{ cliente ? 'Editar' : 'Novo' }}</span>
-{% endblock %}
-
-{% block content %}
-
-{% if errors is defined and errors|length > 0 %}
+<span style="color:var(--color-text-muted)">{{ cliente ? 'Editar' : 'Novo' }}</span> {% endblock %} {% block content %} {% if errors is defined and errors|length > 0 %}
 <div class="alert alert-error">
     <ul style="margin:0;padding-left:20px;">
-    {% for field, msg in errors %}
+        {% for field, msg in errors %}
         <li>{{ msg }}</li>
-    {% endfor %}
+        {% endfor %}
     </ul>
 </div>
 {% endif %}
 
 <div class="card">
     <div class="card-header">
-        <h3>{{ cliente ? 'Editar Cliente' : 'Novo Cliente' }}</h3>
+        <h3>Dados do Cliente</h3>
     </div>
     <div class="card-body">
         <form method="post" action="{{ route_to('painel.clientes.salvar') }}">
-            {% if cliente %}
-            <input type="hidden" name="ID_CLIENTE" value="{{ cliente.ID_CLIENTE }}">
-            {% endif %}
+            {{ csrf_field() | raw }} {% if cliente %} {{ forms.input('ID_CLIENTE', '', cliente.ID_CLIENTE, 'hidden') }} {% endif %}
 
             <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label" for="NOME">Nome</label>
-                    <input type="text" id="NOME" name="NOME" class="form-control" value="{{ old('NOME', cliente.NOME ?? '') }}" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="NOME_FANTASIA">Nome Fantasia</label>
-                    <input type="text" id="NOME_FANTASIA" name="NOME_FANTASIA" class="form-control" value="{{ old('NOME_FANTASIA', cliente.NOME_FANTASIA ?? '') }}">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="TIPO_ID">Tipo</label>
-                    <select id="TIPO_ID" name="TIPO_ID" class="form-control">
-                        <option value="0">— Selecione —</option>
-                        <option value="1" {{ (old('TIPO_ID', cliente.TIPO_ID ?? '') == '1') ? 'selected' : '' }}>Pessoa Física</option>
-                        <option value="2" {{ (old('TIPO_ID', cliente.TIPO_ID ?? '') == '2') ? 'selected' : '' }}>Pessoa Jurídica</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="SITUACAO_ID">Situação</label>
-                    <select id="SITUACAO_ID" name="SITUACAO_ID" class="form-control" required>
-                        <option value="">— Selecione —</option>
-                        {% for s in situacoes %}
-                        <option value="{{ s.ID_SITUACAO }}" {{ (old('SITUACAO_ID', cliente.SITUACAO_ID ?? '') == s.ID_SITUACAO) ? 'selected' : '' }}>
-                            {{ s.DESCRICAO }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
+                {{ forms.input('CPF_CNPJ', 'CPF/CNPJ', old('CPF_CNPJ', cliente.CPF_CNPJ ?? ''), 'text', { col: 'col-3 col-md-12', placeholder: '000.000.000-00', mask: 'cpf_cnpj' }) }} {{ forms.input('NOME', 'Nome', old('NOME', cliente.NOME ?? ''), 'text', { required:
+                true, col: 'col-5 col-md-12', icon: 'fa-user', placeholder: 'Nome completo ou razão social' }) }} {{ forms.input('DATA_NASCIMENTO', 'Data Nasc./Fundação', old('DATA_NASCIMENTO', cliente.DATA_NASCIMENTO ?? ''), 'date', { col: 'col-4 col-md-12',
+                }) }} {{ forms.input('NOME_FANTASIA', 'Nome Fantasia', old('NOME_FANTASIA', cliente.NOME_FANTASIA ?? ''), 'text', { col: 'col-6 col-md-12', icon: 'fa-building', placeholder: 'Nome de fantasia (se houver)' }) }} {{ tipo.select('TIPO_ID',
+                old('TIPO_ID', cliente.TIPO_ID ?? ''), 'TIPO_PESSOA', '', { label: 'Tipo', required: true, col: 'col-3 col-md-12' }) }} {{ situacao.select('SITUACAO_ID', old('SITUACAO_ID', cliente.SITUACAO_ID ?? ''), 'SITUACAO_REGISTRO', 'ATIVO,INATIVO,BLOQUEADO',
+                { label: 'Situação', required: true, col: 'col-3 col-md-12' }) }}
             </div>
 
-            <div class="form-actions">
-                <a href="{{ route_to('painel.clientes') }}" class="btn btn-outline">Cancelar</a>
-                <button type="submit" class="btn btn-primary">
-                    {{ cliente ? 'Atualizar' : 'Salvar' }}
-                </button>
+            <hr style="margin:24px 0;border:none;border-top:1px solid var(--color-border,#e2e8f0);">
+
+            <h4 style="font-size:15px;font-weight:600;color:var(--color-text,#1e293b);margin-bottom:16px;">
+                Contato Principal
+            </h4>
+
+            <div class="form-grid">
+                {{ forms.input('CONTATO_TELEFONE', 'Telefone', old('CONTATO_TELEFONE', contatoPrincipal.TELEFONE ?? ''), 'text', { col: 'col-4 col-md-12', placeholder: '(00) 0000-0000', mask: 'phone' }) }} {{ forms.input('CONTATO_EMAIL', 'E-mail', old('CONTATO_EMAIL',
+                contatoPrincipal.EMAIL ?? ''), 'email', { col: 'col-4 col-md-12', placeholder: 'email@exemplo.com' }) }} {{ forms.input('CONTATO_WHATSAPP', 'WhatsApp', old('CONTATO_WHATSAPP', contatoPrincipal.WHATSAPP ?? ''), 'text', { col: 'col-4 col-md-12',
+                placeholder: '(00) 00000-0000', mask: 'phone' }) }}
+            </div>
+
+            <hr style="margin:24px 0;border:none;border-top:1px solid var(--color-border,#e2e8f0);">
+
+            <h4 style="font-size:15px;font-weight:600;color:var(--color-text,#1e293b);margin-bottom:16px;">
+                Endereço Principal
+            </h4>
+
+            <div class="form-grid">
+                {{ forms.input('ENDERECO_CEP', 'CEP', old('ENDERECO_CEP', enderecoPrincipal.CEP ?? ''), 'text', { col: 'col-4 col-md-12', placeholder: '00000-000', mask: 'cep' }) }} {{ forms.input('ENDERECO_LOGRADOURO', 'Logradouro', old('ENDERECO_LOGRADOURO', enderecoPrincipal.LOGRADOURO
+                ?? ''), 'text', { col: 'col-8 col-md-12', placeholder: 'Rua, Avenida, etc.' }) }} {{ forms.input('ENDERECO_NUMERO', 'Número', old('ENDERECO_NUMERO', enderecoPrincipal.NUMERO ?? ''), 'text', { col: 'col-4 col-md-12', placeholder: 'Ex: 123'
+                }) }} {{ forms.input('ENDERECO_COMPLEMENTO', 'Complemento', old('ENDERECO_COMPLEMENTO', enderecoPrincipal.COMPLEMENTO ?? ''), 'text', { col: 'col-4 col-md-12', placeholder: 'Apto, Sala, Bloco, etc.' }) }} {{ forms.input('ENDERECO_BAIRRO',
+                'Bairro', old('ENDERECO_BAIRRO', enderecoPrincipal.BAIRRO ?? ''), 'text', { col: 'col-4 col-md-12', placeholder: 'Bairro' }) }} {{ forms.input('ENDERECO_CIDADE', 'Cidade', old('ENDERECO_CIDADE', enderecoPrincipal.CIDADE ?? ''), 'text',
+                { col: 'col-2 col-md-12', placeholder: 'Cidade' }) }} {{ forms.select('ENDERECO_UF', 'UF', old('ENDERECO_UF', enderecoPrincipal.UF ?? ''), [ 'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR',
+                'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO' ], { col: 'col-2 col-md-12' }) }}
+            </div>
+
+            <div class="form-grid" style="margin-top:16px;">
+                {{ forms.actions(route_to('painel.clientes'), cliente ? 'Atualizar' : 'Salvar') }}
             </div>
         </form>
     </div>
 </div>
 
+<div class="card" style="margin-top:24px;">
+    <div class="card-header">
+        <h3>Endereços</h3>
+        {% if cliente %}
+        <a href="{{ route_to('painel.clientes.endereco.novo', cliente.UUID) }}" class="btn btn-primary btn-sm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg> Novo Endereço
+        </a>
+        {% endif %}
+    </div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Logradouro</th>
+                        <th>Número</th>
+                        <th>Bairro</th>
+                        <th>Cidade</th>
+                        <th>UF</th>
+                        <th>Principal</th>
+                        {% if cliente %}
+                        <th style="width:100px;">Ações</th>{% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if enderecos is empty %}
+                    <tr>
+                        <td colspan="{% if cliente %}7{% else %}6{% endif %}" style="text-align:center;padding:24px 16px;color:var(--color-text-muted);">
+                            Nenhum endereço cadastrado.
+                        </td>
+                    </tr>
+                    {% else %} {% for e in enderecos %}
+                    <tr>
+                        <td>{{ e.LOGRADOURO }}</td>
+                        <td>{{ e.NUMERO }}</td>
+                        <td>{{ e.BAIRRO }}</td>
+                        <td>{{ e.CIDADE }}</td>
+                        <td>{{ e.UF }}</td>
+                        <td>{{ e.PRINCIPAL ? 'Sim' : '—' }}</td>
+                        {% if cliente %}
+                        <td>
+                            <div class="action-group">
+                                <a href="{{ route_to('painel.clientes.endereco.editar', cliente.UUID, e.ID_ENDERECO) }}" class="btn btn-sm btn-outline" title="Editar">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
+                                </a>
+                                <form method="post" action="{{ route_to('painel.clientes.endereco.excluir', cliente.UUID, e.ID_ENDERECO) }}" class="inline-form" data-confirm="Tem certeza?">
+                                    {{ csrf_field()|raw }}
+                                    <button type="submit" class="btn btn-sm btn-outline btn-danger" title="Excluir">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="3 6 5 6 21 6"/>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %} {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="margin-top:24px;">
+    <div class="card-header">
+        <h3>Contatos</h3>
+        {% if cliente %}
+        <a href="{{ route_to('painel.clientes.contato.novo', cliente.UUID) }}" class="btn btn-primary btn-sm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg> Novo Contato
+        </a>
+        {% endif %}
+    </div>
+    <div class="card-body" style="padding:0;">
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Cargo</th>
+                        <th>Telefone</th>
+                        <th>E-mail</th>
+                        <th>WhatsApp</th>
+                        <th>Principal</th>
+                        {% if cliente %}
+                        <th style="width:100px;">Ações</th>{% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if contatos is empty %}
+                    <tr>
+                        <td colspan="{% if cliente %}7{% else %}6{% endif %}" style="text-align:center;padding:24px 16px;color:var(--color-text-muted);">
+                            Nenhum contato cadastrado.
+                        </td>
+                    </tr>
+                    {% else %} {% for c in contatos %}
+                    <tr>
+                        <td>{{ c.NOME }}</td>
+                        <td>{{ c.CARGO ?? '—' }}</td>
+                        <td>{{ c.TELEFONE ?? '—' }}</td>
+                        <td>{{ c.EMAIL ?? '—' }}</td>
+                        <td>{{ c.WHATSAPP ?? '—' }}</td>
+                        <td>{{ c.PRINCIPAL ? 'Sim' : '—' }}</td>
+                        {% if cliente %}
+                        <td>
+                            <div class="action-group">
+                                <a href="{{ route_to('painel.clientes.contato.editar', cliente.UUID, c.ID_CONTATO) }}" class="btn btn-sm btn-outline" title="Editar">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
+                                </a>
+                                <form method="post" action="{{ route_to('painel.clientes.contato.excluir', cliente.UUID, c.ID_CONTATO) }}" class="inline-form" data-confirm="Tem certeza?">
+                                    {{ csrf_field()|raw }}
+                                    <button type="submit" class="btn btn-sm btn-outline btn-danger" title="Excluir">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="3 6 5 6 21 6"/>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %} {% endif %}
+                </tbody>
+            </table>
+       <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cepInput = document.getElementById('ENDERECO_CEP');
+        if (cepInput) {
+            cepInput.addEventListener('blur', function() {
+                const cep = this.value.replace(/\D/g, '');
+                if (cep.length === 8) {
+                    // Efeito visual premium de loading nos campos
+                    const fields = ['ENDERECO_LOGRADOURO', 'ENDERECO_BAIRRO', 'ENDERECO_CIDADE', 'ENDERECO_UF'];
+                    fields.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.placeholder = 'Carregando...';
+                    });
+
+                    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.erro) {
+                                if (document.getElementById('ENDERECO_LOGRADOURO')) {
+                                    document.getElementById('ENDERECO_LOGRADOURO').value = data.logradouro;
+                                    document.getElementById('ENDERECO_LOGRADOURO').dispatchEvent(new Event('input'));
+                                }
+                                if (document.getElementById('ENDERECO_BAIRRO')) {
+                                    document.getElementById('ENDERECO_BAIRRO').value = data.bairro;
+                                    document.getElementById('ENDERECO_BAIRRO').dispatchEvent(new Event('input'));
+                                }
+                                if (document.getElementById('ENDERECO_CIDADE')) {
+                                    document.getElementById('ENDERECO_CIDADE').value = data.localidade;
+                                    document.getElementById('ENDERECO_CIDADE').dispatchEvent(new Event('input'));
+                                }
+                                if (document.getElementById('ENDERECO_UF')) {
+                                    document.getElementById('ENDERECO_UF').value = data.uf;
+                                    document.getElementById('ENDERECO_UF').dispatchEvent(new Event('change'));
+                                }
+                            } else {
+                                alert('CEP não encontrado.');
+                            }
+                        })
+                        .catch(err => console.error('Erro ao buscar CEP:', err))
+                        .finally(() => {
+                            fields.forEach(id => {
+                                const el = document.getElementById(id);
+                                if (el) el.placeholder = '';
+                            });
+                        });
+                }
+            });
+        }
+
+        const cnpjInput = document.getElementById('CPF_CNPJ');
+        if (cnpjInput) {
+            cnpjInput.addEventListener('blur', function() {
+                const cnpj = this.value.replace(/\D/g, '');
+                if (cnpj.length === 14) {
+                    const fields = ['NOME', 'NOME_FANTASIA', 'CONTATO_EMAIL', 'CONTATO_TELEFONE', 'ENDERECO_CEP', 'ENDERECO_LOGRADOURO', 'ENDERECO_BAIRRO', 'ENDERECO_CIDADE'];
+                    fields.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.placeholder = 'Carregando...';
+                    });
+
+                    fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error('CNPJ não encontrado ou erro na API');
+                            return response.json();
+                        })
+                        .then(data => {
+                            // Preencher tipo como Pessoa Jurídica
+                            const tipoSelect = document.getElementById('TIPO_ID');
+                            if (tipoSelect) {
+                                for (let i = 0; i < tipoSelect.options.length; i++) {
+                                    const text = tipoSelect.options[i].text.toLowerCase();
+                                    const val = tipoSelect.options[i].value;
+                                    if (text.includes('jurídica') || text.includes('juridica') || val == '2') {
+                                        tipoSelect.value = val;
+                                        tipoSelect.dispatchEvent(new Event('change'));
+                                        break;
+                                    }
+                                }
+                            }
+
+                            // Preencher campos básicos
+                            if (data.razao_social && document.getElementById('NOME')) {
+                                document.getElementById('NOME').value = data.razao_social;
+                                document.getElementById('NOME').dispatchEvent(new Event('input'));
+                            }
+                            if (document.getElementById('NOME_FANTASIA')) {
+                                document.getElementById('NOME_FANTASIA').value = data.nome_fantasia || data.razao_social || '';
+                                document.getElementById('NOME_FANTASIA').dispatchEvent(new Event('input'));
+                            }
+                            if (data.email && document.getElementById('CONTATO_EMAIL')) {
+                                document.getElementById('CONTATO_EMAIL').value = data.email;
+                                document.getElementById('CONTATO_EMAIL').dispatchEvent(new Event('input'));
+                            }
+                            if (data.ddd_telefone_1 && document.getElementById('CONTATO_TELEFONE')) {
+                                document.getElementById('CONTATO_TELEFONE').value = data.ddd_telefone_1;
+                                document.getElementById('CONTATO_TELEFONE').dispatchEvent(new Event('input'));
+                            }
+                            if (data.data_inicio_atividade && document.getElementById('DATA_NASCIMENTO')) {
+                                document.getElementById('DATA_NASCIMENTO').value = data.data_inicio_atividade;
+                                document.getElementById('DATA_NASCIMENTO').dispatchEvent(new Event('input'));
+                            }
+
+                            // Preencher endereço principal
+                            if (data.cep && document.getElementById('ENDERECO_CEP')) {
+                                document.getElementById('ENDERECO_CEP').value = data.cep;
+                                document.getElementById('ENDERECO_CEP').dispatchEvent(new Event('input'));
+                            }
+                            if (data.logradouro && document.getElementById('ENDERECO_LOGRADOURO')) {
+                                document.getElementById('ENDERECO_LOGRADOURO').value = data.logradouro;
+                                document.getElementById('ENDERECO_LOGRADOURO').dispatchEvent(new Event('input'));
+                            }
+                            if (data.numero && document.getElementById('ENDERECO_NUMERO')) {
+                                document.getElementById('ENDERECO_NUMERO').value = data.numero;
+                                document.getElementById('ENDERECO_NUMERO').dispatchEvent(new Event('input'));
+                            }
+                            if (document.getElementById('ENDERECO_COMPLEMENTO')) {
+                                document.getElementById('ENDERECO_COMPLEMENTO').value = data.complemento || '';
+                                document.getElementById('ENDERECO_COMPLEMENTO').dispatchEvent(new Event('input'));
+                            }
+                            if (data.bairro && document.getElementById('ENDERECO_BAIRRO')) {
+                                document.getElementById('ENDERECO_BAIRRO').value = data.bairro;
+                                document.getElementById('ENDERECO_BAIRRO').dispatchEvent(new Event('input'));
+                            }
+                            if (data.municipio && document.getElementById('ENDERECO_CIDADE')) {
+                                document.getElementById('ENDERECO_CIDADE').value = data.municipio;
+                                document.getElementById('ENDERECO_CIDADE').dispatchEvent(new Event('input'));
+                            }
+                            if (data.uf && document.getElementById('ENDERECO_UF')) {
+                                document.getElementById('ENDERECO_UF').value = data.uf.toUpperCase();
+                                document.getElementById('ENDERECO_UF').dispatchEvent(new Event('change'));
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Erro ao buscar CNPJ:', err);
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    title: 'Aviso',
+                                    text: 'Não foi possível encontrar dados para este CNPJ automaticamente.',
+                                    icon: 'info',
+                                    confirmButtonText: 'Ok'
+                                });
+                            } else {
+                                alert('Não foi possível encontrar dados para este CNPJ automaticamente.');
+                            }
+                        })
+                        .finally(() => {
+                            fields.forEach(id => {
+                                const el = document.getElementById(id);
+                                if (el) el.placeholder = '';
+                            });
+                        });
+                }
+            });
+        }
+    });
+</script>
 {% endblock %}

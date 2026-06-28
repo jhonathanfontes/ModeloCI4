@@ -6,12 +6,12 @@
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
 <a href="{{ route_to('admin.empresas') }}">Empresas</a>
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
-<a href="{{ route_to('admin.empresas.visualizar', empresa.id) }}">{{ empresa.nomeFantasia }}</a>
+<a href="{{ route_to('admin.empresas.visualizar', empresa.uuid) }}">{{ empresa.nomeFantasia }}</a>
 <span style="color:var(--color-text-muted);margin:0 4px;">/</span>
 <span style="color:var(--color-text-muted)">Usuários</span>
 {% endblock %}
 {% block page_actions %}
-<a href="{{ route_to('admin.empresas.usuarios.vincular', empresa.id) }}" class="btn btn-primary">
+<a href="{{ route_to('admin.empresas.usuarios.vincular', empresa.uuid) }}" class="btn btn-primary">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
         <circle cx="8.5" cy="7" r="4"/>
@@ -33,8 +33,10 @@
 {% endif %}
 
 <div class="tabs">
-    <a href="{{ route_to('admin.empresas.visualizar', empresa.id) }}" class="tab">Dados</a>
-    <a href="{{ route_to('admin.empresas.usuarios', empresa.id) }}" class="tab tab-active">Usuários</a>
+    <a href="{{ route_to('admin.empresas.visualizar', empresa.uuid) }}" class="tab">Dados</a>
+    <a href="{{ route_to('admin.empresas.enderecos', empresa.uuid) }}" class="tab">Endereços</a>
+    <a href="{{ route_to('admin.empresas.contatos', empresa.uuid) }}" class="tab">Contatos</a>
+    <a href="{{ route_to('admin.empresas.usuarios', empresa.uuid) }}" class="tab tab-active">Usuários</a>
     <a href="{{ route_to('admin.empresas.servicos', empresa.uuid) }}" class="tab">Serviços</a>
 </div>
 
@@ -67,7 +69,8 @@
                         <td>{{ u.USUARIO_EMAIL }}</td>
                         <td>{{ u.PERFIL_NOME ?? '-' }}</td>
                         <td>
-                            <form method="post" action="{{ route_to('admin.empresas.usuarios.desvincular', empresa.id, u.ID_USUARIO_EMPRESA) }}" class="inline-form" onsubmit="return confirm('Tem certeza que deseja desvincular este usuário?')">
+                            <form method="post" action="{{ route_to('admin.empresas.usuarios.desvincular', empresa.uuid, u.ID_USUARIO_EMPRESA) }}" class="inline-form" data-confirm="Tem certeza que deseja desvincular este usuário?">
+                                    {{ csrf_field()|raw }}
                                 <button type="submit" class="btn btn-sm btn-outline btn-danger" title="Desvincular">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <polyline points="3 6 5 6 21 6"/>
@@ -86,7 +89,7 @@
 </div>
 
 <div class="form-actions">
-    <a href="{{ route_to('admin.empresas.visualizar', empresa.id) }}" class="btn btn-outline">Voltar para Empresa</a>
+    <a href="{{ route_to('admin.empresas.visualizar', empresa.uuid) }}" class="btn btn-outline">Voltar para Empresa</a>
 </div>
 
 {% endblock %}

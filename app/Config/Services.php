@@ -68,6 +68,18 @@ class Services extends BaseService
     }
 
     /**
+     * Tipo service.
+     */
+    public static function tipo(bool $getShared = true): \App\Modulos\Sistema\Services\TipoService
+    {
+        if ($getShared) {
+            return static::getSharedInstance('tipo');
+        }
+
+        return \App\Services\TipoService::create();
+    }
+
+    /**
      * Cliente repository.
      */
     public static function clienteRepository(bool $getShared = true): \App\Modulos\Cadastro\Repositories\ClienteRepository
